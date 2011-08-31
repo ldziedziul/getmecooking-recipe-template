@@ -1,0 +1,14 @@
+# Get Me Cooking English texts
+
+gmc:
+  admin:
+    ingredients:
+      howto: "Drag and drop the ingredients to change their order"
+      add:
+        title: "Add New Ingredient"
+
+    steps:
+      howto: ""
+      add:
+        title: "Add New Step"
+
