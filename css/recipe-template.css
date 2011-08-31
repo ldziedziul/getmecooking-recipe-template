@@ -1,0 +1,133 @@
+/* The container for the plugin */
+.gmc-recipe {
+  overflow: hidden;
+  *zoom: 1;
+  padding: 10px;
+}
+
+h2.gmc-recipe-title {
+  float: left;
+  width: inherit;
+  vertical-align: top;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+a.gmc-printable {
+  float: right;
+  font-size: 0.8em;
+  text-align: right;
+  /*width: 85px */
+  /* If the printer icon is not on the same line as the */
+  /* words "print recipe" then uncomment this */
+}
+
+.gmc-clear-both {
+  clear: both;
+}
+
+.gmc-recipe-main-photo {
+  display: inline;
+  float: left;
+}
+.gmc-recipe-main-photo img {
+  height: auto;
+}
+
+/*The information next to the main photo */
+table.gmc-recipe-summary {
+  border: 0;
+  border-spacing: 0;
+  width: 250px;
+  /* If the summary information is appearing under the main photo, lower the width. */
+  font-size: 0.8em;
+  float: right;
+  padding: 0;
+  margin: 0;
+}
+
+.gmc-recipe-summary td {
+  border: 0;
+  padding-top: 0;
+  padding-bottom: 2px;
+}
+
+td.gmc-heading {
+  font-weight: bold;
+  padding-right: 10px;
+  text-align: right;
+  vertical-align: text-top;
+  width: 70px;
+  /* If "total time" shows on 2 lines, increase the width */
+}
+
+.gmc-recipe-description {
+  display: none;
+  visibility: hidden;
+}
+
+.gmc-recipe-ingredients {
+  clear: both;
+}
+
+ul.gmc-ingredient-list {
+  clear: left;
+}
+
+.gmc-step-list {
+  margin: 20px 0;
+}
+
+table.gmc-step-list, .gmc-step-list-item td, td.gmc-step-list-title, td.gmc-step-list-title-wide {
+  border: none;
+}
+
+.gmc-step-list-title {
+  font-weight: bold;
+}
+
+.gmc-step-list-title-wide {
+  font-weight: bold;
+  width: 12%;
+}
+
+.gmc-step-list-item td {
+  padding-bottom: 10px;
+  padding-top: 0;
+}
+
+.gmc-step-list-item td {
+  vertical-align: top;
+}
+
+img.gmc-step-photo {
+  width: 150px;
+  height: auto;
+  max-width: inherit !important;
+  padding-top: 5px;
+}
+
+.gmc-powered-by {
+  font-size: 0.7em;
+  text-align: right;
+}
+
+.no-main-photo {
+  float: left !important;
+}
+
+@media print {
+  body {
+    background: white;
+    font-family: "Times New Roman", "MS Georgia", serif;
+    font-size: 12pt;
+  }
+
+  tr, img {
+    page-break-inside: avoid;
+  }
+
+  .gmc-print-hidden {
+    display: none !important;
+  }
+}
