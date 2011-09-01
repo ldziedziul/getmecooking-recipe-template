@@ -6,7 +6,7 @@ Requires at least: 3.0
 Tested up to: 3.2.1
 Stable tag: trunk
 
-For food bloggers. Display one or more recipes per page in an easy to read format with print, recipe search, custom layout, Search Engine Optimisation (SEO) and other features built in.
+For food bloggers. Display one or more recipes per page in an easy to read format with print, recipe search, custom layout, SEO and other features.
 
 == Description ==
 
@@ -64,6 +64,8 @@ Everything is optional and headings will only appear if you have typed in the re
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.01 =
+* Recipes were not being sent to GetMeCooking if you were opted in
 
 = 1.0 =
 * First release
