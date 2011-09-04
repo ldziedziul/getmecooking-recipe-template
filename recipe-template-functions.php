@@ -286,7 +286,6 @@ function gmc_draw_postthumbnail_box($p) {
   echo "</div>";
 }
 
-
 function gmc_postthumbnail_box() {
   global $post;
 
@@ -299,8 +298,6 @@ function gmc_postthumbnail_box() {
   echo "</div>";
   echo "</div>";
 }
-
-
 
 function gmc_add_meta_boxes() {
 //  add_meta_box('gmc-params', __( 'Additional Data', 'recipe-template' ), 'gmc_params_box', 'recipe', 'normal');
@@ -326,7 +323,7 @@ function gmc_addstep_box() {
   if($_GET['gmc-add'] == 'step')
   {
 	$steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=DESC&post_parent='.$post->ID);
-	$last_step = substr($steps[0]->post_content,0,40);
+	$last_step = substr($steps[0]->post_content,0,80);
 	echo '<div id="gmc-step-added" class="gmc-message">You just added step <strong>'.$last_step.'...</strong>, add another or <a href="#" id="gmc-back-to-step-list">go back to the list of steps</a>.</div>';
   }
   
@@ -464,6 +461,16 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 //    $xml->addChild('Id', $gmcid);
 //  }
 
+  if (get_post_meta($recipe->ID, "gmc-source-name", true))
+  {
+	$xml->addChild('Author', get_post_meta($recipe->ID, "gmc-source-name", true));
+  }
+  
+  if (get_post_meta($recipe->ID, "gmc-source-url", true))
+  {
+	$xml->addChild('AuthorUrl', get_post_meta($recipe->ID, "gmc-source-url", true));
+  }
+
   if (get_post_meta($recipe->ID, "gmc-cooking-time-hours", true))
   {
 	$xml->addChild('CookHour', get_post_meta($recipe->ID, "gmc-cooking-time-hours", true));
@@ -474,7 +481,7 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 	$xml->addChild('CookMinute', get_post_meta($recipe->ID, "gmc-cooking-time-mins", true));
   }
   
-  $xml->addChild('Description', $recipe->post_content);
+  $xml->addChild('Description', get_post_meta($recipe->ID, "gmc-description", true));
 
   $xml->addChild('Id', $gmcid);
 
@@ -493,7 +500,9 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 	  $xmiscs->addChild('Misc',$par);
 	}
   }
-
+  
+  $xml->addChild('Note', $recipe->post_content);
+  
   $xoccasions=$xml->addChild('Occasions');
   $pars=(array)unserialize(get_post_meta($recipe->ID, "gmc-recopt-occasion", true));
   if ($pars) {
@@ -576,150 +585,161 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 
 function gmc_mainrecipe_box($post, $metabox) {
   global $post;
-
 ?>
 
-	<div id="recipe-data" class="gmc-tabs">
-	  <div class="gmc-tabs-nav">
-	  <ul>
-		<li><a href="#params">Recipe Details</a></li>
-		<li><a href="#ingredients">Recipe Ingredients</a></li>
-		<li><a href="#steps">Recipe Steps</a></li>
-		<li><a href="#transfer">GetMeCooking User Details</a></li>
-		</ul>
-	  </div>
-	<div class="gmc-tabs-panel">
-	<div id="params">	
-	  <?php include("recipe-template-edit-params.php"); ?>
-	  </div>
+<div id="recipe-data" class="gmc-tabs">
+  <div class="gmc-tabs-nav">
+    <ul>
+      <li><a href="#params">Recipe Details</a></li>
+      <li><a href="#ingredients">Recipe Ingredients</a></li>
+      <li><a href="#steps">Recipe Steps</a></li>
+      <li><a href="#gmc-desc">Recipe Description</a></li>
+      <li><a href="#gmc-note">Recipe Note</a></li>
+      <li><a href="#transfer">GetMeCooking User Details</a></li>
+    </ul>
+  </div>
+  <div class="gmc-tabs-panel">
+    <div id="params">	
+      <?php include("recipe-template-edit-params.php"); ?>
+    </div>      
+    <div id="ingredients">
+      <?php
+        echo "<div class='gmc-buttons'>";
+        echo "<a id='gmc-show-addingredient' class='button-primary' href='#'>"."Add Ingredient"."</a>";
+        echo "</div>";
 
-	<div id="steps">
-<?php
+        gmc_addingredient_box();
 
-//  echo "<a class='thickbox button' rel='thickbox' href='#TB_inline?height=155&width=300&inlineId=gmc-addstep'>"."Add Step"."</a>";
-  echo "<div class='gmc-buttons'>";
-  echo "<a id='gmc-show-addstep' class='button-primary' href='#'>"."Add Step"."</a>";
-  echo "</div>";
+        echo '<div id="gmc-ingredientslistbox">'."\n";
 
-  gmc_addstep_box();
+          echo '<p class="howto">'.owt_t('gmc.admin.ingredients.howto').'</p>';
 
-//  echo "<a class='thickbox button' rel='thickbox' href='http://owt/farm/gmc/wp-admin/post-new.php'>"."Add Step"."</a>";
+          echo '<div id="gmc-ingredientslist">'."\n";
+                    
+            $ingredients=get_posts('post_status=publish&post_type=recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
+            
+            $i=0;
+            foreach($ingredients as $ingredient){
+          //    print_r($ingredient);  
+            $i++;
+            echo '<div id="gmc-ingredients-ingredient-'.$i.'" class="gmc-singleingredient postbox " >'."\n";
+            echo '<div class="handlediv" title="Click to toggle"><br /></div><h3 class="gmc-hndle">Ingredient <span class="gmc-ingredientnumber">'.$i.'</span></h3>'."\n";
+            echo '<div class="inside">'."\n";
 
-  $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
+            include("recipe-template-edit-ingredient.php");
 
-  echo '<div id="gmc-stepslistbox">'."\n";
+        echo "</div></div>\n";  
+        }
+        echo '</div></div>';
+      ?>
+    </div>
+    <div id="steps">
+      <?php
 
-  echo '<p class="howto">'.owt_t('gmc.admin.steps.howto').'</p>';
+      //  echo "<a class='thickbox button' rel='thickbox' href='#TB_inline?height=155&width=300&inlineId=gmc-addstep'>"."Add Step"."</a>";
+        echo "<div class='gmc-buttons'>";
+        echo "<a id='gmc-show-addstep' class='button-primary' href='#'>"."Add Step"."</a>";
+        echo "</div>";
 
-  echo '<div id="gmc-stepslist">'."\n";
-  $i=0;
-  foreach ($steps as $step) {
-	$i++;
+        gmc_addstep_box();
 
-	echo '<div id="gmc-steps-step-'.$i.'" class="gmc-singlestep postbox " >'."\n";
-	echo '<div class="handlediv" title="Click to toggle"><br /></div><h3 class="gmc-hndle">Step <span class="gmc-stepnumber">'.$i.'</span></h3>'."\n";
-	echo '<div class="inside">'."\n";
+      //  echo "<a class='thickbox button' rel='thickbox' href='http://owt/farm/gmc/wp-admin/post-new.php'>"."Add Step"."</a>";
 
-	echo "<input type='hidden' name='stepid[]' value='".$step->ID."' />"."\n";
+        $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
 
-	echo "<label class='gmc-admin-label gmc-admin-step-label'><strong>Step Description:</strong></label>"."\n";
-	echo '<div class="gmc-stepdesc-box">'."\n";
-	echo "<textarea class='gmc-admin-fullline autoResize' name='stepdescription[]'>".$step->post_content."</textarea>"."\n";
-	echo '</div>'."\n";
-	echo '<div class="gmc-stepthumb-box">'."\n";
-	gmc_draw_postthumbnail_box($step);
-	echo '</div>'."\n";
-	echo '<label class="gmc-admin-label gmc-admin-step-label"><strong>Alt text (optional - only used if you have added a photograph):</strong><p>How would you describe the photograph if you could not see it? (e.g. Muffin mixture poured into a muffin tray)</p></label>';
-	
-	$thumbid=get_post_thumbnail_id($step->ID);
-	$alttext = '';
-	if ($thumbid > 0)
-	{
-	  $thumbnail = get_post($thumbid);
-	  $alttext = $thumbnail->post_title;
-	}
-	echo "<input type='text' class='gmc-admin-alt-text-input' name='gmc-step-alt-text[]' value='".$alttext."'/>";
-	echo '<div style="clear:both"></div>';
-	echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#">Delete step</a>';
-	echo '</div></div>'."\n";
-  }
+        echo '<div id="gmc-stepslistbox">'."\n";
 
-  echo '</div>'."\n";
-  echo '</div>'."\n";
+        echo '<p class="howto">'.owt_t('gmc.admin.steps.howto').'</p>';
 
-?>  
+        echo '<div id="gmc-stepslist">'."\n";
+        $i=0;
+        foreach ($steps as $step) {
+        $i++;
+
+        echo '<div id="gmc-steps-step-'.$i.'" class="gmc-singlestep postbox " >'."\n";
+        echo '<div class="handlediv" title="Click to toggle"><br /></div><h3 class="gmc-hndle">Step <span class="gmc-stepnumber">'.$i.'</span></h3>'."\n";
+        echo '<div class="inside">'."\n";
+
+        echo "<input type='hidden' name='stepid[]' value='".$step->ID."' />"."\n";
+
+        echo "<label class='gmc-admin-label gmc-admin-step-label'><strong>Step Description:</strong></label>"."\n";
+        echo '<div class="gmc-stepdesc-box">'."\n";
+        echo "<textarea class='gmc-admin-fullline autoResize' name='stepdescription[]'>".$step->post_content."</textarea>"."\n";
+        echo '</div>'."\n";
+        echo '<div class="gmc-stepthumb-box">'."\n";
+        gmc_draw_postthumbnail_box($step);
+        echo '</div>'."\n";
+        echo '<label class="gmc-admin-label gmc-admin-step-label"><strong>Alt text (optional - only used if you have added a photograph):</strong><p>How would you describe the photograph if you could not see it? (e.g. Muffin mixture poured into a muffin tray)</p></label>';
+        
+        $thumbid=get_post_thumbnail_id($step->ID);
+        $alttext = '';
+        if ($thumbid > 0)
+        {
+          $thumbnail = get_post($thumbid);
+          $alttext = $thumbnail->post_title;
+        }
+        echo "<input type='text' class='gmc-admin-alt-text-input' name='gmc-step-alt-text[]' value='".$alttext."'/>";
+        echo '<div style="clear:both"></div>';
+        echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#">Delete step</a>';
+        echo '</div></div>'."\n";
+        }
+
+        echo '</div>'."\n";
+        echo '</div>'."\n";
+
+      ?>  
+    </div>
+
+    <div id="gmc-desc">
+      <p>The description is a 1 - 2 line summary that is used by search engines.</p>
+      <textarea id="gmc-description" class="gmc-admin-fullline" rows="5" name="gmc-description"><?php echo get_post_meta($post->ID,"gmc-description",true); ?></textarea>
+    </div>
+    
+    <div id="gmc-note">
+      <?php 
+        $note_position = get_option('gmc-note-position') == '' ? 'before' : 'after';
+        $note_link = "<a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>$note_position</a>";
+      ?>
+      <p id="gmc-note-desc">Anything you type here will appear <?php echo $note_link; ?> the recipe steps.</p>
+    </div>
+    
+    <div id="transfer">
+      <?php
+        $gmcid=get_post_meta($post->ID,"gmc-id",true); 
+        $gmcusername=get_option("gmc-username");
+        
+        if (empty($gmcusername)) {
+        echo "<p>You are currently using this plugin as a guest user. To get more functionality, please <a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>enter your GetMeCooking details</a>.</p>";
+        } else {
+        echo "<p>You have told us that your GetMeCooking username is <strong>".$gmcusername."</strong>.<br/>";
+        echo "<p>You can <a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>change your details here</a>.</p>";
+        } 
+        
+        echo "<p>";
+        if (get_option('gmc-hide-recipes'))  
+        echo "You have opted out of send this recipe to GetMeCooking. (<a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template#gmc-share-the-love"."'>I've changed my mind, I want my recipes to appear on GetMeCooking</a>)";
+        else
+        {
+        echo "You have opted in to send this recipe to GetMeCooking.";
+        if (empty($gmcusername))
+          echo ' Once approved by the staff it will appear on <a href="http://www.getmecooking.com/recipes">www.getmecooking.com</a>.';      
+        else
+          echo ' Once approved by the staff it will appear on <a href="http://www.getmecooking.com/user/' . strtolower($gmcusername) . '">http://www.getmecooking.com/user/' . strtolower($gmcusername) . '</a>';
+        }
+        echo "</p>";        
+        
+        echo "<p>";
+        if (is_numeric($gmcid)) {
+        echo "This recipe has been sent to GetMeCooking. It's recipe ID is: ".$gmcid;
+        } else {
+        echo "This recipe hasn't been sent to GetMeCooking yet.";
+        }
+        echo "</p>";
+      ?>
+    </div>
+  </div>
 </div>
-<div id="ingredients">
-<?php
 
-  echo "<div class='gmc-buttons'>";
-  echo "<a id='gmc-show-addingredient' class='button-primary' href='#'>"."Add Ingredient"."</a>";
-  echo "</div>";
-
-  gmc_addingredient_box();
-
-  echo '<div id="gmc-ingredientslistbox">'."\n";
-
-  echo '<p class="howto">'.owt_t('gmc.admin.ingredients.howto').'</p>';
-
-  echo '<div id="gmc-ingredientslist">'."\n";
-  
-  //$ingredients=wp_get_object_terms($post->ID, 'ingredient', 'fields=all_with_object_id');
-  $ingredients=get_posts('post_status=publish&post_type=recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
-  
-  $i=0;
-  foreach($ingredients as $ingredient){
-//    print_r($ingredient);  
-	$i++;
-	echo '<div id="gmc-ingredients-ingredient-'.$i.'" class="gmc-singleingredient postbox " >'."\n";
-	echo '<div class="handlediv" title="Click to toggle"><br /></div><h3 class="gmc-hndle">Ingredient <span class="gmc-ingredientnumber">'.$i.'</span></h3>'."\n";
-	echo '<div class="inside">'."\n";
-
-	include("recipe-template-edit-ingredient.php");
-
-	echo '</div></div>'."\n";  
-  }
-?>
-</div></div></div>
-
-<div id="transfer">
-<?php
-  $gmcid=get_post_meta($post->ID,"gmc-id",true); 
-  $gmcusername=get_option("gmc-username");
-  
-  if (empty($gmcusername)) {
-	echo "<p>You are currently using this plugin as a guest user. To get more functionality, please <a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>enter your GetMeCooking details</a>.</p>";
-  } else {
-	echo "<p>You have told us that your GetMeCooking username is <strong>".$gmcusername."</strong>.<br/>";
-	echo "<p>You can <a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>change your details here</a>.</p>";
-  } 
-  
-  echo "<p>";
-  if (get_option('gmc-hide-recipes'))  
-	echo "You have opted out of send this recipe to GetMeCooking. (<a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template#gmc-share-the-love"."'>I've changed my mind, I want my recipes to appear on GetMeCooking</a>)";
-  else
-  {
-	echo "You have opted in to send this recipe to GetMeCooking.";
-	if (empty($gmcusername))
-	  echo ' Once approved by the staff it will appear at <a href="http://www.getmecooking.com/recipes">www.getmecooking.com</a>.';      
-	else
-	  echo ' Once approved by the staff it will appear at <a href="http://www.getmecooking.com/user/' . $gmcusername . '">http://www.getmecooking.com/user/' . $gmcusername . '</a>';
-  }
-  echo "</p>";
-  
-  
-  echo "<p>";
-  if (is_numeric($gmcid)) {
-	echo "This recipe has been sent to GetMeCooking. It's recipe ID is: ".$gmcid;
-  } else {
-	echo "This recipe hasn't been sent to GetMeCooking yet.";
-  }
-  echo "</p>";
-?>
-</div>
-
-</div>
-</div>
 <?php
   
 }
@@ -734,15 +754,9 @@ function gmc_save_settings() {
   if($_POST["gmc-settings-save"]!= "Y") {
 	return;
   }
-
+  
   // CSS
-  if(!empty($_POST["gmc-overridecss"]))
-  {
-	update_option("gmc-overridecss", $_POST["gmc-overridecss"]);
-  } else
-  {
-	delete_option("gmc-overridecss");
-  }
+  updateOrDeleteOption("gmc-overridecss", $_POST["gmc-overridecss"]);
   
   if(!empty($_POST["gmc-shortcodecss"]))
   {
@@ -779,29 +793,9 @@ function gmc_save_settings() {
 	delete_option("gmc-hide-links");
   }
   
-  if(!empty($_POST["gmc-username"]))
-  {
-	update_option("gmc-username", $_POST["gmc-username"]);
-  } else
-  {
-	delete_option("gmc-username");
-  }
-  
-  if(!empty($_POST["gmc-label-step"]))
-  {
-	update_option("gmc-label-step", $_POST["gmc-label-step"]);
-  } else
-  {
-	delete_option("gmc-label-step");
-  }
-  
-  if(!empty($_POST["gmc-label-step-position"]))
-  {
-	update_option("gmc-label-step-position", $_POST["gmc-label-step-position"]);
-  } else
-  {
-	delete_option("gmc-label-step-position");
-  }
+	updateOrDeleteOption("gmc-username", $_POST["gmc-username"]);  
+  updateOrDeleteOption("gmc-label-step", $_POST["gmc-label-step"]);  
+  updateOrDeleteOption("gmc-label-step-position", $_POST["gmc-label-step-position"]);
   
   $photo_position = $_POST["gmc-step-photo-position"];
   
@@ -809,233 +803,158 @@ function gmc_save_settings() {
 	$photo_position = 0;
   
   update_option("gmc-step-photo-position", $photo_position);
-
-  if(!empty($_POST["gmc-background-colour"]))
-  {
-	update_option("gmc-background-colour", $_POST["gmc-background-colour"]);
-  } else
-  {
-	delete_option("gmc-background-colour");
-  }
   
-  if(!empty($_POST["gmc-border-colour"]))
-  {
-	update_option("gmc-border-colour", $_POST["gmc-border-colour"]);
-  } else
-  {
-	delete_option("gmc-border-colour");
-  }
+  updateOrDeleteOption("gmc-note-position", $_POST["gmc-note-position"]);  
+  updateOrDeleteOption("gmc-background-colour", $_POST["gmc-background-colour"]);  
+  updateOrDeleteOption("gmc-border-colour", $_POST["gmc-border-colour"]);
   
   if(!empty($_POST["gmc-border-style"]) && $_POST["gmc-border-style"] != 'none')
   {
-	update_option("gmc-border-style", $_POST["gmc-border-style"]);
+    update_option("gmc-border-style", $_POST["gmc-border-style"]);
   } else
   {
-	delete_option("gmc-border-style");
+    delete_option("gmc-border-style");
   }
   
   if(!empty($_POST["gmc-border-width"]) && $_POST["gmc-border-width"] != 'none')
   {
-	update_option("gmc-border-width", $_POST["gmc-border-width"]);
+    update_option("gmc-border-width", $_POST["gmc-border-width"]);
   } else
   {
-	delete_option("gmc-border-width");
+    delete_option("gmc-border-width");
   }
   
-  if(!empty($_POST["gmc-label-serves"]))
-  {
-	update_option("gmc-label-serves", $_POST["gmc-label-serves"]);
-  } else
-  {
-	delete_option("gmc-label-serves");
-  }
-  
-  if(!empty($_POST["gmc-label-prep-time"]))
-  {
-	update_option("gmc-label-prep-time", $_POST["gmc-label-prep-time"]);
-  } else
-  {
-	delete_option("gmc-label-prep-time");
-  }
-  
-  if(!empty($_POST["gmc-label-cook-time"]))
-  {
-	update_option("gmc-label-cook-time", $_POST["gmc-label-cook-time"]);
-  } else
-  {
-	delete_option("gmc-label-cook-time");
-  }
-  
-  if(!empty($_POST["gmc-label-total-time"]))
-  {
-	update_option("gmc-label-total-time", $_POST["gmc-label-total-time"]);
-  } else
-  {
-	delete_option("gmc-label-total-time");
-  }
-  
-  if(!empty($_POST["gmc-label-meal-type"]))
-  {
-	update_option("gmc-label-meal-type", $_POST["gmc-label-meal-type"]);
-  } else
-  {
-	delete_option("gmc-label-meal-type");
-  }
-  
-  if(!empty($_POST["gmc-label-allergy"]))
-  {
-	update_option("gmc-label-allergy", $_POST["gmc-label-allergy"]);
-  } else
-  {
-	delete_option("gmc-label-allergy");
-  }
-  
-  if(!empty($_POST["gmc-label-occasion"]))
-  {
-	update_option("gmc-label-occasion", $_POST["gmc-label-occasion"]);
-  } else
-  {
-	delete_option("gmc-label-occasion");
-  }
-  
-  if(!empty($_POST["gmc-label-dietry"]))
-  {
-	update_option("gmc-label-dietry", $_POST["gmc-label-dietry"]);
-  } else
-  {
-	delete_option("gmc-label-dietry");
-  }
-  
-  if(!empty($_POST["gmc-label-misc"]))
-  {
-	update_option("gmc-label-misc", $_POST["gmc-label-misc"]);
-  } else
-  {
-	delete_option("gmc-label-misc");
-  }
-  
-  if(!empty($_POST["gmc-label-region"]))
-  {
-	update_option("gmc-label-region", $_POST["gmc-label-region"]);
-  } else
-  {
-	delete_option("gmc-label-region");
-  }
-  
-  if(!empty($_POST["gmc-label-ingredients"]))
-  {
-	update_option("gmc-label-ingredients", $_POST["gmc-label-ingredients"]);
-  } else
-  {
-	delete_option("gmc-label-ingredients");
-  }
-  
-  if(!empty($_POST["gmc-label-directions"]))
-  {
-	update_option("gmc-label-directions", $_POST["gmc-label-directions"]);
-  } else
-  {
-	delete_option("gmc-label-directions");
-  }
+  updateOrDeleteOption("gmc-label-serves", $_POST["gmc-label-serves"]);  
+  updateOrDeleteOption("gmc-label-prep-time", $_POST["gmc-label-prep-time"]);  
+  updateOrDeleteOption("gmc-label-cook-time", $_POST["gmc-label-cook-time"]);  
+  updateOrDeleteOption("gmc-label-total-time", $_POST["gmc-label-total-time"]);  
+  updateOrDeleteOption("gmc-label-meal-type", $_POST["gmc-label-meal-type"]);  
+  updateOrDeleteOption("gmc-label-allergy", $_POST["gmc-label-allergy"]);  
+  updateOrDeleteOption("gmc-label-occasion", $_POST["gmc-label-occasion"]);  
+  updateOrDeleteOption("gmc-label-dietry", $_POST["gmc-label-dietry"]);  
+  updateOrDeleteOption("gmc-label-misc", $_POST["gmc-label-misc"]);  
+  updateOrDeleteOption("gmc-label-region", $_POST["gmc-label-region"]);  
+  updateOrDeleteOption("gmc-label-source-author", $_POST["gmc-label-source-author"]);  
+  updateOrDeleteOption("gmc-label-source-book", $_POST["gmc-label-source-book"]);  
+  updateOrDeleteOption("gmc-label-source-website", $_POST["gmc-label-source-website"]);  
+  updateOrDeleteOption("gmc-label-ingredients", $_POST["gmc-label-ingredients"]);  
+  updateOrDeleteOption("gmc-label-directions", $_POST["gmc-label-directions"]);  
+  updateOrDeleteOption("gmc-label-note", $_POST["gmc-label-note"]);
   
   echo "<div class='updated'><p><strong>";
   _e('Options saved.' );
   echo "</strong></p></div>";
 }
 
+function updateOrDeleteOption($key, $value) {
+  if(!empty($value)) {
+    update_option($key, $value);
+  } else {
+    delete_option($key);
+  }
+}
+
+function updateOrDeleteMeta($id, $key, $value) {
+  if(!empty($value)) {
+    update_post_meta($id, $key, $value);
+  } else {
+    delete_post_meta($id, $key);
+  }
+}
+
 function gmc_save_recipe_to_db($post_ID, $post) {
   // generic params
-  if (!empty($_POST['gmc-nr-servings'])) {
-	update_post_meta($post_ID, "gmc-nr-servings", $_POST['gmc-nr-servings']);
+  updateOrDeleteMeta($post_ID, "gmc-nr-servings", $_POST['gmc-nr-servings']);  
+  updateOrDeleteMeta($post_ID, "gmc-prep-time-hours", $_POST['gmc-prep-time-hours']);  
+  updateOrDeleteMeta($post_ID, "gmc-prep-time-mins", $_POST['gmc-prep-time-mins']);
+  updateOrDeleteMeta($post_ID, "gmc-cooking-time-hours", $_POST['gmc-cooking-time-hours']);  
+  updateOrDeleteMeta($post_ID, "gmc-cooking-time-mins", $_POST['gmc-cooking-time-mins']);
+  
+  $source_type = $_POST['gmc-source-type'];
+  if (!empty($source_type)) {
+    update_post_meta($post_ID, "gmc-source-type", $source_type);
+    if ($source_type == "Author") {
+      if (!empty($_POST['gmc-source-author-name'])) {
+        update_post_meta($post_ID, "gmc-source-name", $_POST['gmc-source-author-name']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-name");
+        delete_post_meta($post_ID, "gmc-source-type");
+      }
+      if (!empty($_POST['gmc-source-author-url'])) {
+        update_post_meta($post_ID, "gmc-source-url", $_POST['gmc-source-author-url']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-url");
+        delete_post_meta($post_ID, "gmc-source-type");
+      }
+    }
+    else if ($source_type == "Book") {
+      if (!empty($_POST['gmc-source-book-name'])) {
+        update_post_meta($post_ID, "gmc-source-name", $_POST['gmc-source-book-name']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-name");
+        delete_post_meta($post_ID, "gmc-source-type");
+      }
+      if (!empty($_POST['gmc-source-book-url'])) {
+        update_post_meta($post_ID, "gmc-source-url", $_POST['gmc-source-book-url']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-url");
+        delete_post_meta($post_ID, "gmc-source-type");
+      }
+    }
+    else {
+      if (!empty($_POST['gmc-source-website-name'])) {
+        update_post_meta($post_ID, "gmc-source-name", $_POST['gmc-source-website-name']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-name");
+        delete_post_meta($post_ID, "gmc-source-type");
+      }
+      if (!empty($_POST['gmc-source-website-url'])) {
+        update_post_meta($post_ID, "gmc-source-url", $_POST['gmc-source-website-url']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-url");
+        delete_post_meta($post_ID, "gmc-source-type");
+      }
+    }
   }
   else
   {
-	delete_post_meta($post_ID, "gmc-nr-servings");
-  }
-
-  if (!empty($_POST['gmc-prep-time-hours'])) {
-	update_post_meta($post_ID, "gmc-prep-time-hours", $_POST['gmc-prep-time-hours']);
-  }
-  else
-  {
-	delete_post_meta($post_ID, "gmc-prep-time-hours");
+	delete_post_meta($post_ID, "gmc-source-type");
+  delete_post_meta($post_ID, "gmc-source-name");
+  delete_post_meta($post_ID, "gmc-source-url");
   }
   
-  if (!empty($_POST['gmc-prep-time-mins'])) {
-	update_post_meta($post_ID, "gmc-prep-time-mins", $_POST['gmc-prep-time-mins']);
-  }
-  else
-  {
-	delete_post_meta($post_ID, "gmc-prep-time-mins");
-  }
-
-  if (!empty($_POST['gmc-cooking-time-hours'])) {
-	update_post_meta($post_ID, "gmc-cooking-time-hours", $_POST['gmc-cooking-time-hours']);
-  }
-  else
-  {
-	delete_post_meta($post_ID, "gmc-cooking-time-hours");
-  }
-  
-  if (!empty($_POST['gmc-cooking-time-mins'])) {
-	update_post_meta($post_ID, "gmc-cooking-time-mins", $_POST['gmc-cooking-time-mins']);
-  }
-  else
-  {
-	delete_post_meta($post_ID, "gmc-cooking-time-mins");
-  }
-
   // generic optional params
   
   //region can be from drop down list or custom textbox value
   $region = $_POST['gmc-recopt-region'];
   
   if (!empty($_POST['gmc-use-custom-region']) && !empty($_POST['gmc-custom-region'])) {
-	update_post_meta($post_ID, "gmc-use-custom-region", 'Y');
-	$region = $_POST['gmc-custom-region'];
+    update_post_meta($post_ID, "gmc-use-custom-region", 'Y');
+    $region = $_POST['gmc-custom-region'];
   }
   else
   {
-	delete_post_meta($post_ID, "gmc-use-custom-region");
+    delete_post_meta($post_ID, "gmc-use-custom-region");
   }
   
-  if (!empty($region)) {
-	update_post_meta($post_ID, "gmc-recopt-region", $region);
-  }
-  else
-  {
-	delete_post_meta($post_ID, "gmc-recopt-region");
-  }
-
-  if (!empty($_POST['gmc-recopt-when'])) {
-	update_post_meta($post_ID, "gmc-recopt-when", serialize($_POST['gmc-recopt-when']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-when");
-  }
-
-  if (!empty($_POST['gmc-recopt-occasion'])) {
-	update_post_meta($post_ID, "gmc-recopt-occasion", serialize($_POST['gmc-recopt-occasion']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-occasion");
-  }
-
-  if (!empty($_POST['gmc-recopt-allergies'])) {
-	update_post_meta($post_ID, "gmc-recopt-allergies", serialize($_POST['gmc-recopt-allergies']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-allergies");
-  }
-  
-  if (!empty($_POST['gmc-recopt-dietry'])) {
-	update_post_meta($post_ID, "gmc-recopt-dietry", serialize($_POST['gmc-recopt-dietry']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-dietry");
-  }
-
-  if (!empty($_POST['gmc-recopt-other'])) {
-	update_post_meta($post_ID, "gmc-recopt-other", serialize($_POST['gmc-recopt-other']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-other");
-  }
+  updateOrDeleteMeta($post_ID, "gmc-recopt-region", $region);
+  updateOrDeleteMeta($post_ID, "gmc-recopt-when", serialize($_POST['gmc-recopt-when']));
+  updateOrDeleteMeta($post_ID, "gmc-recopt-occasion", serialize($_POST['gmc-recopt-occasion']));
+  updateOrDeleteMeta($post_ID, "gmc-recopt-allergies", serialize($_POST['gmc-recopt-allergies']));  
+  updateOrDeleteMeta($post_ID, "gmc-recopt-dietry", serialize($_POST['gmc-recopt-dietry']));
+  updateOrDeleteMeta($post_ID, "gmc-recopt-other", serialize($_POST['gmc-recopt-other']));
 
   // new step
   if (isset($_POST['save_add_step']) && isset($_POST['newstepdescription']) && !empty($_POST['newstepdescription'])) {
@@ -1053,16 +972,10 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	$my_post['menu_order'] = time();
 
 	$id=wp_insert_post($my_post);
-	// if ($id) {
-
-	// } else {
-	  // // error
-	// }
   }
 
   // existing steps
   if (isset($_POST['stepid'])) {
-
 	// make sure we don't get into a loop
 //      $_POST['save_add_step']="";
 //      unset($_POST['save_add_step']);
@@ -1171,11 +1084,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	  }
 
 	  if (!$deleting) {
-		if(!empty($_POST['gmc-ingredientquantity'][$key])) {
-		  update_post_meta($iid, "gmc-ingredientquantity", $_POST['gmc-ingredientquantity'][$key]);
-		} else {
-		  delete_post_meta($iid, "gmc-ingredientquantity");
-		}
+		updateOrDeleteMeta($iid, "gmc-ingredientquantity", $_POST['gmc-ingredientquantity'][$key]);
 
 		//measurement can be from drop down list or custom textbox value
 		$measurement = $_POST['gmc-ingredientmeasurement'][$key];
@@ -1189,19 +1098,9 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 		  delete_post_meta($iid, "gmc-use-custom-measurement");
 		}
 		
-		if (!empty($measurement)) {
-		  update_post_meta($iid, "gmc-ingredientmeasurement", $measurement);
-		}
-		else
-		{
-		  delete_post_meta($iid, "gmc-ingredientmeasurement");
-		}
+		updateOrDeleteMeta($iid, "gmc-ingredientmeasurement", $measurement);
 		
-		if(!empty($_POST['gmc-ingredientgroup'][$key])) {
-		  update_post_meta($iid, "gmc-ingredientgroup", $_POST['gmc-ingredientgroup'][$key]);
-		} else {
-		  delete_post_meta($iid, "gmc-ingredientgroup");
-		}      
+		updateOrDeleteMeta($iid, "gmc-ingredientgroup", $_POST['gmc-ingredientgroup'][$key]);
 		
 		//error_log(print_r($_POST['gmc-ingredientoptional'],1));
 
@@ -1216,6 +1115,9 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	  $i++;
 	}
   }
+
+  //description
+  updateOrDeleteMeta($post_ID, "gmc-description", $_POST['gmc-description']);
 }
 
 function gmc_save_recipe_to_gmc($post_ID, $post) {
@@ -1276,7 +1178,7 @@ function gmc_print_styles() {
   $gmccss=get_option('gmc-shortcodecss');
 
   if (empty($overridecss) || (!empty($overridecss) && $overridecss!="Y")) {
-	wp_register_style('recipe-template', gmc_plugin_url().'/css/recipe-template.css');
+	wp_register_style('recipe-template', gmc_plugin_url().'/css/recipe-template.css', false, GMC_CSS_VERSION);
 	wp_enqueue_style( 'recipe-template');
   } else {
 	echo "<style type='text/css'>\n";
@@ -1285,7 +1187,7 @@ function gmc_print_styles() {
   }
   
   $theme  = get_theme( get_current_theme() );
-  wp_register_style( 'recipe-template-ie', gmc_plugin_url().'/css/recipe-template-ie.css', false, $theme['Version'] );
+  wp_register_style( 'recipe-template-ie', gmc_plugin_url().'/css/recipe-template-ie.css', false, GMC_CSS_VERSION );
   $GLOBALS['wp_styles']->add_data( 'recipe-template-ie', 'conditional', 'lte IE 8' );
   wp_enqueue_style( 'recipe-template-ie' );
 }
@@ -1323,7 +1225,7 @@ function gmc_admin_print_styles() {
 	}
   }
 
-  wp_register_style('recipe-template-admin', gmc_plugin_url().'/css/recipe-template-admin.css');
+  wp_register_style('recipe-template-admin', gmc_plugin_url().'/css/recipe-template-admin.css', false, GMC_CSS_VERSION);
   wp_enqueue_style( 'recipe-template-admin');
 }
 
@@ -1335,17 +1237,17 @@ function gmc_enqueue_scripts() {
   //TODO need them in both places, some pages dont call here when they should etc
   wp_enqueue_script('thickbox');
   wp_enqueue_script('jqprint',gmc_plugin_url().'/js/jqprint.js');
-  wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('thickbox'),'1.0',true);
+  wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('thickbox'),GMC_JS_VERSION,true);
 }
 
 function gmc_admin_enqueue_scripts() {
   if (!gmc_is_recipe_admin_page()) {
 	wp_enqueue_script('thickbox');
 	wp_enqueue_script('jqprint',gmc_plugin_url().'/js/jqprint.js');
-	wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('thickbox'),'1.0',true);
+	wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('thickbox'),GMC_JS_VERSION,true);
 	
 	$theme  = get_theme( get_current_theme() );
-	wp_register_style( 'recipe-template-ie', gmc_plugin_url().'/css/recipe-template-ie.css', false, $theme['Version'] );
+	wp_register_style( 'recipe-template-ie', gmc_plugin_url().'/css/recipe-template-ie.css', false, GMC_CSS_VERSION);
 	$GLOBALS['wp_styles']->add_data( 'recipe-template-ie', 'conditional', 'lte IE 8' );
 	wp_enqueue_style( 'recipe-template-ie' );
 	return;
@@ -1366,15 +1268,15 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_script('autoresize.jquery', gmc_plugin_url().'/js/autoresize.jquery.min.js','1.0',true);
 
   // this way we can override tb_remove() :)
-  wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),'1.0',true);
+  wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_JS_VERSION,true);
 
   wp_enqueue_script('swfupload');
   wp_enqueue_script('swfupload-queue', array('swfupload'));
   
-  wp_enqueue_script('gmc-swfupload-fileprogress', gmc_plugin_url().'/js/recipe-template-fileprogress.js', array('swfupload'));
-  wp_enqueue_script('gmc-swfupload-handlers', gmc_plugin_url().'/js/recipe-template-handlers.js', array( 'gmc-swfupload-fileprogress'));
+  wp_enqueue_script('gmc-swfupload-fileprogress', gmc_plugin_url().'/js/recipe-template-fileprogress.js', array('swfupload'),GMC_JS_VERSION,true);
+  wp_enqueue_script('gmc-swfupload-handlers', gmc_plugin_url().'/js/recipe-template-handlers.js', array( 'gmc-swfupload-fileprogress'),GMC_JS_VERSION,true);
 
-  wp_enqueue_script('gmc-ajax-request', gmc_plugin_url().'/js/recipe-template-ajax.js', array( 'jquery', 'swfupload', 'swfupload-queue', 'gmc-swfupload-handlers' ));
+  wp_enqueue_script('gmc-ajax-request', gmc_plugin_url().'/js/recipe-template-ajax.js', array( 'jquery', 'swfupload', 'swfupload-queue', 'gmc-swfupload-handlers' ),GMC_JS_VERSION,true);
 
   global $post;
   wp_localize_script('gmc-ajax-request', 'GMCAjax', array('postID' => $post->ID,
@@ -1829,7 +1731,12 @@ function print_ingredient_description($ingredient)
 		break;
 	  default:
 		if ($quantity > 1)
-		  $measurement .= 's';
+    {
+      $last = $measurement[strlen($measurement)-1];
+      
+      if($last != "s")
+        $measurement .= 's';
+    }
 	}
   
 	if ($measurement == 'g' || $measurement == 'kg' || $measurement == 'ml' || $measurement == 'l')
@@ -1967,4 +1874,21 @@ function gmc_recipe_main_style()
 	
   return $output;
 }
+
+function gmc_exclude_from_search($query)
+{
+  if ($query->is_search) {
+    $query->set('post_type', !'recipe');
+  }
+  
+  return $query;
+}
+
+function gmc_create_author_link($author, $author_url) {
+  if (strpos($author_url, 'http://') !== 0)
+    $author_url = 'http://' . $author_url;
+    
+  return '<a href="' . $author_url . '">' . $author . '</a>';
+}
+
 ?>

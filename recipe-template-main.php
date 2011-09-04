@@ -18,6 +18,9 @@
             If you don't already have a user profile on GetMeCooking, you can
 <a href="http://www.getmecooking.com/login/">
                 create a free user account
+              </a>            and then get listed on our
+<a href="http://www.getmecooking.com/blog-directory">
+                food blog directory
               </a>          </p>        </div>        <?php } else { ?>
 <h3>Hey <?php echo get_option('gmc-username'); ?></h3><div class="inside">
 <p>
@@ -37,7 +40,7 @@
 <th>
                   <label for="gmc-userProfile">Your user profile:
                 </th><td>
-<a href="http://www.getmecooking.com/user/<?php echo $gmcusername ?>">http://www.getmecooking.com/user/<?php echo $gmcusername ?></a>                  Is it up-to-date?
+<a href="http://www.getmecooking.com/user/<?php echo $gmcusername ?>">http://www.getmecooking.com/user/<?php echo $gmcusername ?></a>                  Is it up-to-date?             
                 </td>              </tr><tr>
 <th>
                   <label>Food blog directory:
@@ -122,6 +125,12 @@
                   (<a href="<?php echo gmc_plugin_url().'/docs/step-photo-position-options.png'; ?>">example screenshot</a>)
                 </span></td>            </tr><tr>
 <th>
+                Where do you want the recipe note to appear?
+              </th><td><select name="gmc-note-position">
+                  <?php echo gmc_option_list(array("Before the recipe steps", "After the recipe steps"), get_option('gmc-note-position')); ?>
+
+                </select></td>            </tr><tr>
+<th>
                 Background colour
               </th><td><input type="text" name="gmc-background-colour" class="colors" size="7" value="<?php echo get_option("gmc-background-colour");?>" /></td>            </tr><tr>
 <th>
@@ -180,11 +189,23 @@
                 Region
               </th><td><input type="text" name="gmc-label-region" value="<?php echo get_option("gmc-label-region");?>" /></td>            </tr><tr>
 <th>
+                By author
+              </th><td><input type="text" name="gmc-label-source-author" value="<?php echo get_option("gmc-label-source-author");?>" /></td>            </tr><tr>
+<th>
+                From book
+              </th><td><input type="text" name="gmc-label-source-book" value="<?php echo get_option("gmc-label-source-book");?>" /></td>            </tr><tr>
+<th>
+                Website
+              </th><td><input type="text" name="gmc-label-source-website" value="<?php echo get_option("gmc-label-source-website");?>" /></td>            </tr><tr>
+<th>
                 Ingredients
               </th><td><input type="text" name="gmc-label-ingredients" value="<?php echo get_option("gmc-label-ingredients");?>" /></td>            </tr><tr>
 <th>
                 Directions
               </th><td><input type="text" name="gmc-label-directions" value="<?php echo get_option("gmc-label-directions");?>" /></td>            </tr><tr>
+<th>
+                Note
+              </th><td><input type="text" name="gmc-label-note" value="<?php echo get_option("gmc-label-note");?>" /></td>            </tr><tr>
 <td>
 <input class="button button-primary save" name="submit" type="submit" value="Save settings" />              </td><td>
               </td>            </tr>          </table>        </div>      </div><div class="postbox">

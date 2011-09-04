@@ -25,7 +25,7 @@
 <option value="">
             None
           </option><optgroup label="Weight">
-            <?php echo gmc_option_list(array("g" => "Grams", "kg" => "Kilograms", "pounds" => "Pounds", "ounces" => "Ounces"), $ms); ?>
+            <?php echo gmc_option_list(array("g" => "Grams", "kg" => "Kilograms", "pound" => "Pounds", "ounce" => "Ounces"), $ms); ?>
 
           </optgroup><optgroup label="Liquids">
             <?php echo gmc_option_list(array("ml" => "Millilitre", "litre" => "Litre", "juice" => "Juice(s)"), $ms); ?>

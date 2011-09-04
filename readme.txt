@@ -10,14 +10,16 @@ For food bloggers. Display one or more recipes per page in an easy to read forma
 
 == Description ==
 
-The Recipe Template plugin makes it quick and easy for you to add recipes to your blog.
+The Recipe Template plugin makes it quick and easy for you to:
 
-You can personalise the colours, heading descriptions and layout.
+* Add recipes to your blog
+* Personalise the colours, heading descriptions and layout of recipes
+* Add Search Engine Optimisation
 
 Your visitors will be able to:
 
 * Print just the recipe (not the whole blog post, which might be several pages)
-* Click on photographs to see a larger version
+* Click on photographs to see larger versions
 * Filter and search for recipes (requires an optional link to [GetMeCooking](http://www.getmecooking.com))
  
 A video overview and more information is [available here](http://www.getmecooking.com/recipe-template)
@@ -44,13 +46,25 @@ They sure can, each recipe has its own print link.
 
 Don't worry about the search engine bots, we speak their language.
 
-= So how do I use your plugin? =
+= Can I add more than 1 recipe to a blog post? =
 
-Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooking.com/recipe-template-info#how-to-use).
+Yes. You can add as many recipes as you like. An example of this being useful is if your child has attended a school fete and you have cooked more than one recipe
+
+= Can the same recipe exist on more than one blog post? =
+
+Yes. And if you make changes to the recipe, the changes will be updated in all of your blog posts
+
+= Can I edit recipes after I have posted them on my blog? =
+
+Yes - just edit the recipe. No need to do anything in the blog post
 
 = Do I need to type in ALL the information? =
 
 Everything is optional and headings will only appear if you have typed in the relevant information. If you want the recipe to appear on GetMeCooking then we do need a photo of the finished recipe.
+
+= So how do I use your plugin? =
+
+Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooking.com/recipe-template-info#how-to-use).
 
 == Screenshots ==
 
@@ -64,6 +78,13 @@ Everything is optional and headings will only appear if you have typed in the re
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.02 =
+* Fixed a plural bug with pounds and ounces
+* Added a recipe note option
+* Added an option to reference the original author / book / website
+* Now hide the recipe title if it is the same as the blog post title
+* Removed the recipe from showing in search results as it already shows your blog post
+
 = 1.01 =
 * Recipes were not being sent to GetMeCooking if you were opted in
 
@@ -71,6 +92,11 @@ Everything is optional and headings will only appear if you have typed in the re
 * First release
 
 == Upgrade Notice ==
+
+= 1.02 =
+* If you have typed in a description, you will need to move it from the 'note' tab.
+* You will need to reselect the ingredient measurement type if you used 'pounds' or 'ounces' prior to running this version
+* If you have ticked 'use your own CSS' then you will want to add '.gmc-img-right' with 'float: right' and 'gmc-web-hidden' with 'display: none'. Within @media print you need to add '.gmc-web-hidden' with 'display: block !important'
 
 = 1.0 =
 First release
