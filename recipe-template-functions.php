@@ -950,11 +950,36 @@ function gmc_save_recipe_to_db($post_ID, $post) {
   }
   
   updateOrDeleteMeta($post_ID, "gmc-recopt-region", $region);
-  updateOrDeleteMeta($post_ID, "gmc-recopt-when", serialize($_POST['gmc-recopt-when']));
-  updateOrDeleteMeta($post_ID, "gmc-recopt-occasion", serialize($_POST['gmc-recopt-occasion']));
-  updateOrDeleteMeta($post_ID, "gmc-recopt-allergies", serialize($_POST['gmc-recopt-allergies']));  
-  updateOrDeleteMeta($post_ID, "gmc-recopt-dietry", serialize($_POST['gmc-recopt-dietry']));
-  updateOrDeleteMeta($post_ID, "gmc-recopt-other", serialize($_POST['gmc-recopt-other']));
+  
+  if (!empty($_POST['gmc-recopt-when'])) {
+	update_post_meta($post_ID, "gmc-recopt-when", serialize($_POST['gmc-recopt-when']));
+  } else {
+	delete_post_meta($post_ID, "gmc-recopt-when");
+  }
+
+  if (!empty($_POST['gmc-recopt-occasion'])) {
+	update_post_meta($post_ID, "gmc-recopt-occasion", serialize($_POST['gmc-recopt-occasion']));
+  } else {
+	delete_post_meta($post_ID, "gmc-recopt-occasion");
+  }
+
+  if (!empty($_POST['gmc-recopt-allergies'])) {
+	update_post_meta($post_ID, "gmc-recopt-allergies", serialize($_POST['gmc-recopt-allergies']));
+  } else {
+	delete_post_meta($post_ID, "gmc-recopt-allergies");
+  }
+  
+  if (!empty($_POST['gmc-recopt-dietry'])) {
+	update_post_meta($post_ID, "gmc-recopt-dietry", serialize($_POST['gmc-recopt-dietry']));
+  } else {
+	delete_post_meta($post_ID, "gmc-recopt-dietry");
+  }
+
+  if (!empty($_POST['gmc-recopt-other'])) {
+	update_post_meta($post_ID, "gmc-recopt-other", serialize($_POST['gmc-recopt-other']));
+  } else {
+	delete_post_meta($post_ID, "gmc-recopt-other");
+  }
 
   // new step
   if (isset($_POST['save_add_step']) && isset($_POST['newstepdescription']) && !empty($_POST['newstepdescription'])) {

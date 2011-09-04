@@ -78,6 +78,9 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.03 =
+* Labels were showing when they did not need to
+
 = 1.02 =
 * Fixed a plural bug with pounds and ounces
 * Added a recipe note option
