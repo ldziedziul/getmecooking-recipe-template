@@ -691,7 +691,7 @@ function gmc_mainrecipe_box($post, $metabox) {
     </div>
 
     <div id="gmc-desc">
-      <p>The description is a 1 - 2 line summary that is used by search engines.</p>
+      <p>The description is a 1 - 2 line summary that is used by search engines and <a href="http://www.getmecooking.com">GetMeCooking</a>. This will not be visible on your blog post.</p>
       <textarea id="gmc-description" class="gmc-admin-fullline" rows="5" name="gmc-description"><?php echo get_post_meta($post->ID,"gmc-description",true); ?></textarea>
     </div>
     

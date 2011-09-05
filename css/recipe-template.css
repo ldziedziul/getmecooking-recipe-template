@@ -107,6 +107,10 @@ img.gmc-step-photo {
   padding-top: 5px;
 }
 
+.gmc-img-right {
+  float: right;
+}
+
 .gmc-powered-by {
   font-size: 0.7em;
   text-align: right;
@@ -114,6 +118,10 @@ img.gmc-step-photo {
 
 .no-main-photo {
   float: left !important;
+}
+
+.gmc-web-hidden {
+  display: none;
 }
 
 @media print {
@@ -130,4 +138,8 @@ img.gmc-step-photo {
   .gmc-print-hidden {
     display: none !important;
   }
+
+  .gmc-web-hidden {
+    display: block !important;
+  }  
 }

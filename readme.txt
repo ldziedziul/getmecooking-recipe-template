@@ -78,6 +78,12 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.04 =
+* Added missing CSS to hide recipe title if it's the same as the blog post
+* Fixed bug where other plugins would insert things after the note.
+* Fixed ingredient group label bug in blog post. Some were showing when there were no ingredients.
+* Fixed the note label, it was always showing even if you had no note.
+
 = 1.03 =
 * Labels were showing when they did not need to
 

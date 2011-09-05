@@ -209,22 +209,39 @@
           </ul>        <?php } ?>
                 <?php foreach($distinctGroupNames as $groupName) { ?>
 
-<h3 class="gmc-recipe-subtitle"><?php echo $groupName; ?></h3><ul class="gmc-ingredient-list">
-                        <?php foreach ($ingredients as $ingredient) { ?>
+          <?php $containsOptional = false; ?>
+          <?php $containsGroup = false; ?>
+                    <?php foreach ($ingredients as $ingredient) { ?>
 
-              <?php $ingredient_group_name = get_post_meta($ingredient->ID, "gmc-ingredientgroup", true); ?>
-                            <?php if($ingredient_group_name == $groupName) { ?>
+            <?php $ingredient_group_name = get_post_meta($ingredient->ID, "gmc-ingredientgroup", true); ?>
+                        <?php if($ingredient_group_name == $groupName)              { ?>
 
-                <?php $optional=get_post_meta($ingredient->ID, "gmc-ingredientoptional", true); ?>
-                                <?php if(!$optional) { ?>
+              <?php $optional=get_post_meta($ingredient->ID, "gmc-ingredientoptional", true); ?>
+                            <?php if($optional) { ?>
 
-<li class="gmc-ingredient-list-item" itemprop="ingredients"><?php echo print_ingredient_description($ingredient); ?></li>                                <?php } else { ?>
+                <?php $containsOptional = true; ?>
+                            <?php } else { ?>
 
-                  <?php $containsOptional = true; ?>
-                <?php } ?>
+                <?php $containsGroup = true; ?>
               <?php } ?>
             <?php } ?>
-          </ul>                    <?php if($containsOptional) { ?>
+          <?php } ?>
+                    <?php if($containsGroup) { ?>
+
+<h3 class="gmc-recipe-subtitle"><?php echo $groupName; ?></h3><ul class="gmc-ingredient-list">
+                            <?php foreach ($ingredients as $ingredient) { ?>
+
+                <?php $ingredient_group_name = get_post_meta($ingredient->ID, "gmc-ingredientgroup", true); ?>
+                                <?php if($ingredient_group_name == $groupName) { ?>
+
+                  <?php $optional=get_post_meta($ingredient->ID, "gmc-ingredientoptional", true); ?>
+                                    <?php if(!$optional) { ?>
+
+<li class="gmc-ingredient-list-item" itemprop="ingredients"><?php echo print_ingredient_description($ingredient); ?></li>                  <?php } ?>
+                <?php } ?>
+              <?php } ?>
+            </ul>          <?php } ?>
+                    <?php if($containsOptional) { ?>
 
 <h3 class="gmc-recipe-subtitle"><?php echo $groupName; ?>
 
@@ -273,12 +290,10 @@
   <?php $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
     <?php if ($steps) { ?>
 
-        <?php if (get_option('gmc-note-position') != '1') { ?>
+        <?php if (!empty($post->post_content) && get_option('gmc-note-position') != '1') { ?>
 
-<h2 class="gmc-recipe-subtitle"><?php echo get_option("gmc-label-note") ? get_option("gmc-label-note") : "Note"; ?></h2>      <?php global $gmc_skip_content; ?>
-      <?php $gmc_skip_content=true; ?>
-      <?php the_content(); ?>
-      <?php $gmc_skip_content=false; ?>
+<h2 class="gmc-recipe-subtitle"><?php echo get_option("gmc-label-note") ? get_option("gmc-label-note") : "Note"; ?></h2>      <?php echo wpautop(get_the_content()); ?>
+
     <?php } ?>
 <div class="gmc-recipe-steps">
 <h2 class="gmc-recipe-subtitle">
@@ -348,7 +363,7 @@
 <td class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></td>              <?php } ?>
             </tr>          <?php } ?>
         </table>      <?php } ?>
-    </div>        <?php if (get_option('gmc-note-position') == '1') { ?>
+    </div>        <?php if (!empty($post->post_content) && get_option('gmc-note-position') == '1') { ?>
 
 <h2 class="gmc-recipe-subtitle"><?php echo get_option("gmc-label-note") ? get_option("gmc-label-note") : "Note"; ?></h2>      <?php global $gmc_skip_content; ?>
       <?php $gmc_skip_content=true; ?>
