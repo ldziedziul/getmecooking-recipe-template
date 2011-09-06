@@ -54,18 +54,18 @@
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
-    <?php $dietry = get_post_meta($post->ID,'gmc-recopt-dietry',true); ?>
-        <?php if (!empty($dietry)) { ?>
+    <?php $dietary = get_post_meta($post->ID,'gmc-recopt-dietary',true); ?>
+        <?php if (!empty($dietary)) { ?>
 
-      <?php $gmparams=(array)unserialize($dietry); ?>
+      <?php $gmparams=(array)unserialize($dietary); ?>
 <tr>
 <td class="gmc-heading">
-          <?php echo get_option("gmc-label-dietry") ? get_option("gmc-label-dietry") . ':' : "Dietry:"; ?>
+          <?php echo get_option("gmc-label-dietary") ? get_option("gmc-label-dietary") . ':' : "Dietary:"; ?>
 
           <?php $output = ''; ?>
                     <?php foreach($gmparams as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp, 'dietry').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp, 'dietary').", "; ?>
           <?php } ?>
         </td><td>
           <?php echo substr($output, 0, strlen($output) -2); ?>
@@ -365,10 +365,8 @@
         </table>      <?php } ?>
     </div>        <?php if (!empty($post->post_content) && get_option('gmc-note-position') == '1') { ?>
 
-<h2 class="gmc-recipe-subtitle"><?php echo get_option("gmc-label-note") ? get_option("gmc-label-note") : "Note"; ?></h2>      <?php global $gmc_skip_content; ?>
-      <?php $gmc_skip_content=true; ?>
-      <?php the_content(); ?>
-      <?php $gmc_skip_content=false; ?>
+<h2 class="gmc-recipe-subtitle"><?php echo get_option("gmc-label-note") ? get_option("gmc-label-note") : "Note"; ?></h2>      <?php echo wpautop(get_the_content()); ?>
+
     <?php } ?>
   <?php } ?>
 </div><?php if (get_option('gmc-hide-powered-by') != 'Y') { ?>

@@ -174,8 +174,8 @@
                 Allergy
               </th><td><input type="text" name="gmc-label-allergy" value="<?php echo get_option("gmc-label-allergy");?>" /></td>            </tr><tr>
 <th>
-                Dietry
-              </th><td><input type="text" name="gmc-label-dietry" value="<?php echo get_option("gmc-label-dietry");?>" /></td>            </tr><tr>
+                Dietary
+              </th><td><input type="text" name="gmc-label-dietary" value="<?php echo get_option("gmc-label-dietary");?>" /></td>            </tr><tr>
 <th>
                 Meal type
               </th><td><input type="text" name="gmc-label-meal-type" value="<?php echo get_option("gmc-label-meal-type");?>" /></td>            </tr><tr>

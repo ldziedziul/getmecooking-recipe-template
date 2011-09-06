@@ -111,15 +111,15 @@
 <label class="gmc-admin-label">
 <span>
 <b>
-            Can the recipe be associated with any dietry requirements?
+            Can the recipe be associated with any dietary requirements?
           </b>          (Tick all that apply)
         </span>      </label><div class="gmc-admin-fullline">
         <?php $gmallparams=array("Diabetic", "Gluten Free", "Vegan", "Vegetarian"); ?>
-        <?php $gmparams=(array)unserialize(get_post_meta($post->ID,'gmc-recopt-dietry',true)); ?>
+        <?php $gmparams=(array)unserialize(get_post_meta($post->ID,'gmc-recopt-dietary',true)); ?>
                 <?php foreach($gmallparams as $gmp) { ?>
 
 <p>
-            <input value="<?php echo $gmp; ?>" name="gmc-recopt-dietry[]" type="checkbox" <?php echo (in_array($gmp, $gmparams) ? "checked='checked'" : ""); ?> />
+            <input value="<?php echo $gmp; ?>" name="gmc-recopt-dietary[]" type="checkbox" <?php echo (in_array($gmp, $gmparams) ? "checked='checked'" : ""); ?> />
             <?php echo $gmp; ?>
 
           </p>        <?php } ?>

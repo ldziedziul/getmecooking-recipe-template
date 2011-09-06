@@ -65,8 +65,7 @@ function gmc_admin_init() {
 }
 
 function gmc_after_setup_theme() {
-  add_theme_support('post-thumbnails', array( 'recipe', 'recipestep'));
-//  add_theme_support('post-thumbnails', array( 'recipe', 'recipestep', 'recipeingredient' ));
+  //add_theme_support('post-thumbnails', array( 'recipe', 'recipestep'));
 }
 
 function gmc_admin_body_class($bclass) {
@@ -831,7 +830,7 @@ function gmc_save_settings() {
   updateOrDeleteOption("gmc-label-meal-type", $_POST["gmc-label-meal-type"]);  
   updateOrDeleteOption("gmc-label-allergy", $_POST["gmc-label-allergy"]);  
   updateOrDeleteOption("gmc-label-occasion", $_POST["gmc-label-occasion"]);  
-  updateOrDeleteOption("gmc-label-dietry", $_POST["gmc-label-dietry"]);  
+  updateOrDeleteOption("gmc-label-dietary", $_POST["gmc-label-dietary"]);  
   updateOrDeleteOption("gmc-label-misc", $_POST["gmc-label-misc"]);  
   updateOrDeleteOption("gmc-label-region", $_POST["gmc-label-region"]);  
   updateOrDeleteOption("gmc-label-source-author", $_POST["gmc-label-source-author"]);  
@@ -969,10 +968,10 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	delete_post_meta($post_ID, "gmc-recopt-allergies");
   }
   
-  if (!empty($_POST['gmc-recopt-dietry'])) {
-	update_post_meta($post_ID, "gmc-recopt-dietry", serialize($_POST['gmc-recopt-dietry']));
+  if (!empty($_POST['gmc-recopt-dietary'])) {
+	update_post_meta($post_ID, "gmc-recopt-dietary", serialize($_POST['gmc-recopt-dietary']));
   } else {
-	delete_post_meta($post_ID, "gmc-recopt-dietry");
+	delete_post_meta($post_ID, "gmc-recopt-dietary");
   }
 
   if (!empty($_POST['gmc-recopt-other'])) {

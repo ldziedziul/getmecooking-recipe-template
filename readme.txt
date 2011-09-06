@@ -78,6 +78,9 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.05 =
+* Fixed custom themes, the plugin was hiding the featured image box and other sidebar boxes
+
 = 1.04 =
 * Added missing CSS to hide recipe title if it's the same as the blog post
 * Fixed bug where other plugins would insert things after the note.
