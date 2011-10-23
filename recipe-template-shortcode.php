@@ -11,7 +11,7 @@
   </div><div class="gmc-recipe-main-photo">
     <?php $large_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large'); ?>
 <a href="<?php echo $large_image_url[0]; ?>">
-      <?php the_post_thumbnail('medium', array('itemprop' => 'image', 'alt' => "$recipeTitle", 'title' => "$recipeTitle")); ?>
+      <?php the_post_thumbnail('medium', array('itemprop' => 'image', 'alt' => "$recipe_title", 'title' => "$recipe_title")); ?>
     </a>  </div>  <?php $prepHour = get_post_meta($post->ID,"gmc-prep-time-hours",true); ?>
   <?php $prepMinute = get_post_meta($post->ID,"gmc-prep-time-mins",true); ?>
   <?php $cookHour = get_post_meta($post->ID,"gmc-cooking-time-hours",true); ?>
@@ -152,6 +152,10 @@
                     <?php } elseif($source_type == 'Book') { ?>
 
             <?php echo get_option("gmc-label-source-book") ? get_option("gmc-label-source-book") . ':' : "From book:"; ?>
+
+                    <?php } elseif($source_type == 'Magazine') { ?>
+
+            <?php echo get_option("gmc-label-source-mag") ? get_option("gmc-label-source-mag") . ':' : "From magazine:"; ?>
 
                     <?php } else { ?>
 

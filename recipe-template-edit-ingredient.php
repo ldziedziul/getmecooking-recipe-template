@@ -25,10 +25,10 @@
 <option value="">
             None
           </option><optgroup label="Weight">
-            <?php echo gmc_option_list(array("g" => "Grams", "kg" => "Kilograms", "pound" => "Pounds", "ounce" => "Ounces"), $ms); ?>
+            <?php echo gmc_option_list(array("g" => "Grams", "kg" => "Kilograms", "oz" => "Ounces", "lb" => "Pounds"), $ms); ?>
 
           </optgroup><optgroup label="Liquids">
-            <?php echo gmc_option_list(array("ml" => "Millilitre", "litre" => "Litre", "juice" => "Juice(s)"), $ms); ?>
+            <?php echo gmc_option_list(array("ml" => "Millilitre", "litre" => "Litre", "imperial fl oz" => "Fluid Ounces (Imperial)", "usa fl oz" => "Fluid Ounces (US)", "juice" => "Juice(s)"), $ms); ?>
 
           </optgroup><optgroup label="Size">
             <?php echo gmc_option_list(array("small" => "Small", "medium" => "Medium", "large" => "Large"), $ms); ?>
@@ -37,7 +37,7 @@
             <?php echo gmc_option_list(array("thin slice" => "Thin slice(s)", "medium slice" => "Medium slice(s)", "thick slice" => "Thick slice(s)"), $ms); ?>
 
           </optgroup><optgroup label="Other">
-            <?php echo gmc_option_list(array("bunch" => "Bunch", "bottle" => "Bottle", "can" => "Can", "cube" => "Cube", "cup" => "Cup", "glass" => "Glass", "handful" => "Handful", "jar" => "Jar", "piece" => "Piece", "pinch" => "Pinch", "scoop" => "Scoop", "tablespoon" => "Tablespoon", "heaped tablespoon" => "Tablespoon (heaped)", "teaspoon" => "Teaspoon", "heaped teaspoon" => "Teaspoon (heaped)", "tin" => "Tin"), $ms)       ; ?>
+            <?php echo gmc_option_list(array("bunch" => "Bunch", "bottle" => "Bottle", "box" => "Box", "can" => "Can", "clove" => "Clove", "cube" => "Cube", "cup" => "Cup", "drop" => "Drop", "glass" => "Glass", "handful" => "Handful", "head" => "Head", "jar" => "Jar", "packet" => "Packet", "piece" => "Piece", "pinch" => "Pinch", "imperial pint" => "Pint (Imperial)", "usa pint" => "Pint (US)", "scoop" => "Scoop", "sprinkle" => "Sprinkle", "sprig" => "Sprig", "tablespoon" => "Tablespoon", "heaped tablespoon" => "Tablespoon (heaped)", "teaspoon" => "Teaspoon", "heaped teaspoon" => "Teaspoon (heaped)", "tin" => "Tin", "zest" => "Zest"), $ms); ?>
 
           </optgroup>        </select>      </div><div id="gmc-custom-measurement-area-<?php echo $ingredient->ID; ?>">
 <label class="gmc-admin-label">
@@ -65,7 +65,11 @@
         <?php $gmcoptional=get_post_meta($ingredient->ID,'gmc-ingredientoptional',true); ?>
         <input value="<?php echo ($ingredient->ID ? $ingredient->ID : 0); ?>" name="gmc-ingredientoptional[]" type="checkbox" <?php echo ($gmcoptional=="Y" ? "checked='checked'" : ""); ?> />
         This is an optional ingredient
-      </div>            <?php if (!$gmcaddnew) { ?>
+<span class="gmc-tooltip">
+            <img src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="Help" />
+<b><em>
+              </em>Could be an ingredient that is not suitable for everyone (e.g. alcohol), or a garnish.
+            </b>          </span>      </div>            <?php if (!$gmcaddnew) { ?>
 
 <div class="gmc-admin-fullline">
 <a class="gmc-delete-ingredient" href="#" id="gmc-ingredient-to-delete-<?php echo $ingredient->ID; ?>">

@@ -28,7 +28,7 @@
 <select class="gmc-admin-halfline" id="gmc-source-type" name="gmc-source-type">
 <option value="">
             No source
-            <?php echo gmc_option_list(array("Author" => "Author", "Book" => "Book", "Website" => "Website"), $selected_source); ?>
+            <?php echo gmc_option_list(array("Author" => "Author", "Book" => "Book", "Magazine" => "Magazine", "Website" => "Website"), $selected_source); ?>
 
           </option>        </select>      </div><div id="gmc-source-author">
 <label class="gmc-admin-recipe-details" id="gmc-source-name-label">
@@ -42,7 +42,13 @@
         </label><input class="gmc-admin-author" name="gmc-source-book-name" value="<?php echo $selected_source == 'Book' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />      </div><div id="gmc-source-book-url">
 <label class="gmc-admin-recipe-details" id="gmc-source-url-label">
           Book website:
-        </label><input class="gmc-admin-author" name="gmc-source-book-url" value="<?php echo $selected_source == 'Book' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />      </div><div id="gmc-source-website">
+        </label><input class="gmc-admin-author" name="gmc-source-book-url" value="<?php echo $selected_source == 'Book' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />      </div><div id="gmc-source-mag">
+<label class="gmc-admin-recipe-details" id="gmc-source-name-label">
+          Name of magazine:
+        </label><input class="gmc-admin-author" name="gmc-source-mag-name" value="<?php echo $selected_source == 'Magazine' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />      </div><div id="gmc-source-mag-url">
+<label class="gmc-admin-recipe-details" id="gmc-source-url-label">
+          Magazine website:
+        </label><input class="gmc-admin-author" name="gmc-source-mag-url" value="<?php echo $selected_source == 'Magazine' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />      </div><div id="gmc-source-website">
 <label class="gmc-admin-recipe-details" id="gmc-source-name-label">
           Name of website:
         </label><input class="gmc-admin-author" name="gmc-source-website-name" value="<?php echo $selected_source == 'Website' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />      </div><div id="gmc-source-website-url">

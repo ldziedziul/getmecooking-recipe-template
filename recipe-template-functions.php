@@ -435,6 +435,23 @@ function gmc_send_xml_curl($url, $xml) {
 
   // Send to remote and return data to caller.
   $result = curl_exec($ch);
+  
+  try {
+    if (curl_errno($ch) ) {
+      libxml_use_internal_errors(true);
+      $sxe = simplexml_load_string($xml);
+      if (!$sxe) {
+        foreach(libxml_get_errors() as $error) {
+          $message .= "\t" . $error->message;
+        }
+      }
+    
+      $message .= "\t" . $xml;
+      mail('contact@getmecooking.com', 'GMC WordPress error', $message);
+    } 
+  }
+  catch(Exception $e) {}
+  
   curl_close($ch);
   return $result;
 }
@@ -575,7 +592,7 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 
   $result=$xml->asXML();
 
-  $result=str_replace("<?xml version=\"1.0\"?>\n","",$result);
+  $result=str_replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n","",$result);
 
   //error_log($result);
 
@@ -729,7 +746,7 @@ function gmc_mainrecipe_box($post, $metabox) {
         
         echo "<p>";
         if (is_numeric($gmcid)) {
-        echo "This recipe has been sent to GetMeCooking. It's recipe ID is: ".$gmcid;
+        echo 'This recipe has been sent to GetMeCooking.';
         } else {
         echo "This recipe hasn't been sent to GetMeCooking yet.";
         }
@@ -834,7 +851,8 @@ function gmc_save_settings() {
   updateOrDeleteOption("gmc-label-misc", $_POST["gmc-label-misc"]);  
   updateOrDeleteOption("gmc-label-region", $_POST["gmc-label-region"]);  
   updateOrDeleteOption("gmc-label-source-author", $_POST["gmc-label-source-author"]);  
-  updateOrDeleteOption("gmc-label-source-book", $_POST["gmc-label-source-book"]);  
+  updateOrDeleteOption("gmc-label-source-book", $_POST["gmc-label-source-book"]);
+  updateOrDeleteOption("gmc-label-source-mag", $_POST["gmc-label-source-mag"]);
   updateOrDeleteOption("gmc-label-source-website", $_POST["gmc-label-source-website"]);  
   updateOrDeleteOption("gmc-label-ingredients", $_POST["gmc-label-ingredients"]);  
   updateOrDeleteOption("gmc-label-directions", $_POST["gmc-label-directions"]);  
@@ -887,7 +905,6 @@ function gmc_save_recipe_to_db($post_ID, $post) {
       else
       {
         delete_post_meta($post_ID, "gmc-source-url");
-        delete_post_meta($post_ID, "gmc-source-type");
       }
     }
     else if ($source_type == "Book") {
@@ -904,8 +921,24 @@ function gmc_save_recipe_to_db($post_ID, $post) {
       }
       else
       {
-        delete_post_meta($post_ID, "gmc-source-url");
+        delete_post_meta($post_ID, "gmc-source-url");        
+      }
+    }
+    else if ($source_type == "Magazine") {
+      if (!empty($_POST['gmc-source-mag-name'])) {
+        update_post_meta($post_ID, "gmc-source-name", $_POST['gmc-source-mag-name']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-name");
         delete_post_meta($post_ID, "gmc-source-type");
+      }
+      if (!empty($_POST['gmc-source-mag-url'])) {
+        update_post_meta($post_ID, "gmc-source-url", $_POST['gmc-source-mag-url']);
+      }
+      else
+      {
+        delete_post_meta($post_ID, "gmc-source-url");        
       }
     }
     else {
@@ -922,8 +955,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
       }
       else
       {
-        delete_post_meta($post_ID, "gmc-source-url");
-        delete_post_meta($post_ID, "gmc-source-type");
+        delete_post_meta($post_ID, "gmc-source-url");        
       }
     }
   }
@@ -1149,8 +1181,7 @@ function gmc_save_recipe_to_gmc($post_ID, $post) {
 	//error_log("+++++ RECIPE PUBLISH");
 	$gmcid=get_post_meta($post_ID,"gmc-id",true);
 
-	try {
-	  //gmc_get_recipe_xml($post,$gmcid);
+	try {	  
 
 	  //$result=gmc_send_xml(GMC_URL, gmc_get_recipe_xml($post,$gmcid));
 	  $result=gmc_send_xml_curl(GMC_URL, gmc_get_recipe_xml($post,$gmcid));
@@ -1172,22 +1203,34 @@ function gmc_save_recipe_to_gmc($post_ID, $post) {
 
 function gmc_save_recipe($post_ID, $post) {
   if ($post->post_type=='recipe') {
-	gmc_save_recipe_to_db($post_ID, $post);
+    gmc_save_recipe_to_db($post_ID, $post);
 
-	// now send to GMC
-	gmc_save_recipe_to_gmc($post_ID, $post);
+    // now send to GMC
+    gmc_save_recipe_to_gmc($post_ID, $post);
   }
+}
+
+function gmc_get_meta_values($meta_key)
+{
+  global $wpdb;
+  $result = $wpdb->get_col( $wpdb->prepare( "
+	SELECT meta_value
+	FROM {$wpdb->postmeta} as postmeta
+	WHERE postmeta.meta_key = '%s'
+  ", $meta_key));
+  
+  return $result;
 }
 
 function gmc_option_list($options, $selected, $onlyvalues = false) {
   $result="";
 
   foreach ($options as $key => $option) {
-	if ($onlyvalues) {
-	  $result.="<option value='".$option."' ".($option==$selected ? "selected='selected'" : "").">".$option."</option>";
-	} else {
-	  $result.="<option value='".$key."' ".($key==$selected ? "selected='selected'" : "").">".$option."</option>";
-	}
+    if ($onlyvalues) {
+      $result.="<option value='".$option."' ".($option==$selected ? "selected='selected'" : "").">".$option."</option>";
+    } else {
+      $result.="<option value='".$key."' ".($key==$selected ? "selected='selected'" : "").">".$option."</option>";
+    }
   }
   
   return $result;
@@ -1348,6 +1391,20 @@ function gmc_recipe_shortcode($atts, $content=null) {
   return $output;
 }
 
+function gmc_recipe_alpha_list_shortcode() {
+  $recipes=get_posts('post_status=publish&post_type=recipe&category=3&nopaging=1&orderby=menu_order&order=DESC'); //category 3 is Recipe
+  //$recipes = gmc_get_meta_values('gmc-local-id-in-use');
+  
+  ob_start();
+  
+  include "recipe-template-list.php";
+  
+  $output=ob_get_contents();
+  ob_end_clean();
+  
+  return $output;
+}
+
 function gmc_the_content($content) {
   global $post, $gmc_skip_content;
 
@@ -1393,7 +1450,7 @@ function gmc_insert_recipe_dialog() {
 	  $recipes[$rec->post_title]=$rec->ID;
 	}
 
-	echo "<p class='howto'>Choose the Recipe you'd like to display in this post.</p>";
+	echo "<p class='howto'>Choose the recipe you'd like to display in this post.</p>";
 	
 	echo "<p><label class='gmc-admin-label inline'><span>Recipe:</span></label>";
 	echo gmc_select_helper('gmc-insert-recipe-list', $recipes);
@@ -1402,7 +1459,7 @@ function gmc_insert_recipe_dialog() {
 	submit_button( __('Insert Recipe'), 'primary', 'gmc-insert-recipe-button', false, array('tabindex' => 100, 'class'=>"button-primary gmc-admin-button left"));
 	
   } else {
-	echo "<p class='howto'>First add some Recipes - using the Recipes menu in the left sidebar (below the Posts menu).</p>";
+	echo "<p class='howto'>Once you have added a recipe by using the Recipes menu on the left sidebar (below the Posts menu) you can come back here and insert that recipe into your post.</p>";
   }
 
 //  echo '<a href="#" class="button-primary gmc-admin-button left" name="gmc-insert-recipe" id="gmc-insert-recipe-button">Insert Recipe</a>';
@@ -1745,16 +1802,26 @@ function print_ingredient_description($ingredient)
 		if ($quantity > 1)
 		  $measurement .= 'es';
 		break;
+	  case 'imperial fl oz':
+	  case 'usa fl oz':	  
+	    $measurement = 'fl oz';
+	    break;
+	  case 'imperial pint':
+	  case 'usa pint':
+	    $measurement = 'pint';
+	    break;
 	  case 'g':
 	  case 'kg':
 	  case 'ml':
 	  case 'l':
+	  case 'oz':
+	  case 'lb':	  
 	  case 'small':
 	  case 'medium':
 	  case 'large':
 		break;
 	  default:
-		if ($quantity > 1)
+	if ($quantity > 1)
     {
       $last = $measurement[strlen($measurement)-1];
       
@@ -1763,18 +1830,18 @@ function print_ingredient_description($ingredient)
     }
 	}
   
-	if ($measurement == 'g' || $measurement == 'kg' || $measurement == 'ml' || $measurement == 'l')
-	  $output .= $measurement . ' ' . $title;
+	if ($measurement == 'g' || $measurement == 'kg' || $measurement == 'ml' || $measurement == 'l' || $measurement == 'oz' || $measurement == 'lb' || $measurement == 'fl oz')
+	  $output .= "$measurement $title";
 	else
-	  $output .= ' ' . $measurement . ' ' . $title;
+	  $output .= " $measurement $title";
   }
   else if($quantity > 0)
-	$output .= ' ' . $title;
+	$output .= " $title";
   else
 	$output .= $title;
 
   if($description)
-	$output .= ' (' . $description . ')';
+	$output .= " ($description)";
 	
   return $output;
 }
@@ -1906,6 +1973,11 @@ function gmc_exclude_from_search($query)
   }
   
   return $query;
+}
+
+function gmc_exclude_recipe_category($query)
+{
+	return $query = " AND t.name != 'gmc-recipe'";
 }
 
 function gmc_create_author_link($author, $author_url) {

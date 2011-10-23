@@ -96,7 +96,11 @@
 <a href="http://www.getmecooking.com/contact">contacting us</a>            via our website.
           </p><p>
             For some basic information on this plugin and a list of common questions, please visit the
-<a href="http://www.getmecooking.com/recipe-template-info">Recipe Template FAQ page</a>          </p>        </div>      </div><div class="postbox">
+<a href="http://www.getmecooking.com/recipe-template-info">Recipe Template FAQ page</a>          </p><p>
+            Come and hang out with us: <a target="_blank" href="http://www.getmecooking.com/newsletter-subscribe"><img src="<?php echo gmc_plugin_url().'/images/email.png'; ?>" alt="GetMeCooking newsletter" /></a> <a target="_blank" href="http://www.facebook.com/pages/GetMeCooking/24238181534"><img src="<?php echo gmc_plugin_url().'/images/facebook.png'; ?>" alt="Facebook" /></a> <a target="_blank" href="http://www.twitter.com/getmecooking"><img src="<?php echo gmc_plugin_url().'/images/twitter.png'; ?>" alt="Twitter" /></a> <a target="_blank" href="http://www.getmecooking.com/rss"><img src="<?php echo gmc_plugin_url().'/images/rss.png'; ?>" alt="RSS" /></a> <a target="_blank" href="http://www.youtube.com/user/GetMeCooking"><img src="<?php echo gmc_plugin_url().'/images/youtube.png'; ?>" alt="YouTube" /></a>
+          </p><p>
+            Like us? Please rate us: <a target="_blank" href="http://wordpress.org/extend/plugins/getmecooking-recipe-template/"><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /></a>
+          </p>        </div>      </div><div class="postbox">
 <h3>Layout options</h3><div class="inside">
 <table class="gmc-table">
 <tr>
@@ -156,7 +160,11 @@
 <h3>Heading text</h3><div class="inside">
 <p>
             Here you can change the default text of the headings.
-          </p><table class="gmc-table">
+<span class="gmc-tooltip">
+                <img src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="Help" />
+<b><em>
+                  </em>This is useful if your blog isn't in English.
+                </b>              </span>          </p><table class="gmc-table">
 <tr>
 <th>
                 Serves
@@ -195,6 +203,9 @@
                 From book
               </th><td><input type="text" name="gmc-label-source-book" value="<?php echo get_option("gmc-label-source-book");?>" /></td>            </tr><tr>
 <th>
+                From magazine
+              </th><td><input type="text" name="gmc-label-source-mag" value="<?php echo get_option("gmc-label-source-mag");?>" /></td>            </tr><tr>
+<th>
                 Website
               </th><td><input type="text" name="gmc-label-source-website" value="<?php echo get_option("gmc-label-source-website");?>" /></td>            </tr><tr>
 <th>
@@ -212,7 +223,11 @@
 <h3>Use your own styling</h3><div class="inside">
 <p>
             Here you can replace the standard Recipe Template styling with your own.
-          </p><p>
+<span class="gmc-tooltip">
+              <img src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="Help" />
+<b><em>
+                </em>Remember to tick 'Use your own CSS' and to 'Save settings'.
+              </b>            </span>          </p><p>
             To learn about Cascading Style Sheets (CSS), please see the
 <a href="http://www.w3schools.com/css/css_intro.asp">
                 W3Schools introduction to CSS
