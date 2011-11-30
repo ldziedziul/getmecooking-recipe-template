@@ -11,7 +11,6 @@
 define('GMC_URL', 'http://www.getmecooking.com/recipeservice.svc/submitrecipe');
 define('GMC_VERSION', '1.07');
 
-include('lib/owt-translate.php');
 include "recipe-template-functions.php";
 
 add_action('activate_plugin','gmc_plugin_activate');
