@@ -1,15 +1,52 @@
 <?php global $post; ?>
+<?php $large_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large'); ?>
+<?php $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
 <div class="gmc-recipe" id="gmc-print-<?php echo $post->ID; ?>" itemscope itemtype="http://schema.org/Recipe" style="<?php echo gmc_recipe_main_style(); ?>">
   <?php $parent_title = $tmppost->post_title; ?>
   <?php $recipe_title = get_the_title(); ?>
     <?php if ($showtitle) { ?>
 
-<h2 class="gmc-recipe-title <?php echo strtolower($recipe_title) == strtolower($parent_title) ? 'gmc-web-hidden' : ''; ?>" itemprop="name"><?php echo $recipe_title; ?></h2><a class="gmc-printable gmc-print-hidden" href="#" id="gmc-printable-<?php echo $post->ID; ?>">
-<img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" />      Print recipe
-    </a>  <?php } ?>
+<h2 class="gmc-recipe-title <?php echo strtolower($recipe_title) == strtolower($parent_title) ? 'gmc-web-hidden' : ''; ?>" itemprop="name"><?php echo $recipe_title; ?></h2><div class="gmc-print-area">
+            <?php if ($steps) { ?>
+
+                <?php foreach ($steps as $step) { ?>
+
+          <?php $thumbid=get_post_thumbnail_id($step->ID); ?>
+                    <?php if ($thumbid) { ?>
+
+            <?php $hasStepImage = true; ?>
+            <?php break; ?>
+          <?php } ?>
+        <?php } ?>
+      <?php } ?>
+            <?php if (!$hasStepImage && !$large_image_url) { ?>
+
+<a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-text-<?php echo $post->ID; ?>">
+<img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" />          Print recipe just text
+        </a>            <?php } else { ?>
+
+<a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-options-<?php echo $post->ID; ?>">
+<img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" />          Print recipe
+        </a><ul class="gmc-print-options-box" id="gmc-print-options-box-<?php echo $post->ID; ?>" style="display:none">
+                    <?php if ($hasStepImage) { ?>
+
+<li>
+<a class="gmc-print-full gmc-print-hidden" href="#" id="gmc-print-full-<?php echo $post->ID; ?>">
+                Print with all photos
+              </a>            </li>          <?php } ?>
+                    <?php if ($large_image_url) { ?>
+
+<li>
+<a class="gmc-print-main gmc-print-hidden" href="#" id="gmc-print-main-<?php echo $post->ID; ?>">
+                Print with main photo 
+              </a>            </li>          <?php } ?>
+<li>
+<a class="gmc-print-text gmc-print-hidden" href="#" id="gmc-print-text-<?php echo $post->ID; ?>">
+              Print text only
+            </a>          </li>        </ul>      <?php } ?>
+    </div>  <?php } ?>
 <div class="gmc-clear-both">
   </div><div class="gmc-recipe-main-photo">
-    <?php $large_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large'); ?>
 <a href="<?php echo $large_image_url[0]; ?>">
       <?php the_post_thumbnail('medium', array('itemprop' => 'image', 'alt' => "$recipe_title", 'title' => "$recipe_title")); ?>
     </a>  </div>  <?php $prepHour = get_post_meta($post->ID,"gmc-prep-time-hours",true); ?>
@@ -291,7 +328,6 @@
           </ul>        <?php } ?>
       <?php } ?>
     </div>  <?php } ?>
-  <?php $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
     <?php if ($steps) { ?>
 
         <?php if (!empty($post->post_content) && get_option('gmc-note-position') != '1') { ?>

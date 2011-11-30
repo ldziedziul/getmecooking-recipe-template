@@ -78,6 +78,12 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+
+= 1.07 =
+* Improved the process of adding ingredients and steps
+* Improved printing - choose to print with or without photos
+* Added validation to the username field
+
 = 1.06 =
 * Added support for US / Imperial measurements
 * Added more default measurement options
@@ -110,6 +116,10 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 * First release
 
 == Upgrade Notice ==
+
+= 1.07 =
+* Please reset the CSS back to default in the GetMeCooking settings page due to lots of changes
+
 = 1.06 =
 * Any ingredient which was pounds or ounces will need re-selecting if you edit those recipes again.
 

@@ -5,7 +5,7 @@
 <span id="gmc-logo">
       <img src="<?php echo gmc_plugin_url().'/images/icon.png'; ?>" alt="GetMeCooking logo" />
     </span><h2>GetMeCooking Recipe Template Settings</h2><form action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" id="gmc-settings" method="post" name="gmc-settings">
-<input name="gmc-settings-save" type="hidden" value="Y" /><input id="gmc_reset_css" name="gmc_reset_css" type="hidden" /><div class="postbox">
+<input name="gmc-settings-save" type="hidden" value="Y" /><input id="gmc_resetcss" name="gmc_resetcss" type="hidden" /><div class="postbox">
         <?php $gmcusername= strtolower(get_option("gmc-username")); ?>
         <?php if (!$gmcusername) { ?>
 <h3>Have we met?</h3><div class="inside">
@@ -59,7 +59,12 @@
                 <input id="gmc-hide-recipes" value="Y" name="gmc-hide-recipes" type="checkbox" <?php echo (get_option('gmc-hide-recipes')!='Y' ? 'checked="checked"' : ''); ?>/>
               </td><td>
                 I am happy for any recipes that I add using this plugin to appear on
-<a href="http://www.getmecooking.com">www.getmecooking.com</a>                (<a href="http://www.getmecooking.com/recipe-template-info#why-link">see the benefits</a>)
+<a href="http://www.getmecooking.com">www.getmecooking.com</a>                (<a href="http://www.getmecooking.com/recipe-template-info#featuresPostRecipesOnGetMeCooking">see the benefits</a>)
+              </td>            </tr><tr>
+<td colspan="2">
+<strong>
+                  Note:
+                </strong>                Recipes go through an approval process before appearing on <a href="http://www.getmecooking.com">www.getmecooking.com</a>. It must have a good quality photograph and full recipe information. For more information please see <a href="http://www.getmecooking.com/recipe-template-info#faqMissingRecipesGMC">the FAQ</a>.
               </td>            </tr><tr>
 <td>
                 <input id="gmc-hide-links" value="Y" name="gmc-hide-links" type="checkbox" <?php echo (get_option('gmc-hide-links')!='Y' ? 'checked="checked"' : ''); ?>/>
@@ -97,66 +102,10 @@
           </p><p>
             For some basic information on this plugin and a list of common questions, please visit the
 <a href="http://www.getmecooking.com/recipe-template-info">Recipe Template FAQ page</a>          </p><p>
-            Come and hang out with us: <a target="_blank" href="http://www.getmecooking.com/newsletter-subscribe"><img src="<?php echo gmc_plugin_url().'/images/email.png'; ?>" alt="GetMeCooking newsletter" /></a> <a target="_blank" href="http://www.facebook.com/pages/GetMeCooking/24238181534"><img src="<?php echo gmc_plugin_url().'/images/facebook.png'; ?>" alt="Facebook" /></a> <a target="_blank" href="http://www.twitter.com/getmecooking"><img src="<?php echo gmc_plugin_url().'/images/twitter.png'; ?>" alt="Twitter" /></a> <a target="_blank" href="http://www.getmecooking.com/rss"><img src="<?php echo gmc_plugin_url().'/images/rss.png'; ?>" alt="RSS" /></a> <a target="_blank" href="http://www.youtube.com/user/GetMeCooking"><img src="<?php echo gmc_plugin_url().'/images/youtube.png'; ?>" alt="YouTube" /></a>
+            Come and hang out with us: <a target="_blank" href="http://www.getmecooking.com/newsletter-subscribe"><img src="<?php echo gmc_plugin_url().'/images/email.png'; ?>" alt="GetMeCooking newsletter" /></a> <a target="_blank" href="http://www.facebook.com/GetMeCooking/"><img src="<?php echo gmc_plugin_url().'/images/facebook.png'; ?>" alt="Facebook" /></a> <a target="_blank" href="http://www.twitter.com/getmecooking"><img src="<?php echo gmc_plugin_url().'/images/twitter.png'; ?>" alt="Twitter" /></a> <a target="_blank" href="http://www.getmecooking.com/rss"><img src="<?php echo gmc_plugin_url().'/images/rss.png'; ?>" alt="RSS" /></a> <a target="_blank" href="http://www.youtube.com/user/GetMeCooking"><img src="<?php echo gmc_plugin_url().'/images/youtube.png'; ?>" alt="YouTube" /></a>
           </p><p>
             Like us? Please rate us: <a target="_blank" href="http://wordpress.org/extend/plugins/getmecooking-recipe-template/"><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="Rate GetMeCooking 5 stars" /></a>
           </p>        </div>      </div><div class="postbox">
-<h3>Layout options</h3><div class="inside">
-<table class="gmc-table">
-<tr>
-<th>
-                What label option would you like between each recipe step?
-              </th><td><select name="gmc-label-step">
-                  <?php echo gmc_option_list(array("Step 1", "Step 1.", "step 1", "step 1.", '1.', '1', "No label"), get_option('gmc-label-step')); ?>
-
-                </select><span class="gmc-smaller">
-                  (<a href="<?php echo gmc_plugin_url().'/docs/label-step-options.png'; ?>">example screenshot</a>)
-                </span></td>            </tr><tr>
-<th>
-                Where do you want the recipe step label to appear?
-              </th><td><select name="gmc-label-step-position">
-                  <?php echo gmc_option_list(array("Above the step text", "To the left of the step text"), get_option('gmc-label-step-position')); ?>
-
-                </select><span class="gmc-smaller">
-                  (<a href="<?php echo gmc_plugin_url().'/docs/label-step-position-options.png'; ?>">example screenshot</a>)
-                </span></td>            </tr><tr>
-<th>
-                Where do you want the recipe step photo to appear?
-              </th><td><select name="gmc-step-photo-position">
-                  <?php echo gmc_option_list(array("Above the step text", "To the right of the step text", "Below the step text", "To the left of the step text"), get_option('gmc-step-photo-position')); ?>
-
-                </select><span class="gmc-smaller">
-                  (<a href="<?php echo gmc_plugin_url().'/docs/step-photo-position-options.png'; ?>">example screenshot</a>)
-                </span></td>            </tr><tr>
-<th>
-                Where do you want the recipe note to appear?
-              </th><td><select name="gmc-note-position">
-                  <?php echo gmc_option_list(array("Before the recipe steps", "After the recipe steps"), get_option('gmc-note-position')); ?>
-
-                </select></td>            </tr><tr>
-<th>
-                Background colour
-              </th><td><input type="text" name="gmc-background-colour" class="colors" size="7" value="<?php echo get_option("gmc-background-colour");?>" /></td>            </tr><tr>
-<th>
-                Border colour
-              </th><td><input type="text" name="gmc-border-colour" class="colors" size="7" value="<?php echo get_option("gmc-border-colour");?>" /></td>            </tr><tr>
-<th>
-                Border style
-              </th><td><select name="gmc-border-style">
-                  <?php echo gmc_option_list(array("none", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset"), get_option('gmc-border-style'), true); ?>
-
-                </select><span class="gmc-smaller">
-                  (<a href="http://www.w3schools.com/css/css_border.asp">style options explained</a>)
-                </span></td>            </tr><tr>
-<th>
-                Border width
-              </th><td><select name="gmc-border-width">
-                  <?php echo gmc_option_list(array("none", "thin", "medium", "thick"), get_option('gmc-border-width'), true); ?>
-
-                </select></td>            </tr><tr>
-<td>
-<input class="button button-primary save" name="submit" type="submit" value="Save settings" />              </td><td>
-              </td>            </tr>          </table>        </div>      </div><div class="postbox">
 <h3>Heading text</h3><div class="inside">
 <p>
             Here you can change the default text of the headings.
@@ -217,6 +166,62 @@
 <th>
                 Note
               </th><td><input type="text" name="gmc-label-note" value="<?php echo get_option("gmc-label-note");?>" /></td>            </tr><tr>
+<td>
+<input class="button button-primary save" name="submit" type="submit" value="Save settings" />              </td><td>
+              </td>            </tr>          </table>        </div>      </div><div class="postbox">
+<h3>Layout options</h3><div class="inside">
+<table class="gmc-table">
+<tr>
+<th>
+                What label option would you like between each recipe step?
+              </th><td><select name="gmc-label-step">
+                  <?php echo gmc_option_list(array("Step 1", "Step 1.", "step 1", "step 1.", '1.', '1', "No label"), get_option('gmc-label-step')); ?>
+
+                </select><span class="gmc-smaller">
+                  (<a href="<?php echo gmc_plugin_url().'/docs/label-step-options.png'; ?>">example screenshot</a>)
+                </span></td>            </tr><tr>
+<th>
+                Where do you want the recipe step label to appear?
+              </th><td><select name="gmc-label-step-position">
+                  <?php echo gmc_option_list(array("Above the step text", "To the left of the step text"), get_option('gmc-label-step-position')); ?>
+
+                </select><span class="gmc-smaller">
+                  (<a href="<?php echo gmc_plugin_url().'/docs/label-step-position-options.png'; ?>">example screenshot</a>)
+                </span></td>            </tr><tr>
+<th>
+                Where do you want the recipe step photo to appear?
+              </th><td><select name="gmc-step-photo-position">
+                  <?php echo gmc_option_list(array("Above the step text", "To the right of the step text", "Below the step text", "To the left of the step text"), get_option('gmc-step-photo-position')); ?>
+
+                </select><span class="gmc-smaller">
+                  (<a href="<?php echo gmc_plugin_url().'/docs/step-photo-position-options.png'; ?>">example screenshot</a>)
+                </span></td>            </tr><tr>
+<th>
+                Where do you want the recipe note to appear?
+              </th><td><select name="gmc-note-position">
+                  <?php echo gmc_option_list(array("Before the recipe steps", "After the recipe steps"), get_option('gmc-note-position')); ?>
+
+                </select></td>            </tr><tr>
+<th>
+                Background colour
+              </th><td><input type="text" name="gmc-background-colour" class="colors" size="7" value="<?php echo get_option("gmc-background-colour");?>" /></td>            </tr><tr>
+<th>
+                Border colour
+              </th><td><input type="text" name="gmc-border-colour" class="colors" size="7" value="<?php echo get_option("gmc-border-colour");?>" /></td>            </tr><tr>
+<th>
+                Border style
+              </th><td><select name="gmc-border-style">
+                  <?php echo gmc_option_list(array("none", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset"), get_option('gmc-border-style'), true); ?>
+
+                </select><span class="gmc-smaller">
+                  (<a href="http://www.w3schools.com/css/css_border.asp">style options explained</a>)
+                </span></td>            </tr><tr>
+<th>
+                Border width
+              </th><td><select name="gmc-border-width">
+                  <?php echo gmc_option_list(array("none", "thin", "medium", "thick"), get_option('gmc-border-width'), true); ?>
+
+                </select></td>            </tr><tr>
 <td>
 <input class="button button-primary save" name="submit" type="submit" value="Save settings" />              </td><td>
               </td>            </tr>          </table>        </div>      </div><div class="postbox">
