@@ -1,6 +1,9 @@
 <?php global $post; ?>
 <?php $large_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large'); ?>
 <?php $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
+<?php if(!empty($gmcCssPrint)) { ?>
+
+<input class="gmcPrintCssPath" type="hidden" value="<?php echo gmc_plugin_url().'/css/recipe-template.css?ver='.GMC_VERSION; ?>" /><?php } ?>
 <div class="gmc-recipe" id="gmc-print-<?php echo $post->ID; ?>" itemscope itemtype="http://schema.org/Recipe" style="<?php echo gmc_recipe_main_style(); ?>">
   <?php $parent_title = $tmppost->post_title; ?>
   <?php $recipe_title = get_the_title(); ?>

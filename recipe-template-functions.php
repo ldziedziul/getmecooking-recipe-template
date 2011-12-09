@@ -65,7 +65,9 @@ function gmc_admin_init() {
 }
 
 function gmc_after_setup_theme() {
-  add_theme_support('post-thumbnails', array( 'recipe', 'recipestep'));
+if ( !function_exists('post-thumbnails') && function_exists('add_theme_support') ) {
+  add_theme_support('post-thumbnails');
+  }
 }
 
 function gmc_admin_body_class($bclass) {
@@ -1319,6 +1321,9 @@ function gmc_show_recipe($id, $showtitle=true) {
 //  echo "<pre>\n";
 //  echo htmlentities(gmc_get_recipe_xml($post));
 //  echo "</pre>\n";
+
+  global $gmcCssPrint;
+  $gmcCssPrint = get_option('gmc-overridecss');
 
   include "recipe-template-shortcode.php";
 
