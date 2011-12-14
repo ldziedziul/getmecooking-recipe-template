@@ -25,7 +25,7 @@
             <?php if (!$hasStepImage && !$large_image_url) { ?>
 
 <a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-text-<?php echo $post->ID; ?>">
-<img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" />          Print recipe just text
+<img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" />          Print recipe
         </a>            <?php } else { ?>
 
 <a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-options-<?php echo $post->ID; ?>">

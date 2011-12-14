@@ -374,7 +374,7 @@ function gmc_send_xml_curl($url, $xml) {
   curl_setopt($ch, CURLOPT_URL, $url);
 
   // For xml, change the content-type.
-  curl_setopt ($ch, CURLOPT_HTTPHEADER, Array("Content-Type: text/xml"));
+  curl_setopt ($ch, CURLOPT_HTTPHEADER, Array('Content-Type: text/xml; charset="utf-8"'));
 
   curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
@@ -543,8 +543,6 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
   }
 
   $result=$xml->asXML();
-
-  $result=str_replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n","",$result);
 
   //error_log($result);
 
@@ -1018,15 +1016,15 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	  }  
 	  
 	  if ($stepid=="" || $stepid=="0") {
-		if(!empty($_POST['stepdescription'][$key]))
-		{
-		  $my_post['post_type'] = 'recipestep';
-		  $my_post['post_parent'] = $post_ID;
-		  $my_post['post_status'] = 'publish';
-		  $my_post['post_author'] = $current_user->ID;
-		
-		  wp_insert_post($my_post);
-		}
+      if(!empty($_POST['stepdescription'][$key]))
+      {
+        $my_post['post_type'] = 'recipestep';
+        $my_post['post_parent'] = $post_ID;
+        $my_post['post_status'] = 'publish';
+        $my_post['post_author'] = $current_user->ID;
+      
+        wp_insert_post($my_post);
+      }
 	  }    
 	  else if (!empty($step_to_delete) && $step_to_delete == $stepid) {
 	  //Unattach any previous photo associated to this recipe step
@@ -1087,11 +1085,15 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	  $ingredient_to_delete = $_POST['gmc_ingredient_to_delete'];
 	  $newingredientid = 0;
 	  
-	  if (intval($ingredientid) == 0) {
-		$newingredientid=wp_insert_post($my_post);
-		if ($newingredientid) {
-		  $iid=$newingredientid;
-		}
+	  if (intval($ingredientid) == 0) {      
+      if (!empty($my_post['post_title']))
+      {
+        $newingredientid=wp_insert_post($my_post);
+        
+        if ($newingredientid) {
+          $iid=$newingredientid;
+        }
+      }
 	  }
 	  else if (!empty($ingredient_to_delete) && $ingredient_to_delete == $ingredientid) {
 		wp_delete_post($ingredient_to_delete,true);
@@ -1173,6 +1175,38 @@ function gmc_save_recipe($post_ID, $post) {
 
 	// now send to GMC
 	gmc_save_recipe_to_gmc($post_ID, $post);
+  }
+  else {
+	//TODO instead of saving post meta below, just add each recipe id to wp_term_relationships. object_id is the recipe id, term_taxonomy is the one where the term_id in wp_term_taxonomy is
+	//name Recipe which is in wp_terms
+	
+	//object_id = recipeId
+	//term_taxonomy = 3 (Recipe)
+	//term_order = blog post its part of
+	//then just list all unique object_id recipes
+  
+	//save a list of recipe ids used in blog posts for the recipe listing page
+	// $needle = '[recipe \d+]';
+	// $result = preg_match_all($needle, $post->post_content, $matches);
+
+	// $recipes_in_use = gmc_get_meta_values('gmc-local-id-in-use');
+	// $recipes_in_post = get_post_meta($post_ID, 'gmc-local-id-in-use');
+	
+	// foreach ($matches[0] as $match) {
+	  // //$match = just save the number, not "recipe 4"
+	  // if (!in_array($match, $recipes_in_use)) {
+		// add_post_meta($post_ID, 'gmc-local-id-in-use', substr($match, 7)); 
+	  // }
+	  // else {
+		// $key = array_search($match, $recipes_in_post);
+		// unset($recipes_in_post[$key]);
+	  // }
+	// }
+	
+	// //anything left was in the blog post but is no longer
+	// foreach ($recipes_in_post as $match) {
+	  // delete_post_meta($post_ID, 'gmc-local-id-in-use', substr($match, 7));
+	// }
   }
 }
 
@@ -1349,7 +1383,17 @@ function gmc_recipe_shortcode($atts, $content=null) {
 }
 
 function gmc_recipe_alpha_list_shortcode() {
+  //$recipes=get_posts('post_status=publish&post_type=recipe&category=3&nopaging=1&orderby=menu_order&order=DESC'); //category 3 is Recipe
+  //$recipes = gmc_get_meta_values('gmc-local-id-in-use');
   
+  // ob_start();
+  
+  // include "recipe-template-list.php";
+  
+  // $output=ob_get_contents();
+  // ob_end_clean();
+  
+  // return $output;
 }
 
 function gmc_the_content($content) {

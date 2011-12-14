@@ -78,6 +78,9 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.0.9 =
+* Bugfixes to support WordPress 3.3
+
 = 1.0.8 =
 * The ingredient note and step text boxes were not increasing in size
 * The featured image box was no longer showing
