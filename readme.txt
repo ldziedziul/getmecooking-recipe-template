@@ -3,7 +3,7 @@ Contributors: GetMeCooking
 Donate link: http://www.getmecooking.com/recipe-template-info#donate
 Tags: recipes, recipe, cooking, food, recipe template, getmecooking
 Requires at least: 3.0
-Tested up to: 3.2.1
+Tested up to: 3.3
 Stable tag: trunk
 
 For food bloggers. Display one or more recipes per page in an easy to read format with print, recipe search, custom layout, SEO and other features.
