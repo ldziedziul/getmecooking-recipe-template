@@ -81,10 +81,10 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 = 1.1.0 =
 * Some users are not seeing 1.0.9 in the auto update
 
-= 1.0.9 =
+= 1.09 =
 * Bugfixes to support WordPress 3.3
 
-= 1.0.8 =
+= 1.08 =
 * The ingredient note and step text boxes were not increasing in size
 * The featured image box was no longer showing
 * Printing style was wrong if custom css was enabled
