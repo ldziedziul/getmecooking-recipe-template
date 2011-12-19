@@ -78,7 +78,7 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
-= 1.1.0 =
+= 1.10 =
 * Some users are not seeing 1.0.9 in the auto update
 
 = 1.09 =
