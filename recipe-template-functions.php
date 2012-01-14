@@ -98,10 +98,11 @@ function gmc_init() {
 			'parent' => __( 'Parent Recipe' ), // !!!
 			'parent_item_colon' => __('Parent Recipe: ') // !!!
 		  ),
-		  'menu_position' => 7,
+		  //'menu_position' => 5.999,
+      'menu_icon' => gmc_plugin_url().'/images/icon-admin-menu.png',
 		  'publicly_queryable' => true,
 		  'show_ui' => true,
-		  'exclude_from_search' => false,
+		  'exclude_from_search' => true,
 		  'capability_type' => 'page',
 		  'hierarchical' => false,
 		  'rewrite' => array('slug' => 'recipe'),
@@ -431,25 +432,25 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 
   if (get_post_meta($recipe->ID, "gmc-source-name", true))
   {
-	$xml->addChild('Author', get_post_meta($recipe->ID, "gmc-source-name", true));
+	$xml->addChild('Author', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-source-name", true))));
   }
   
   if (get_post_meta($recipe->ID, "gmc-source-url", true))
   {
-	$xml->addChild('AuthorUrl', get_post_meta($recipe->ID, "gmc-source-url", true));
+	$xml->addChild('AuthorUrl', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-source-url", true))));
   }
 
   if (get_post_meta($recipe->ID, "gmc-cooking-time-hours", true))
   {
-	$xml->addChild('CookHour', get_post_meta($recipe->ID, "gmc-cooking-time-hours", true));
+	$xml->addChild('CookHour', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-cooking-time-hours", true))));
   }
   
   if (get_post_meta($recipe->ID, "gmc-cooking-time-mins", true))
   {
-	$xml->addChild('CookMinute', get_post_meta($recipe->ID, "gmc-cooking-time-mins", true));
+	$xml->addChild('CookMinute', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-cooking-time-mins", true))));
   }
   
-  $xml->addChild('Description', get_post_meta($recipe->ID, "gmc-description", true));
+  $xml->addChild('Description', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-description", true))));
 
   $xml->addChild('Id', $gmcid);
 
@@ -457,7 +458,7 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
   $pars=(array)unserialize(get_post_meta($recipe->ID, "gmc-recopt-when", true));
   if ($pars) {
 	foreach($pars as $par) {
-	  $xmealinfo->addChild('Meal',$par);
+	  $xmealinfo->addChild('Meal',htmlspecialchars(utf8_encode($par)));
 	}
   }
 
@@ -465,17 +466,17 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
   $pars=(array)unserialize(get_post_meta($recipe->ID, "gmc-recopt-other", true));
   if ($pars) {
 	foreach($pars as $par) {
-	  $xmiscs->addChild('Misc',$par);
+	  $xmiscs->addChild('Misc',htmlspecialchars(utf8_encode($par)));
 	}
   }
   
-  $xml->addChild('Note', $recipe->post_content);
+  $xml->addChild('Note', htmlspecialchars(utf8_encode($recipe->post_content)));
   
   $xoccasions=$xml->addChild('Occasions');
   $pars=(array)unserialize(get_post_meta($recipe->ID, "gmc-recopt-occasion", true));
   if ($pars) {
 	foreach($pars as $par) {
-	  $xoccasions->addChild('Occasion',$par);
+	  $xoccasions->addChild('Occasion',htmlspecialchars(utf8_encode($par)));
 	}
   }
   
@@ -484,27 +485,27 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
   
   $xoptingredients=$xml->addChild('OptionalIngredients');
   
-  $xml->addChild('Photo', gmc_get_post_thumb_src($recipe->ID));
-  $xml->addChild('PostUrl', get_permalink($recipe->ID));
+  $xml->addChild('Photo', htmlspecialchars(utf8_encode(gmc_get_post_thumb_src($recipe->ID))));
+  $xml->addChild('PostUrl', htmlspecialchars(utf8_encode(get_permalink($recipe->ID))));
   
   if (get_post_meta($recipe->ID, "gmc-prep-time-hours", true))
   {  
-	$xml->addChild('PrepHour', get_post_meta($recipe->ID, "gmc-prep-time-hours", true));
+	$xml->addChild('PrepHour', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-prep-time-hours", true))));
   }
   
   if (get_post_meta($recipe->ID, "gmc-prep-time-mins", true))
   {  
-	$xml->addChild('PrepMinute', get_post_meta($recipe->ID, "gmc-prep-time-mins", true));
+	$xml->addChild('PrepMinute', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-prep-time-mins", true))));
   }
   
-  $xml->addChild('Region', get_post_meta($recipe->ID, "gmc-recopt-region", true));
+  $xml->addChild('Region', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-recopt-region", true))));
   $xreqingredients=$xml->addChild('RequiredIngredients');
-  $xml->addChild('Servings', get_post_meta($recipe->ID, "gmc-nr-servings", true));
+  $xml->addChild('Servings', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-nr-servings", true))));
   $xsteps=$xml->addChild('Steps');
-  $xml->addChild('Title', $recipe->post_title);
+  $xml->addChild('Title', htmlspecialchars(utf8_encode($recipe->post_title)));
 
   $gmcusername=get_option("gmc-username");
-  $xml->addChild('UserName',$gmcusername);
+  $xml->addChild('UserName',htmlspecialchars(utf8_encode($gmcusername)));
   
   // ingredients
   foreach($ingredients as $ingredient) {
@@ -516,14 +517,14 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 	  $xi=$xreqingredients->addChild('Ingredient');
 	}
 
-	$xi->addChild('AdditionalNote',$ingredient->post_content);
-	$xi->addChild('GroupName',get_post_meta($ingredient->ID,'gmc-ingredientgroup',true));
-	$xi->addChild('Measurement',get_post_meta($ingredient->ID,'gmc-ingredientmeasurement',true));
-	$xi->addChild('Name',$ingredient->post_title);
+	$xi->addChild('AdditionalNote',htmlspecialchars(utf8_encode($ingredient->post_content)));
+	$xi->addChild('GroupName',htmlspecialchars(utf8_encode(get_post_meta($ingredient->ID,'gmc-ingredientgroup',true))));
+	$xi->addChild('Measurement',htmlspecialchars(utf8_encode(get_post_meta($ingredient->ID,'gmc-ingredientmeasurement',true))));
+	$xi->addChild('Name',htmlspecialchars(utf8_encode($ingredient->post_title)));
 	
 	if (get_post_meta($ingredient->ID,'gmc-ingredientquantity',true))
 	{
-		$xi->addChild('Quantity',get_post_meta($ingredient->ID,'gmc-ingredientquantity',true));
+		$xi->addChild('Quantity',htmlspecialchars(utf8_encode(get_post_meta($ingredient->ID,'gmc-ingredientquantity',true))));
 	}
   }
 
@@ -535,11 +536,11 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 	if ($thumbid)
 	{
 	  $thumbnail = get_post($thumbid);
-	  $xs->addChild('AltText',$thumbnail->post_title);
+	  $xs->addChild('AltText',htmlspecialchars(utf8_encode($thumbnail->post_title)));
 	}    
 	
-	$xs->addChild('Description',$step->post_content);
-	$xs->addChild('Photo',gmc_get_post_thumb_src($step->ID));
+	$xs->addChild('Description',htmlspecialchars(utf8_encode($step->post_content)));
+	$xs->addChild('Photo',htmlspecialchars(utf8_encode(gmc_get_post_thumb_src($step->ID))));
   }
 
   $result=$xml->asXML();
@@ -1955,15 +1956,6 @@ function gmc_recipe_main_style()
 	$output .= 'border-width:' . get_option('gmc-border-width') . ';';
 	
   return $output;
-}
-
-function gmc_exclude_from_search($query)
-{
-  if ($query->is_search) {
-	$query->set('post_type', !'recipe');
-  }
-  
-  return $query;
 }
 
 function gmc_exclude_recipe_category($query)

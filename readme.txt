@@ -78,8 +78,13 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.11 =
+* Moved recipe admin menu position to prevent conflicts with other plugins
+* Encode xml values when sent to getmecooking.com to prevent errors
+* Added GetMeCooking logo to recipe menu
+
 = 1.10 =
-* Some users are not seeing 1.0.9 in the auto update
+* Some users are not seeing 1.09 in the auto update
 
 = 1.09 =
 * Bugfixes to support WordPress 3.3
