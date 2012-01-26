@@ -36,7 +36,7 @@
 <option value="">
             None
           </option><optgroup label="Weight">
-            <?php echo gmc_option_list(array("g" => "Grams", "kg" => "Kilograms", "oz" => "Ounces", "lb" => "Pounds"), $ms); ?>
+            <?php echo gmc_option_list(array("g" => "Grams", "kg" => "Kilograms", "oz" => "Ounces", "lb" => "Pounds", "imperial pint weight" => "Pint (Imperial)", "usa pint weight" => "Pint (US)"), $ms); ?>
 
           </optgroup><optgroup label="Liquids">
             <?php echo gmc_option_list(array("ml" => "Millilitre", "litre" => "Litre", "imperial fl oz" => "Fluid Ounces (Imperial)", "usa fl oz" => "Fluid Ounces (US)", "juice" => "Juice(s)"), $ms); ?>
@@ -48,7 +48,7 @@
             <?php echo gmc_option_list(array("thin slice" => "Thin slice(s)", "medium slice" => "Medium slice(s)", "thick slice" => "Thick slice(s)"), $ms); ?>
 
           </optgroup><optgroup label="Other">
-            <?php echo gmc_option_list(array("bunch" => "Bunch", "bottle" => "Bottle", "box" => "Box", "bulb" => "Bulb", "can" => "Can", "clove" => "Clove", "cube" => "Cube", "cup" => "Cup", "drop" => "Drop", "glass" => "Glass", "handful" => "Handful", "head" => "Head", "jar" => "Jar", "knob" => "Knob", "packet" => "Packet", "piece" => "Piece", "pinch" => "Pinch", "imperial pint" => "Pint (Imperial)", "usa pint" => "Pint (US)", "rib" => "Rib", "scoop" => "Scoop", "sheet" => "Sheet", "sprinkle" => "Sprinkle", "sprig" => "Sprig", "stalk" => "Stalk", "stick" => "Stick", "tablespoon" => "Tablespoon", "heaped tablespoon" => "Tablespoon (heaped)", "teaspoon" => "Teaspoon", "heaped teaspoon" => "Teaspoon (heaped)", "tin" => "Tin", "wedge" => "Wedge", "zest" => "Zest"), $ms); ?>
+            <?php echo gmc_option_list(array("bunch" => "Bunch", "bottle" => "Bottle", "box" => "Box", "bulb" => "Bulb", "can" => "Can", "clove" => "Clove", "cube" => "Cube", "cup" => "Cup", "drizzle" => "Drizzle", "drop" => "Drop", "glass" => "Glass", "handful" => "Handful", "head" => "Head", "jar" => "Jar", "knob" => "Knob", "packet" => "Packet", "piece" => "Piece", "pinch" => "Pinch", "imperial pint" => "Pint (Imperial)", "usa pint" => "Pint (US)", "rib" => "Rib", "scoop" => "Scoop", "sheet" => "Sheet", "sprinkle" => "Sprinkle", "sprig" => "Sprig", "stalk" => "Stalk", "stick" => "Stick", "tablespoon" => "Tablespoon", "heaped tablespoon" => "Tablespoon (heaped)", "teaspoon" => "Teaspoon", "heaped teaspoon" => "Teaspoon (heaped)", "tin" => "Tin", "wedge" => "Wedge", "zest" => "Zest"), $ms); ?>
 
           </optgroup>        </select>      </div><div id="gmc-custom-measurement-area-<?php echo $ingredientId; ?>">
 <label class="gmc-admin-label">

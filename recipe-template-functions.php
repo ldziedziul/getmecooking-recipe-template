@@ -8,40 +8,75 @@ $gmc_skip_content=false;
 
 function gmc_plugin_url() {
   return WP_PLUGIN_URL.'/'.basename(dirname(__FILE__));
-//  return WP_PLUGIN_URL.'/'.'recipetemplate';
 } 
 
-function gmc_add_column_if_not_exist($db, $column, $column_attr = "VARCHAR( 255 ) NULL" ) {
-	$exists = false;
-	$columns = mysql_query("show columns from $db");
-	while($c = mysql_fetch_assoc($columns)){
-		if($c['Field'] == $column){
-			$exists = true;
-			break;
-		}
-	}
-	if(!$exists){
-		mysql_query("ALTER TABLE `$db` ADD `$column`  $column_attr");
-	}
-}
-
-function gmc_plugin_activate($plugin) {
-  if ($plugin=='recipe-template.php' || basename($plugin)=='recipe-template.php') {
-	//error_log("+++ ACTIVATE +++ ".$plugin);
-	global $wpdb;
-
-	//gmc_add_column_if_not_exist($wpdb->term_relationships,'meta','text');
-  }
+function populate_taxonomies() {
+  wp_insert_term('Egg', 'gmc_allergy');
+  wp_insert_term('Fish', 'gmc_allergy');
+  wp_insert_term('Milk', 'gmc_allergy');
+  wp_insert_term('Peanuts', 'gmc_allergy');
+  wp_insert_term('Shellfish', 'gmc_allergy');
+  wp_insert_term('Soy', 'gmc_allergy');
+  wp_insert_term('Tree Nuts', 'gmc_allergy');
+  wp_insert_term('Wheat', 'gmc_allergy');
+  
+  wp_insert_term('Appetizer', 'gmc_course');
+  wp_insert_term('Beverage', 'gmc_course');
+  wp_insert_term('Bread', 'gmc_course');
+  wp_insert_term('Breakfast', 'gmc_course');
+  wp_insert_term('Condiment', 'gmc_course');
+  wp_insert_term('Dessert', 'gmc_course');
+  wp_insert_term('Lunch', 'gmc_course');
+  wp_insert_term('Main Dish', 'gmc_course');
+  wp_insert_term('Salad', 'gmc_course');
+  wp_insert_term('Side Dish', 'gmc_course');
+  wp_insert_term('Snack', 'gmc_course');
+  wp_insert_term('Soup', 'gmc_course');
+  wp_insert_term('Starter', 'gmc_course');
+  
+  wp_insert_term('Diabetic', 'gmc_dietary');
+  wp_insert_term('Gluten Free', 'gmc_dietary');
+  wp_insert_term('Vegan', 'gmc_dietary');
+  wp_insert_term('Vegetarian', 'gmc_dietary');
+  
+  wp_insert_term('Child Friendly', 'gmc_misc');
+  wp_insert_term('Freezable', 'gmc_misc');
+  wp_insert_term('Gourmet', 'gmc_misc');
+  wp_insert_term('Pre-preparable', 'gmc_misc');
+  wp_insert_term('Serve Cold', 'gmc_misc');
+  wp_insert_term('Serve Hot', 'gmc_misc');
+  
+  wp_insert_term('Barbecue', 'gmc_occasion');
+  wp_insert_term('Birthday Party', 'gmc_occasion');
+  wp_insert_term('Casual Party', 'gmc_occasion');
+  wp_insert_term('Christmas', 'gmc_occasion');
+  wp_insert_term('Formal Party', 'gmc_occasion');
+  wp_insert_term('Halloween', 'gmc_occasion');
+  wp_insert_term('Thanksgiving', 'gmc_occasion');
 }
 
 function gmc_menu() {
-  add_submenu_page('options-general.php', 'GMC Recipe Template Settings', 'GetMeCooking Recipe Template', 'activate_plugins', 'recipe-template', 'gmc_main');
-//  $settingspage=add_submenu_page('options-general.php', "F-Stop Academy Theme Options", "F-Stop Academy Theme Options", 'edit_theme_options', "fstop-theme-settings", "fstop_theme_settings");
+  add_menu_page('GetMeCooking Settings','GetMeCooking Settings','edit_others_posts', 'getmecooking_options', 'gmc_main', gmc_plugin_url().'/images/icon-admin-menu.png');
+  add_submenu_page('getmecooking_options', 'GetMeCooking settings', 'General Settings', 'activate_plugins', 'getmecooking_options', 'gmc_main');
+  add_submenu_page('getmecooking_options', 'GetMeCooking allergies', 'Allergies', 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_allergy&post_type=gmc_recipe');  
+  add_submenu_page('getmecooking_options', 'GetMeCooking courses', 'Courses', 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_course&post_type=gmc_recipe');
+  add_submenu_page('getmecooking_options', 'GetMeCooking dietaries', 'Dietaries', 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_dietary&post_type=gmc_recipe');
+  add_submenu_page('getmecooking_options', 'GetMeCooking miscs', 'Miscs', 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_misc&post_type=gmc_recipe');
+  add_submenu_page('getmecooking_options', 'GetMeCooking occasions', 'Occasions', 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_occasion&post_type=gmc_recipe');
+  //add_submenu_page('getmecooking_options', 'GetMeCooking regions', 'Regions', 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_region&post_type=gmc_recipe');
+}
 
+function gmc_parent_menu($parent_file) {
+	 global $current_screen;
+	 $taxonomy = $current_screen->taxonomy;
+  
+	 if ($taxonomy == 'gmc_allergy' || $taxonomy == 'gmc_course' || $taxonomy == 'gmc_dietary' || $taxonomy == 'gmc_misc' || $taxonomy == 'gmc_occasion')
+		 $parent_file = 'getmecooking_options';
+	 return $parent_file;
 }
 
 function gmc_main() {
-	include('recipe-template-main.php');
+	require_once('recipe-template-main.php');
 }
 
 function gmc_head() {
@@ -81,7 +116,7 @@ function gmc_admin_body_class($bclass) {
 }
 
 function gmc_init() {
-  register_post_type('recipe', 
+  register_post_type('gmc_recipe', 
 	array(  'labels' => array(
 			'name' => __( 'Recipes' ),
 			'singular_name' => __( 'Recipe'),
@@ -119,7 +154,7 @@ function gmc_init() {
 							  //'page-attributes'
 							  )) );
 
-  register_post_type('recipestep', 
+  register_post_type('gmc_recipestep', 
 	array(  'labels' => array(
 			'name' => __( 'Recipe Steps' ),
 			'singular_name' => __( 'Step'),
@@ -157,7 +192,7 @@ function gmc_init() {
 							  )
 			));
 
-  register_post_type('recipeingredient', 
+  register_post_type('gmc_recipeingredient', 
 	array(  'labels' => array(
 			'name' => __( 'Recipe Ingredients' ),
 			'singular_name' => __( 'Recipe Ingredient'),
@@ -194,11 +229,232 @@ function gmc_init() {
 							  //'page-attributes'
 							  )
 			));
-			
+  
+  register_taxonomy('gmc_allergy', 'gmc_recipe', 
+  array(
+      'labels' => array( 
+        'name' => _x( 'Allergies', 'taxonomy general name' ), 
+        'singular_name' => _x( 'Allergy', 'taxonomy singular name' ),
+        'popular_items' => __( 'Popular Allergies' ),
+        'search_items' => __( 'Search Allergies' ), 
+        'all_items' => __( 'All Allergies' ), 
+        'parent_item' => __( 'Parent Allergy' ), 
+        'parent_item_colon' => __( 'Parent Allergy:' ),
+        'edit_item' => __( 'Edit Allergy' ), 
+        'update_item' => __( 'Update Allergy' ), 
+        'add_new_item' => __( 'Add New Allergy' ), 
+        'new_item_name' => __( 'New Allergy Name' ), 
+        'menu_name' => __( 'Allergies' ), 
+      ),
+      'rewrite' => array( 
+        'slug' => 'allergies'
+      ), 
+      'show_in_nav_menus' => false,
+      'show_ui' => false,
+      'show_tagcloud' => false
+    )
+  );
+  
+  register_taxonomy('gmc_course', 'gmc_recipe', 
+    array(
+      'labels' => array( 
+        'name' => _x( 'Courses', 'taxonomy general name' ), 
+        'singular_name' => _x( 'Course', 'taxonomy singular name' ),
+        'popular_items' => __( 'Popular Courses' ),
+        'search_items' => __( 'Search Courses' ), 
+        'all_items' => __( 'All Courses' ), 
+        'parent_item' => __( 'Parent Course' ), 
+        'parent_item_colon' => __( 'Parent Course:' ), 
+        'edit_item' => __( 'Edit Course' ), 
+        'update_item' => __( 'Update Course' ), 
+        'add_new_item' => __( 'Add New Course' ), 
+        'new_item_name' => __( 'New Course Name' ), 
+        'menu_name' => __( 'Courses' ),       
+      ),
+      'rewrite' => array( 
+        'slug' => 'courses',
+        'with_front' => false
+      ), 
+      'show_in_nav_menus' => false,
+      'show_ui' => false,
+      'show_tagcloud' => false
+    )
+  );
+  
+  register_taxonomy('gmc_dietary', 'gmc_recipe', 
+    array(
+      'labels' => array( 
+        'name' => _x( 'Dietaries', 'taxonomy general name' ), 
+        'singular_name' => _x( 'Dietary', 'taxonomy singular name' ),
+        'popular_items' => __( 'Popular Dietaries' ),
+        'search_items' => __( 'Search Dietaries' ), 
+        'all_items' => __( 'All Dietaries' ), 
+        'parent_item' => __( 'Parent Dietary' ), 
+        'parent_item_colon' => __( 'Parent Dietary:' ), 
+        'edit_item' => __( 'Edit Dietary' ), 
+        'update_item' => __( 'Update Dietary' ), 
+        'add_new_item' => __( 'Add New Dietary' ), 
+        'new_item_name' => __( 'New Dietary Name' ), 
+        'menu_name' => __( 'Dietaries' ), 
+      ),
+      'rewrite' => array( 
+        'slug' => 'dietaries',
+        'with_front' => false
+      ), 
+      'show_in_nav_menus' => false,
+      'show_ui' => false,
+      'show_tagcloud' => false
+    )
+  );
+  
+  register_taxonomy('gmc_misc', 'gmc_recipe', 
+    array(
+      'labels' => array( 
+        'name' => _x( 'Miscs', 'taxonomy general name' ), 
+        'singular_name' => _x( 'Misc', 'taxonomy singular name' ),
+        'popular_items' => __( 'Popular Miscs' ),
+        'search_items' => __( 'Search Miscs' ), 
+        'all_items' => __( 'All Miscs' ), 
+        'parent_item' => __( 'Parent Misc' ), 
+        'parent_item_colon' => __( 'Parent Misc:' ), 
+        'edit_item' => __( 'Edit Misc' ), 
+        'update_item' => __( 'Update Misc' ), 
+        'add_new_item' => __( 'Add New Misc' ), 
+        'new_item_name' => __( 'New Misc Name' ), 
+        'menu_name' => __( 'Miscs' ), 
+      ),
+      'rewrite' => array( 
+        'slug' => 'miscs',
+        'with_front' => false
+      ), 
+      'show_in_nav_menus' => false,
+      'show_ui' => false,
+      'show_tagcloud' => false
+    )
+  );
+  
+  register_taxonomy('gmc_occasion', 'gmc_recipe', 
+    array(
+      'labels' => array( 
+        'name' => _x( 'Occasions', 'taxonomy general name' ), 
+        'singular_name' => _x( 'Occasion', 'taxonomy singular name' ),
+        'popular_items' => __( 'Popular Occasions' ),
+        'search_items' => __( 'Search Occasions' ), 
+        'all_items' => __( 'All Occasions' ), 
+        'parent_item' => __( 'Parent Occasion' ), 
+        'parent_item_colon' => __( 'Parent Occasion:' ), 
+        'edit_item' => __( 'Edit Occasion' ), 
+        'update_item' => __( 'Update Occasion' ), 
+        'add_new_item' => __( 'Add New Occasion' ), 
+        'new_item_name' => __( 'New Occasion Name' ), 
+        'menu_name' => __( 'Occasions' ), 
+      ),
+      'rewrite' => array( 
+        'slug' => 'occasions',
+        'with_front' => false
+      ), 
+      'show_in_nav_menus' => false,
+      'show_ui' => false,
+      'show_tagcloud' => false
+    )
+  );
+  
+  register_taxonomy('gmc_region', 'gmc_recipe', 
+    array(
+      'labels' => array( 
+        'name' => _x( 'Regions', 'taxonomy general name' ), 
+        'singular_name' => _x( 'Region', 'taxonomy singular name' ),
+        'popular_items' => __( 'Popular Regions' ),
+        'search_items' => __( 'Search Regions' ), 
+        'all_items' => __( 'All Regions' ), 
+        'parent_item' => __( 'Parent Region' ), 
+        'parent_item_colon' => __( 'Parent Region:' ), 
+        'edit_item' => __( 'Edit Region' ), 
+        'update_item' => __( 'Update Region' ), 
+        'add_new_item' => __( 'Add New Region' ), 
+        'new_item_name' => __( 'New Region Name' ), 
+        'menu_name' => __( 'Regions' ), 
+      ),
+      'rewrite' => array( 
+        'slug' => 'regions',
+        'with_front' => false
+      ), 
+      'show_in_nav_menus' => false,
+      'show_ui' => false,
+      'show_tagcloud' => false
+    )
+  );
+  
   flush_rewrite_rules(false);
-
+  
   if (!gmc_is_recipe_admin_page()) {
-	gmc_add_recipe_button();
+    gmc_add_recipe_button();
+  }
+  
+  gmc_update_old_version();
+}
+
+function gmc_activate()
+{
+  global $wpdb;
+  $recipe_count = $wpdb->get_var($wpdb->prepare( "SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type= 'gmc_recipe' OR post_type = 'recipe'"));
+  
+  if ($recipe_count == 0)
+  {
+    populate_taxonomies();
+    
+    if(!get_option("gmc_version"))
+    {
+      add_option("gmc_version", GMC_VERSION, '', 'no');
+    }
+  }
+}
+
+function gmc_update_old_version() {
+  if (!get_option("gmc_version") || get_option("gmc_version") < 1.12)
+  {
+    populate_taxonomies();
+    
+    //convert data to taxonomy
+    $post_key = 'gmc-recopt-region';
+    $regions = gmc_get_post_meta_unknown_id($post_key);
+  
+    foreach ($regions as $region)
+    {
+      wp_set_post_terms($region->post_id, $region->meta_value, 'gmc_region');
+      delete_post_meta($region->post_id, $post_key);
+    }
+    
+    gmc_convert_to_taxonomy('gmc-recopt-when', 'gmc_course');
+    gmc_convert_to_taxonomy('gmc-recopt-occasion', 'gmc_occasion');
+    gmc_convert_to_taxonomy('gmc-recopt-allergies', 'gmc_allergy');
+    gmc_convert_to_taxonomy('gmc-recopt-dietary', 'gmc_dietary');
+    gmc_convert_to_taxonomy('gmc-recopt-other', 'gmc_misc');
+    
+    global $wpdb;
+    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipe'	WHERE post_type = 'recipe'");
+    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipestep'	WHERE post_type = 'recipestep'");
+    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipeingredient'	WHERE post_type = 'recipeingredient'");
+  }
+  
+  if(!get_option("gmc_version"))
+  {
+    add_option("gmc_version", GMC_VERSION, '', 'no');
+  }
+  else
+  {
+    update_option("gmc_version", GMC_VERSION);
+  }
+}
+
+function gmc_convert_to_taxonomy($post_key, $taxonomy) {
+  $posts = gmc_get_post_meta_unknown_id($post_key);
+  foreach ($posts as $post)
+  {
+    $values = (array)unserialize(get_post_meta($post->post_id,$post_key,true));
+    wp_set_post_terms($post->post_id, $values, $taxonomy);      
+    
+    delete_post_meta($post->post_id, $post_key);
   }
 }
 
@@ -215,15 +471,15 @@ function gmc_is_recipe_admin_page() {
 	  
 	  if ($post_id) {
 		$p=get_post($post_id);
-		if ($p->post_type=="recipe") {
+		if ($p->post_type=="gmc_recipe") {
 		return true;
 	  }
 	}
   } else if ($pagenow == 'post-new.php') {
-	if ($_GET['post_type']=="recipe") {
+	if ($_GET['post_type']=="gmc_recipe") {
 	  return true;
 	}
-  } elseif ($pagenow=="options-general.php" && $_GET['page']=="recipe-template") {
+  } elseif ($pagenow=="admin.php" && $_GET['page']=="getmecooking_options") {
 	return true;
   }
 
@@ -291,6 +547,8 @@ function gmc_draw_postthumbnail_box($p) {
 function gmc_postthumbnail_box() {
   global $post;
 
+  echo "<p>Select a photo - the images will be resized for you. ";
+  echo '<span class="gmc-tooltip"><img src="' . gmc_plugin_url().'/images/help.png" alt="Help" /><b><em></em>The size of the main recipe image is determined by <strong>Dashboard | Settings | Media</strong> (thumbnail image = Medium size, full size image = Large size)</b></span></label></p>';
   echo "<div class='gmc-post-thumbnail' id='gmc-post-thumbnail-".$post->ID."' >";
   echo "<div class='gmc-upload-button' id='gmc-upload-button-".$post->ID."' ></div>";
   //echo '<input class="gmc-upload-cancel" id="gmc-upload-cancel-'.$post->ID.'" type="button" value="Cancel All Uploads" onclick="swfu.cancelQueue();" disabled="disabled" />';
@@ -302,20 +560,14 @@ function gmc_postthumbnail_box() {
 }
 
 function gmc_add_meta_boxes() {
-//  add_meta_box('gmc-params', __( 'Additional Data', 'recipe-template' ), 'gmc_params_box', 'recipe', 'normal');
-
-//	remove_meta_box('postimagediv', 'recipe', 'side');
-//  add_meta_box('postimagediv', __('Photograph of finished Recipe'), 'post_thumbnail_meta_box', 'recipe', 'normal');
-  add_meta_box('gmc-post-thumbnail', __( 'Photograph of the Finished Recipe', 'recipe-template' ), 'gmc_postthumbnail_box', 'recipe', 'normal');
-  add_meta_box('gmc-recipe-main', __( 'Recipe Information', 'recipe-template' ), 'gmc_mainrecipe_box', 'recipe', 'normal');
+//	remove_meta_box('postimagediv', 'gmc_recipe', 'side');
+//  add_meta_box('postimagediv', __('Photograph of finished Recipe'), 'post_thumbnail_meta_box', 'gmc_recipe', 'normal');
+  add_meta_box('gmc-post-thumbnail', __( 'Photograph of the Finished Recipe', 'recipe-template' ), 'gmc_postthumbnail_box', 'gmc_recipe', 'normal');
+  add_meta_box('gmc-recipe-main', __( 'Recipe Information', 'recipe-template' ), 'gmc_mainrecipe_box', 'gmc_recipe', 'normal');
   
 
-//	remove_meta_box('ingredientdiv', 'recipe', 'side'); 
+//	remove_meta_box('ingredientdiv', 'gmc_recipe', 'side'); 
 
-}
-
-function gmc_params_box() {
-  include("recipe-template-edit-params.php");
 }
 
 function gmc_get_post_thumb_src($id) {
@@ -415,8 +667,8 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 	$gmcid="0";
   }
 
-  $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$recipe->ID);
-  $ingredients=get_posts('post_status=publish&post_type=recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$recipe->ID);
+  $steps=get_posts('post_status=publish&post_type=gmc_recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$recipe->ID);
+  $ingredients=get_posts('post_status=publish&post_type=gmc_recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$recipe->ID);
 
   $xml=new SimpleXMLElement('<Recipe xmlns="http://www.getmecooking.com/recipeservice/submitrecipe" />');
 
@@ -455,28 +707,28 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
   $xml->addChild('Id', $gmcid);
 
   $xmealinfo=$xml->addChild('MealInformation');
-  $pars=(array)unserialize(get_post_meta($recipe->ID, "gmc-recopt-when", true));
+  $pars=wp_get_object_terms($recipe->ID, 'gmc_course');
   if ($pars) {
 	foreach($pars as $par) {
-	  $xmealinfo->addChild('Meal',htmlspecialchars(utf8_encode($par)));
+	  $xmealinfo->addChild('Meal',htmlspecialchars(utf8_encode($par->name)));
 	}
   }
 
   $xmiscs=$xml->addChild('Miscs');
-  $pars=(array)unserialize(get_post_meta($recipe->ID, "gmc-recopt-other", true));
+  $pars=wp_get_object_terms($recipe->ID, 'gmc_misc');
   if ($pars) {
 	foreach($pars as $par) {
-	  $xmiscs->addChild('Misc',htmlspecialchars(utf8_encode($par)));
+	  $xmiscs->addChild('Misc',htmlspecialchars(utf8_encode($par->name)));
 	}
   }
   
   $xml->addChild('Note', htmlspecialchars(utf8_encode($recipe->post_content)));
   
   $xoccasions=$xml->addChild('Occasions');
-  $pars=(array)unserialize(get_post_meta($recipe->ID, "gmc-recopt-occasion", true));
+  $pars=wp_get_object_terms($recipe->ID, 'gmc_occasion');
   if ($pars) {
 	foreach($pars as $par) {
-	  $xoccasions->addChild('Occasion',htmlspecialchars(utf8_encode($par)));
+	  $xoccasions->addChild('Occasion',htmlspecialchars(utf8_encode($par->name)));
 	}
   }
   
@@ -498,7 +750,16 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
 	$xml->addChild('PrepMinute', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-prep-time-mins", true))));
   }
   
-  $xml->addChild('Region', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-recopt-region", true))));
+  $regions = wp_get_object_terms($recipe->ID, 'gmc_region');
+  $region = "";
+  
+  if(!empty($regions)){
+    if(!is_wp_error($regions)){
+      $region = $regions[0]->name;
+    }
+	}
+  
+  $xml->addChild('Region', htmlspecialchars(utf8_encode($region)));
   $xreqingredients=$xml->addChild('RequiredIngredients');
   $xml->addChild('Servings', htmlspecialchars(utf8_encode(get_post_meta($recipe->ID, "gmc-nr-servings", true))));
   $xsteps=$xml->addChild('Steps');
@@ -567,7 +828,7 @@ function gmc_mainrecipe_box($post, $metabox) {
   </div>
   <div class="gmc-tabs-panel">
 	<div id="params">	
-	  <?php include("recipe-template-edit-params.php"); ?>
+	  <?php require_once("recipe-template-edit-params.php"); ?>
 	</div>      
 	<div id="ingredients">
 	  <?php
@@ -578,7 +839,7 @@ function gmc_mainrecipe_box($post, $metabox) {
 
 	echo '<div id="gmc-ingredientslist">'."\n";
 		
-	$ingredients=get_posts('post_status=publish&post_type=recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
+	$ingredients=get_posts('post_status=publish&post_type=gmc_recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
 	
 	$i=1;
 	foreach($ingredients as $ingredient){
@@ -586,7 +847,7 @@ function gmc_mainrecipe_box($post, $metabox) {
 	  echo '<div class="handlediv" title="Click to toggle"><br /></div><h3 class="gmc-hndle">Ingredient <span class="gmc-ingredientnumber">'.$i.'</span></h3>'."\n";
 	  echo '<div class="inside">'."\n";
 
-	  include("recipe-template-edit-ingredient.php");
+	  require("recipe-template-edit-ingredient.php");
 
 	  echo "</div></div>\n";
 	  $i++;
@@ -598,7 +859,7 @@ function gmc_mainrecipe_box($post, $metabox) {
 
 	$ingredient = null;
 	$gmcaddnew = true;
-	include("recipe-template-edit-ingredient.php");
+	require("recipe-template-edit-ingredient.php");
 
 	echo "</div></div>\n";  
 	
@@ -607,7 +868,7 @@ function gmc_mainrecipe_box($post, $metabox) {
 	</div>
 	<div id="steps">
 	  <?php
-		$steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
+		$steps=get_posts('post_status=publish&post_type=gmc_recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
 
 		echo '<div id="gmc-stepslistbox">'."\n";		
 
@@ -685,7 +946,7 @@ function gmc_mainrecipe_box($post, $metabox) {
 	<div id="gmc-note">
 	  <?php 
 		$note_position = get_option('gmc-note-position') == '' ? 'before' : 'after';
-		$note_link = "<a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>$note_position</a>";
+		$note_link = "<a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options"."'>$note_position</a>";
 	  ?>
 	  <p id="gmc-note-desc">Anything you type here will appear <?php echo $note_link; ?> the recipe steps.</p>
 	</div>
@@ -696,15 +957,15 @@ function gmc_mainrecipe_box($post, $metabox) {
 		$gmcusername=get_option("gmc-username");
 		
 		if (empty($gmcusername)) {
-		echo "<p>You are currently using this plugin as a guest user. To get more functionality, please <a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>enter your GetMeCooking details</a>.</p>";
+		echo "<p>You are currently using this plugin as a guest user. To get more functionality, please <a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options"."'>enter your GetMeCooking details</a>.</p>";
 		} else {
 		echo "<p>You have told us that your GetMeCooking username is <strong>".$gmcusername."</strong>.<br/>";
-		echo "<p>You can <a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template"."'>change your details here</a>.</p>";
+		echo "<p>You can <a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options"."'>change your details here</a>.</p>";
 		} 
 		
 		echo "<p>";
 		if (get_option('gmc-hide-recipes'))  
-		echo "You have opted out of send this recipe to GetMeCooking. (<a href='".get_bloginfo('url')."/wp-admin/options-general.php?page=recipe-template#gmc-share-the-love"."'>I've changed my mind, I want my recipes to appear on GetMeCooking</a>)";
+		echo "You have opted out of send this recipe to GetMeCooking. (<a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options#gmc-share-the-love"."'>I've changed my mind, I want my recipes to appear on GetMeCooking</a>)";
 		else
 		{
 		echo "You have opted in to send this recipe to GetMeCooking.";
@@ -724,13 +985,14 @@ function gmc_mainrecipe_box($post, $metabox) {
 		echo "This recipe hasn't been sent to GetMeCooking yet.";
 		}
 		echo "</p>";
+        
+    echo '<input type="hidden" name="gmc_noncename" value="' . wp_create_nonce( plugin_basename(__FILE__) ) . '" />';
 	  ?>
 	</div>
-  </div>
+  </div>  
 </div>
 
-<?php
-  
+<?php  
 }
 
 function gmc_set_term_relationship_meta($object_id, $term_taxonomy_id, $meta) {
@@ -967,37 +1229,12 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	delete_post_meta($post_ID, "gmc-use-custom-region");
   }
   
-  updateOrDeleteMeta($post_ID, "gmc-recopt-region", $region);
-  
-  if (!empty($_POST['gmc-recopt-when'])) {
-	update_post_meta($post_ID, "gmc-recopt-when", serialize($_POST['gmc-recopt-when']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-when");
-  }
-
-  if (!empty($_POST['gmc-recopt-occasion'])) {
-	update_post_meta($post_ID, "gmc-recopt-occasion", serialize($_POST['gmc-recopt-occasion']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-occasion");
-  }
-
-  if (!empty($_POST['gmc-recopt-allergies'])) {
-	update_post_meta($post_ID, "gmc-recopt-allergies", serialize($_POST['gmc-recopt-allergies']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-allergies");
-  }
-  
-  if (!empty($_POST['gmc-recopt-dietary'])) {
-	update_post_meta($post_ID, "gmc-recopt-dietary", serialize($_POST['gmc-recopt-dietary']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-dietary");
-  }
-
-  if (!empty($_POST['gmc-recopt-other'])) {
-	update_post_meta($post_ID, "gmc-recopt-other", serialize($_POST['gmc-recopt-other']));
-  } else {
-	delete_post_meta($post_ID, "gmc-recopt-other");
-  }
+  wp_set_post_terms($post_ID, $region, 'gmc_region');
+  wp_set_post_terms($post_ID, $_POST['gmc-recopt-when'], 'gmc_course');
+  wp_set_post_terms($post_ID, $_POST['gmc-recopt-occasion'], 'gmc_occasion');
+  wp_set_post_terms($post_ID, $_POST['gmc-recopt-allergies'], 'gmc_allergy');
+  wp_set_post_terms($post_ID, $_POST['gmc-recopt-dietary'], 'gmc_dietary');
+  wp_set_post_terms($post_ID, $_POST['gmc-recopt-other'], 'gmc_misc');
 
   //steps
   if (isset($_POST['stepid'])) {
@@ -1019,7 +1256,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	  if ($stepid=="" || $stepid=="0") {
       if(!empty($_POST['stepdescription'][$key]))
       {
-        $my_post['post_type'] = 'recipestep';
+        $my_post['post_type'] = 'gmc_recipestep';
         $my_post['post_parent'] = $post_ID;
         $my_post['post_status'] = 'publish';
         $my_post['post_author'] = $current_user->ID;
@@ -1070,7 +1307,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 
 	  $my_post=array();
 	  $my_post['menu_order']=$_POST['gmc-recipeingredientorder'][$key];
-	  $my_post['post_type'] = 'recipeingredient';
+	  $my_post['post_type'] = 'gmc_recipeingredient';
 	  $my_post['post_parent'] = $post_ID;
 	  $my_post['post_status'] = 'publish';
 	  $my_post['post_author'] = $current_user->ID;
@@ -1171,56 +1408,71 @@ function gmc_save_recipe_to_gmc($post_ID, $post) {
 }
 
 function gmc_save_recipe($post_ID, $post) {
-  if ($post->post_type=='recipe') {
+  if( $parent_id = wp_is_post_revision($post_ID) ) {
+    $post_ID = $parent_id;
+  }
+  
+  // verify if this is an auto save routine. If it is our form has not been submitted, so we dont want to do anything
+  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
+      return;
+
+  // Check permissions
+  if ( 'page' == $_POST['post_type'] ) 
+  {
+    if ( !current_user_can( 'edit_page', $post_ID ) )
+        return;
+  }
+  else
+  {
+    if ( !current_user_can( 'edit_post', $post_ID ) )
+        return;
+  }
+
+  if ($post->post_type=='gmc_recipe') {
+    // verify this came from the our screen and with proper authorization, because save_post can be triggered at other times
+    if ( !wp_verify_nonce( $_POST['gmc_noncename'], plugin_basename( __FILE__ ) ) )
+      return;
+      
 	gmc_save_recipe_to_db($post_ID, $post);
 
 	// now send to GMC
 	gmc_save_recipe_to_gmc($post_ID, $post);
   }
-  else {
-	//TODO instead of saving post meta below, just add each recipe id to wp_term_relationships. object_id is the recipe id, term_taxonomy is the one where the term_id in wp_term_taxonomy is
-	//name Recipe which is in wp_terms
-	
-	//object_id = recipeId
-	//term_taxonomy = 3 (Recipe)
-	//term_order = blog post its part of
-	//then just list all unique object_id recipes
-  
-	//save a list of recipe ids used in blog posts for the recipe listing page
-	// $needle = '[recipe \d+]';
-	// $result = preg_match_all($needle, $post->post_content, $matches);
-
-	// $recipes_in_use = gmc_get_meta_values('gmc-local-id-in-use');
-	// $recipes_in_post = get_post_meta($post_ID, 'gmc-local-id-in-use');
-	
-	// foreach ($matches[0] as $match) {
-	  // //$match = just save the number, not "recipe 4"
-	  // if (!in_array($match, $recipes_in_use)) {
-		// add_post_meta($post_ID, 'gmc-local-id-in-use', substr($match, 7)); 
-	  // }
-	  // else {
-		// $key = array_search($match, $recipes_in_post);
-		// unset($recipes_in_post[$key]);
-	  // }
-	// }
-	
-	// //anything left was in the blog post but is no longer
-	// foreach ($recipes_in_post as $match) {
-	  // delete_post_meta($post_ID, 'gmc-local-id-in-use', substr($match, 7));
-	// }
-  }
 }
 
-function gmc_get_meta_values($meta_key)
+function gmc_get_post_meta_unknown_id($meta_key)
 {
   global $wpdb;
-  $result = $wpdb->get_col( $wpdb->prepare( "
+  return $wpdb->get_results( $wpdb->prepare("SELECT post_id, meta_value
+	FROM {$wpdb->postmeta} as postmeta
+	WHERE postmeta.meta_key = '%s'
+  ", $meta_key));
+}
+
+function gmc_get_post_id($meta_key)
+{
+  global $wpdb;
+  return $wpdb->get_col( $wpdb->prepare( "
+	SELECT post_id
+	FROM {$wpdb->postmeta} as postmeta
+	WHERE postmeta.meta_key = '%s'
+  ", $meta_key));
+}
+
+function gmc_get_post_meta_values($meta_key)
+{
+  global $wpdb;
+  return $wpdb->get_col( $wpdb->prepare( "
 	SELECT meta_value
 	FROM {$wpdb->postmeta} as postmeta
 	WHERE postmeta.meta_key = '%s'
   ", $meta_key));
-  
-  return $result;
+}
+
+function gmc_get_post_count_for_recipe($meta_value)
+{
+  global $wpdb;
+  return $wpdb->get_var($wpdb->prepare( "SELECT COUNT(meta_id) FROM $wpdb->postmeta WHERE meta_key= 'gmc_local_id' AND meta_value = '%s'", $meta_value) );
 }
 
 function gmc_option_list($options, $selected, $onlyvalues = false) {
@@ -1282,7 +1534,7 @@ function gmc_admin_print_styles() {
 	if (isset($_REQUEST['post_id'])) {
 	  $p=get_post($_REQUEST['post_id']);
 	  
-	  if ($p->post_type!="recipe") {
+	  if ($p->post_type!="gmc_recipe") {
 		return;
 	  }
 	}
@@ -1360,7 +1612,7 @@ function gmc_show_recipe($id, $showtitle=true) {
   global $gmcCssPrint;
   $gmcCssPrint = get_option('gmc-overridecss');
 
-  include "recipe-template-shortcode.php";
+  require_once "recipe-template-shortcode.php";
 
   $output=ob_get_contents();
   ob_end_clean();
@@ -1383,24 +1635,10 @@ function gmc_recipe_shortcode($atts, $content=null) {
   return $output;
 }
 
-function gmc_recipe_alpha_list_shortcode() {
-  //$recipes=get_posts('post_status=publish&post_type=recipe&category=3&nopaging=1&orderby=menu_order&order=DESC'); //category 3 is Recipe
-  //$recipes = gmc_get_meta_values('gmc-local-id-in-use');
-  
-  // ob_start();
-  
-  // include "recipe-template-list.php";
-  
-  // $output=ob_get_contents();
-  // ob_end_clean();
-  
-  // return $output;
-}
-
 function gmc_the_content($content) {
   global $post, $gmc_skip_content;
 
-  if ($post->post_type=='recipe' && !$gmc_skip_content) {
+  if ($post->post_type=='gmc_recipe' && !$gmc_skip_content) {
 	remove_filter('the_content', 'gmc_the_content', 10);
 
 	$content=gmc_show_recipe($post->ID, false);
@@ -1434,7 +1672,7 @@ function gmc_select_helper($name,$options,$selected = '',$params = '') {
 
 function gmc_insert_recipe_dialog() {
   echo "<div id='gmc-choose-recipe' style='display: none;'>\n";
-  $r=get_posts('post_status=publish&post_type=recipe&nopaging=1&orderby=menu_order&order=ASC');  
+  $r=get_posts('post_status=publish&post_type=gmc_recipe&nopaging=1&orderby=menu_order&order=ASC');  
 
   if ($r) {
 	$recipes=array();
@@ -1462,7 +1700,7 @@ function gmc_add_edit_attachment($post_ID) {
   $photo=get_post($post_ID);
   $recipestep=get_post($photo->post_parent);
 
-  if ($recipestep->post_type=="recipestep") {
+  if ($recipestep->post_type=="gmc_recipestep") {
 	//error_log("Insert attachment: ".$post_ID." ".$photo->post_parent);
 
 	set_post_thumbnail($photo->post_parent, $post_ID);
@@ -1500,7 +1738,7 @@ function gmc_media_upload_tabs($tabs) {
 	//$p=get_post($_REQUEST['post_id']);
 	//error_log(print_r($p,1));
 
-	//if ($p->post_type=='recipe' || $p->post_type=='recipestep' || $p->post_type=='recipeingredient') {
+	//if ($p->post_type=='gmc_recipe' || $p->post_type=='gmc_recipestep' || $p->post_type=='gmc_recipeingredient') {
 //      unset($tabs['library']);
 	//}
   //}
@@ -1512,7 +1750,7 @@ function gmc_admin_footer() {
 }
 
 function gmc_enter_title_here($title, $post) {
-  if ($post->post_type=="recipe") {
+  if ($post->post_type=="gmc_recipe") {
 	$title="Recipe Title";
   }
   
@@ -1522,7 +1760,7 @@ function gmc_enter_title_here($title, $post) {
 // function gmc_the_editor_content($content) {
   // global $post;
   
-  // // if ($post->post_type=="recipe" && empty($content)) {
+  // // if ($post->post_type=="gmc_recipe" && empty($content)) {
 	// // $content="Enter a brief description of your recipe here (delete this text)";
   // // }
 
@@ -1536,7 +1774,7 @@ function gmc_admin_post_thumbnail_html($content) {
 
   global $post;
   
-  if ($post->post_type=="recipe") {
+  if ($post->post_type=="gmc_recipe") {
 	$content=preg_replace('/Set featured image/','Set photograph of finished Recipe', $content);
 	$content=preg_replace('/Remove featured image/','Remove photograph of finished Recipe', $content);
   }
@@ -1552,7 +1790,7 @@ function gmc_plugin_action_links($links, $file) {
 //  }
 
   if (basename($file)=='recipe-template.php') {
-	$settings_link = '<a href="'.admin_url("options-general.php?page=recipe-template").'">Settings</a>';
+	$settings_link = '<a href="'.admin_url("admin.php?page=getmecooking_options").'">Settings</a>';
 	array_unshift($links, $settings_link);
   }
 
@@ -1566,7 +1804,7 @@ function gmc_attachment_fields_to_edit($form_fields, $p) {
   if (!empty($p->post_parent)) {
 	$parent=get_post($p->post_parent);
 
-	if ($parent->post_type=='recipe' || $parent->post_type=='recipestep' || $parent->post_type=='recipeingredient') {
+	if ($parent->post_type=='gmc_recipe' || $parent->post_type=='gmc_recipestep' || $parent->post_type=='gmc_recipeingredient') {
 	  unset($form_fields['post_excerpt']);
 	  unset($form_fields['post_content']);
 //      unset($form_fields['url']);
@@ -1677,8 +1915,9 @@ function gmc_time($hour, $minute)
 
 	if ($dblMinutes >= 60)
 	{
+  
 	  $partMinutes = $dblMinutes % 60;
-	  $dblHour .= floor($dblMinutes / 60);
+	  $dblHour .= $dblMinutes / 60;
 	  $dblMinutes = $partMinutes;
 	}
 
@@ -1688,7 +1927,7 @@ function gmc_time($hour, $minute)
 	}
 	else if ($dblHour > 1)
 	{
-	  $hours .= $dblHour . " hours";
+	  $hours .= intval($dblHour) . " hours";
 	}
 
 	if ($dblMinutes == 1)
@@ -1697,7 +1936,7 @@ function gmc_time($hour, $minute)
 	}
 	else if ($dblMinutes > 1)
 	{
-	  $minutes .= $dblMinutes . " minutes";
+	  $minutes .= intval($dblMinutes) . " minutes";
 	}
   }
 
@@ -1782,8 +2021,8 @@ function print_ingredient_description($ingredient)
 {
   $quantity = get_post_meta($ingredient->ID, "gmc-ingredientquantity", true);
   $measurement = get_post_meta($ingredient->ID,'gmc-ingredientmeasurement',true);
-  $title = strtolower($ingredient->post_title);
-  $description = strtolower($ingredient->post_content);
+  $title = $ingredient->post_title;
+  $description = $ingredient->post_content;
   $output = $quantity;
   if(!empty($measurement))
   {
@@ -1800,6 +2039,8 @@ function print_ingredient_description($ingredient)
 		break;
 	  case 'imperial pint':
 	  case 'usa pint':
+    case 'usa pint weight':
+    case 'imperial pint weight':
 		$measurement = 'pint';
 		break;
 	  case 'g':
@@ -1813,13 +2054,13 @@ function print_ingredient_description($ingredient)
 	  case 'large':
 		break;
 	  default:
-	if ($quantity > 1)
-	{
-	  $last = $measurement[strlen($measurement)-1];
-	  
-	  if($last != "s")
-		$measurement .= 's';
-	}
+    if ($quantity > 1)
+    {
+      $last = $measurement[strlen($measurement)-1];
+      
+      if($last != "s")
+      $measurement .= 's';
+    }
 	}
   
 	if ($measurement == 'g' || $measurement == 'kg' || $measurement == 'ml' || $measurement == 'l' || $measurement == 'oz' || $measurement == 'lb' || $measurement == 'fl oz')
@@ -1838,7 +2079,7 @@ function print_ingredient_description($ingredient)
   return $output;
 }
 
-function gmc_recipe_filter_link($filter, $category)
+function gmc_recipe_filter_link($filter, $has_photo, $category)
 {
   if(get_option('gmc-hide-links'))
 	return $filter;
@@ -1846,7 +2087,7 @@ function gmc_recipe_filter_link($filter, $category)
   $username = get_option("gmc-username");
   $filterText = $filter;
 	
-  if($username)
+  if($username && $has_photo)
   {
 	if ($filterText == 'Worldwide')
 	{
@@ -1970,4 +2211,17 @@ function gmc_create_author_link($author, $author_url) {
   return '<a href="' . $author_url . '">' . $author . '</a>';
 }
 
+function in_array_field($needle, $needle_field, $haystack, $strict = false) { 
+    if ($strict) { 
+        foreach ($haystack as $item) 
+            if (isset($item->$needle_field) && $item->$needle_field === $needle) 
+                return true; 
+    } 
+    else { 
+        foreach ($haystack as $item) 
+            if (isset($item->$needle_field) && $item->$needle_field == $needle) 
+                return true; 
+    } 
+    return false; 
+} 
 ?>

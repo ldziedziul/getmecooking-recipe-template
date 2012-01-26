@@ -78,6 +78,11 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.12 =
+* Can now add your own allergies, courses, dietary requirements etc
+* No longer lower case the note text
+* Improved the menu structure
+
 = 1.11 =
 * Moved recipe admin menu position to prevent conflicts with other plugins
 * Encode xml values when sent to getmecooking.com to prevent errors

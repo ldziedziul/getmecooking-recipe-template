@@ -3,17 +3,23 @@
 	Plugin Name: GetMeCooking Recipe Template
 	Plugin URI: http://www.getmecooking.com/recipe-template
 	Description: <strong>For food bloggers - allows you to add recipes to your blog</strong>. Includes recipe title, photographs, list of ingredients, recipe steps and Search Engine Optimisation (SEO). Also your recipes can be added to <a href="http://www.getmecooking.com/">http://www.getmecooking.com</a>, which will give your recipes additional functionality, more exposure and increased traffic. Visit the <a href="http://www.getmecooking.com/recipe-template/">information page</a> for full details.
-	Version: 1.11
+	Version: 1.12
 	Author: GetMeCooking
 	Author URI: http://www.getmecooking.com/
 */
 
 define('GMC_URL', 'http://www.getmecooking.com/recipeservice.svc/submitrecipe');
-define('GMC_VERSION', '1.11');
+define('GMC_VERSION', '1.12');
 
-include "recipe-template-functions.php";
+require_once "recipe-template-functions.php";
 
-add_action('activate_plugin','gmc_plugin_activate');
+register_activation_hook( __FILE__, 'gmc_activate' );
+
+if (file_exists(dirname(__FILE__).'\recipe-template-function-extras.php'))
+{
+  require_once "recipe-template-function-extras.php";
+}
+
 add_action('admin_menu', 'gmc_menu');
 
 add_action('wp_head','gmc_head');
@@ -43,8 +49,9 @@ add_action('wp_ajax_nopriv_gmc-ajax-upload', 'gmc_ajax_upload');
 
 add_action('admin_footer', 'gmc_admin_footer');
 
+add_action('parent_file', 'gmc_parent_menu');
+
 add_shortcode('recipe', 'gmc_recipe_shortcode');
-add_shortcode('recipe_alpha_list', 'gmc_recipe_alpha_list_shortcode');
 
 add_filter('the_content', 'gmc_the_content', 10);
 add_filter('tiny_mce_version', 'gmc_refresh_mce');

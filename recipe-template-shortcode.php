@@ -1,6 +1,6 @@
 <?php global $post; ?>
 <?php $large_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large'); ?>
-<?php $steps=get_posts('post_status=publish&post_type=recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
+<?php $steps=get_posts('post_status=publish&post_type=gmc_recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
 <?php if(!empty($gmcCssPrint)) { ?>
 
 <input class="gmcPrintCssPath" type="hidden" value="<?php echo gmc_plugin_url().'/css/recipe-template.css?ver='.GMC_VERSION; ?>" /><?php } ?>
@@ -77,93 +77,91 @@
 <td class="gmc-heading">
         <?php echo get_option("gmc-label-total-time") ? get_option("gmc-label-total-time") . ':' : "Total time:"; ?>
 
-      </td>      <?php $searchEngineTime = search_engine_total_time($prepHour, $prepMinute, $cookHour, $cookMinute); ?><td content="<?php echo $searchEngineTime; ?>" itemprop="totalTime"><?php echo gmc_total_time($prepHour,$prepMinute,$cookHour,$cookMinute); ?></td></tr>    <?php $allergies = get_post_meta($post->ID,'gmc-recopt-allergies',true); ?>
+      </td>      <?php $searchEngineTime = search_engine_total_time($prepHour, $prepMinute, $cookHour, $cookMinute); ?><td content="<?php echo $searchEngineTime; ?>" itemprop="totalTime"><?php echo gmc_total_time($prepHour,$prepMinute,$cookHour,$cookMinute); ?></td></tr>    <?php $allergies = wp_get_object_terms($post->ID, 'gmc_allergy'); ?>
         <?php if (!empty($allergies)) { ?>
 
-      <?php $gmparams=(array)unserialize($allergies); ?>
 <tr>
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-allergy") ? get_option("gmc-label-allergy") . ':' : "Allergy:"; ?>
 
           <?php $output = ''; ?>
-                    <?php foreach($gmparams as $gmp) { ?>
+                    <?php foreach($allergies as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp, 'allergy').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'allergy').", "; ?>
           <?php } ?>
         </td><td>
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
-    <?php $dietary = get_post_meta($post->ID,'gmc-recopt-dietary',true); ?>
+    <?php $dietary = wp_get_object_terms($post->ID, 'gmc_dietary'); ?>
         <?php if (!empty($dietary)) { ?>
 
-      <?php $gmparams=(array)unserialize($dietary); ?>
 <tr>
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-dietary") ? get_option("gmc-label-dietary") . ':' : "Dietary:"; ?>
 
           <?php $output = ''; ?>
-                    <?php foreach($gmparams as $gmp) { ?>
+                    <?php foreach($dietary as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp, 'dietary').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'dietary').", "; ?>
           <?php } ?>
         </td><td>
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
-    <?php $mealType = get_post_meta($post->ID,'gmc-recopt-when',true); ?>
+    <?php $mealType = wp_get_object_terms($post->ID, 'gmc_course'); ?>
         <?php if (!empty($mealType)) { ?>
 
-      <?php $gmparams=(array)unserialize($mealType); ?>
 <tr>
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-meal-type") ? get_option("gmc-label-meal-type") . ':' : "Meal type:"; ?>
 
           <?php $output = ''; ?>
-                    <?php foreach($gmparams as $gmp) { ?>
+                    <?php foreach($mealType as $gmp) { ?>
 
-            <?php $output.= '<span itemprop="recipeCategory">'. gmc_recipe_filter_link($gmp, 'course').'</span>, '; ?>
+            <?php $output.= '<span itemprop="recipeCategory">'. gmc_recipe_filter_link($gmp->name, $large_image_url, 'course').'</span>, '; ?>
           <?php } ?>
         </td><td>
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
-    <?php $misc = get_post_meta($post->ID,'gmc-recopt-other',true); ?>
+    <?php $misc = wp_get_object_terms($post->ID, 'gmc_misc'); ?>
         <?php if (!empty($misc)) { ?>
 
-      <?php $gmparams=(array)unserialize($misc); ?>
 <tr>
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-misc") ? get_option("gmc-label-misc") . ':' : "Misc:"; ?>
 
           <?php $output = ''; ?>
-                    <?php foreach($gmparams as $gmp) { ?>
+                    <?php foreach($misc as $gmp) { ?>
 
+            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'misc').", "; ?>
           <?php } ?>
-          <?php $output.= gmc_recipe_filter_link($gmp, 'misc').", "; ?>
         </td><td>
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
-    <?php $occasions = get_post_meta($post->ID,'gmc-recopt-occasion',true); ?>
+    <?php $occasion = wp_get_object_terms($post->ID, 'gmc_occasion'); ?>
         <?php if (!empty($occasions)) { ?>
 
-      <?php $gmparams=(array)unserialize($occasions); ?>
 <tr>
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-occasion") ? get_option("gmc-label-occasion") . ':' : "Occasion:"; ?>
 
           <?php $output = ''; ?>
-                    <?php foreach($gmparams as $gmp) { ?>
+                    <?php foreach($occasion as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp, 'occasion').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'occasion').", "; ?>
           <?php } ?>
         </td><td>
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
-    <?php $region = get_post_meta($post->ID, 'gmc-recopt-region', true); ?>
-        <?php if (!$region) { ?>
+    <?php $region = wp_get_object_terms($post->ID, 'gmc_region'); ?>
+        <?php if (!empty($region)) { ?>
+
+      <?php $region = $region[0]->name; ?>
+        <?php } else { ?>
 
       <?php $region = 'Worldwide'; ?>
     <?php } ?>
@@ -172,7 +170,7 @@
         <?php echo get_option("gmc-label-region") ? get_option("gmc-label-region") . ':' : "Region:"; ?>
 
       </td><td itemprop="recipeCuisine">
-        <?php echo gmc_recipe_filter_link($region, 'region'); ?>
+        <?php echo gmc_recipe_filter_link($region, $large_image_url, 'region'); ?>
 
       </td>    </tr>    <?php $author = get_post_meta($post->ID, 'gmc-source-name', true); ?>
         <?php if (!empty($author)) { ?>
@@ -213,7 +211,7 @@
       <?php echo $gmc_description; ?>
 
     </div>  <?php } ?>
-  <?php $ingredients=get_posts('post_status=publish&post_type=recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
+  <?php $ingredients=get_posts('post_status=publish&post_type=gmc_recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
     <?php if ($ingredients) { ?>
 
 <div class="gmc-recipe-ingredients"><h2 class="gmc-recipe-subtitle"><?php echo get_option("gmc-label-ingredients") ? get_option("gmc-label-ingredients") : "Ingredients"; ?></h2><?php $distinctGroupNames = gmc_distinct_group_names($post->ID); ?>

@@ -66,15 +66,15 @@
 <b>
             Does the recipe come from a particular region?
           </b>        </span>        (<a href="#" id="gmc-show-custom-region">Region not listed?</a>)
-      </label>      <?php $selectedregion =get_post_meta($post->ID, 'gmc-recopt-region', true); ?>
+      </label>      <?php $selectedregion = wp_get_object_terms($post->ID, 'gmc_region'); ?>
 <select class="gmc-admin-fullline" id="gmc-recopt-region" name="gmc-recopt-region">
 <option value="">
           No (Worldwide)
 <optgroup label="General - Continent">
-            <?php echo gmc_option_list(array("African" => "African", "American" => "American", "Asian" => "Asian", "European" => "European", "Oceanian" => "Oceanian", "South American" => "South American"), $selectedregion); ?>
+            <?php echo gmc_option_list(array("African" => "African", "American" => "American", "Asian" => "Asian", "European" => "European", "Oceanian" => "Oceanian", "South American" => "South American"), $selectedregion[0]->name); ?>
 
           </optgroup><optgroup label="Specific - Region">
-            <?php echo gmc_option_list(array("British" => "British", "Canadian" => "Canadian", "Chinese" => "Chinese", "Croatian" => "Croatian", "French" => "French", "German" => "German", "Greek" => "Greek", "Indian" => "Indian", "Indonesian" => "Indonesian", "Irish" => "Irish", "Italian" => "Italian", "Jamaican" => "Jamaican", "Japanese" => "Japanese", "Lebanese" => "Lebanese", "Malaysian" => "Malaysian", "Mexican" => "Mexican", "Moroccan" => "Moroccan", "Russian" => "Russian", "Spanish" => "Spanish", "Swedish" => "Swedish", "Thai" => "Thai", "Turkish" => "Turkish", "Vietnamese" => "Vietnamese"), $selectedregion); ?>
+            <?php echo gmc_option_list(array("British" => "British", "Canadian" => "Canadian", "Chinese" => "Chinese", "Croatian" => "Croatian", "French" => "French", "German" => "German", "Greek" => "Greek", "Indian" => "Indian", "Indonesian" => "Indonesian", "Irish" => "Irish", "Italian" => "Italian", "Jamaican" => "Jamaican", "Japanese" => "Japanese", "Lebanese" => "Lebanese", "Malaysian" => "Malaysian", "Mexican" => "Mexican", "Moroccan" => "Moroccan", "Russian" => "Russian", "Spanish" => "Spanish", "Swedish" => "Swedish", "Thai" => "Thai", "Turkish" => "Turkish", "Vietnamese" => "Vietnamese"), $selectedregion[0]->name); ?>
 
           </optgroup>        </option>      </select>    </div><div id="gmc-custom-region-area">
 <label class="gmc-admin-label">
@@ -92,13 +92,13 @@
 <b>
             When would you eat this recipe?
           </b>        </span>      </label><div class="gmc-admin-fullline">
-        <?php $gmallparams=array("Appetizer", "Beverage", "Bread", "Breakfast", "Condiment", "Dessert", "Lunch", "Main Dish", "Salad", "Side Dish", "Snack", "Soup", "Starter"); ?>
-        <?php $gmparams=(array)unserialize(get_post_meta($post->ID,'gmc-recopt-when',true)); ?>
+        <?php $gmallparams=get_terms("gmc_course", array("hide_empty" => 0)); ?>
+        <?php $gmparams = wp_get_object_terms($post->ID, 'gmc_course'); ?>
                 <?php foreach($gmallparams as $gmp) { ?>
 
 <p>
-            <input value="<?php echo $gmp; ?>" name="gmc-recopt-when[]" type="checkbox" <?php echo (in_array($gmp, $gmparams) ? "checked='checked'" : ""); ?> />
-            <?php echo $gmp; ?>
+            <input value="<?php echo $gmp->name; ?>" name="gmc-recopt-when[]" type="checkbox" <?php echo (in_array_field($gmp->name, 'name', $gmparams) ? "checked='checked'" : ""); ?> />
+            <?php echo $gmp->name; ?>
 
           </p>        <?php } ?>
       </div>    </div><div>
@@ -111,13 +111,13 @@
 <b><em>
                   </em>e.g. pumpkin soup for Halloween
                 </b>              </span>          </b>        </span>      </label><div class="gmc-admin-fullline">
-        <?php $gmallparams=array("Barbecue", "Birthday Party", "Casual Party", "Christmas", "Formal Party", "Halloween", "Thanksgiving"); ?>
-        <?php $gmparams=(array)unserialize(get_post_meta($post->ID,'gmc-recopt-occasion',true)); ?>
+        <?php $gmallparams=get_terms("gmc_occasion", array("hide_empty" => 0)); ?>
+        <?php $gmparams = wp_get_object_terms($post->ID, 'gmc_occasion'); ?>
                 <?php foreach($gmallparams as $gmp) { ?>
 
 <p>
-            <input value="<?php echo $gmp; ?>" name="gmc-recopt-occasion[]" type="checkbox" <?php echo (in_array($gmp, $gmparams) ? "checked='checked'" : ""); ?> />
-            <?php echo $gmp; ?>
+            <input value="<?php echo $gmp->name; ?>" name="gmc-recopt-occasion[]" type="checkbox" <?php echo (in_array_field($gmp->name, 'name', $gmparams) ? "checked='checked'" : ""); ?> />
+            <?php echo $gmp->name; ?>
 
           </p>        <?php } ?>
       </div>    </div>  </div><div class="gmc-half">
@@ -148,13 +148,13 @@
                     Serve Hot:
                   </strong>                  This recipe can (or should) be served hot.
                 </b>              </span>          </b>        </span>      </label><div class="gmc-admin-fullline">
-        <?php $gmallparams=array("Child Friendly", "Freezable", "Gourmet", "Pre-preparable", "Serve Cold", "Serve Hot"); ?>
-        <?php $gmparams=(array)unserialize(get_post_meta($post->ID,'gmc-recopt-other',true)); ?>
+        <?php $gmallparams=get_terms("gmc_misc", array("hide_empty" => 0)); ?>
+        <?php $gmparams = wp_get_object_terms($post->ID, 'gmc_misc'); ?>
                 <?php foreach($gmallparams as $gmp) { ?>
 
 <p>
-            <input value="<?php echo $gmp; ?>" name="gmc-recopt-other[]" type="checkbox" <?php echo (in_array($gmp, $gmparams) ? "checked='checked'" : ""); ?> />
-            <?php echo $gmp; ?>
+            <input value="<?php echo $gmp->name; ?>" name="gmc-recopt-other[]" type="checkbox" <?php echo (in_array_field($gmp->name, 'name', $gmparams) ? "checked='checked'" : ""); ?> />
+            <?php echo $gmp->name; ?>
 
           </p>        <?php } ?>
       </div>    </div><div>
@@ -163,13 +163,13 @@
 <b>
             Can the recipe be associated with any dietary requirements?
           </b>        </span>      </label><div class="gmc-admin-fullline">
-        <?php $gmallparams=array("Diabetic", "Gluten Free", "Vegan", "Vegetarian"); ?>
-        <?php $gmparams=(array)unserialize(get_post_meta($post->ID,'gmc-recopt-dietary',true)); ?>
+        <?php $gmallparams=get_terms("gmc_dietary", array("hide_empty" => 0)); ?>
+        <?php $gmparams = wp_get_object_terms($post->ID, 'gmc_dietary'); ?>
                 <?php foreach($gmallparams as $gmp) { ?>
 
 <p>
-            <input value="<?php echo $gmp; ?>" name="gmc-recopt-dietary[]" type="checkbox" <?php echo (in_array($gmp, $gmparams) ? "checked='checked'" : ""); ?> />
-            <?php echo $gmp; ?>
+            <input value="<?php echo $gmp->name; ?>" name="gmc-recopt-dietary[]" type="checkbox" <?php echo (in_array_field($gmp->name, 'name', $gmparams) ? "checked='checked'" : ""); ?> />
+            <?php echo $gmp->name; ?>
 
           </p>        <?php } ?>
       </div>    </div><div>
@@ -178,13 +178,13 @@
 <b>
             Can the recipe be associated with any allergies?
           </b>        </span>      </label><div class="gmc-admin-fullline">
-        <?php $gmallparams=array("Egg", "Fish", "Milk", "Peanuts", "Shellfish", "Soy", "Tree Nuts", "Wheat"); ?>
-        <?php $gmparams=(array)unserialize(get_post_meta($post->ID,'gmc-recopt-allergies',true)); ?>
+        <?php $gmallparams=get_terms("gmc_allergy", array("hide_empty" => 0)); ?>
+        <?php $gmparams = wp_get_object_terms($post->ID, 'gmc_allergy'); ?>
                 <?php foreach($gmallparams as $gmp) { ?>
 
 <p>
-            <input value="<?php echo $gmp; ?>" name="gmc-recopt-allergies[]" type="checkbox" <?php echo (in_array($gmp, $gmparams) ? "checked='checked'" : ""); ?> />
-            <?php echo $gmp; ?>
+            <input value="<?php echo $gmp->name; ?>" name="gmc-recopt-allergies[]" type="checkbox" <?php echo (in_array_field($gmp->name, 'name', $gmparams) ? "checked='checked'" : ""); ?> />
+            <?php echo $gmp->name; ?>
 
           </p>        <?php } ?>
       </div>    </div>  </div></div><div style="clear:both">
