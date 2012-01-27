@@ -1612,7 +1612,7 @@ function gmc_show_recipe($id, $showtitle=true) {
   global $gmcCssPrint;
   $gmcCssPrint = get_option('gmc-overridecss');
 
-  require_once "recipe-template-shortcode.php";
+  require "recipe-template-shortcode.php";
 
   $output=ob_get_contents();
   ob_end_clean();

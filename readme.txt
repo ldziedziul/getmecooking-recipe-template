@@ -78,6 +78,9 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.13 =
+* Fixed bug where only 1 recipe per post was showing
+
 = 1.12 =
 * Can now add your own allergies, courses, dietary requirements etc
 * No longer lower case the note text
