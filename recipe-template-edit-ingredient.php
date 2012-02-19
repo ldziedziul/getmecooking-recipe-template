@@ -4,98 +4,48 @@
 
   <?php $ingredientId = 'unique-ingred';; ?>
 <?php } ?>
-<input name="gmc-recipeingredientid[]" type="hidden" value="<?php echo $ingredientId; ?>" /><input id="gmc-recipeingredientorder-<?php echo $i; ?>" name="gmc-recipeingredientorder[]" type="hidden" value="<?php echo $i; ?>" /><div class="gmc-full <?php echo $gmcaddnew ? 'gmc-sidebar' : ''; ?>">
-<div class="gmc-half">
-<div class="padder">
-<div>
-<label class="gmc-admin-label">
-<span>
-<b>
-              Ingredient name:
-            </b>          </span>          (e.g. Sausage)
-        </label>      </div>            <?php if ($gmcaddnew) { ?>
-
-<input class="gmc-admin-fullline" id="gmc-admin-new-ingredient-<?php echo $i; ?>" name="gmc-ingredientname[]" value="<?php echo $ingredient->post_title; ?>" />            <?php } else { ?>
-
-<input class="gmc-admin-fullline" name="gmc-ingredientname[]" value="<?php echo $ingredient->post_title; ?>" />      <?php } ?>
-<div>
-<label class="gmc-admin-label">
-<span>
-<b>
-              Quantity:
-            </b>          </span>          (e.g. 1)
-        </label><input class="gmc-admin-fullline" name="gmc-ingredientquantity[]" value="<?php echo get_post_meta($ingredientId,'gmc-ingredientquantity',true); ?>" />      </div><div id="gmc-standard-measurement-area-<?php echo $ingredientId; ?>">
-<label class="gmc-admin-label">
-<span>
-<b>
-              Measurement type:
-            </b>          </span>          (       
-<a class="gmc-show-custom-measurement" href="#" id="gmc-show-custom-measurement-<?php echo $ingredientId; ?>" tabindex="-1">Measurement not listed?</a>          )
-        </label>        <?php $ms=get_post_meta($ingredientId,'gmc-ingredientmeasurement',true); ?>
-<select class="gmc-admin-fullline" name="gmc-ingredientmeasurement[]">
+<tr class="gmc-singleingredient" id="gmc-ingredients-ingredient-<?php echo $i; ?>">
+<input name="gmc-recipeingredientid[]" type="hidden" value="<?php echo $ingredientId; ?>" /><input id="gmc-recipeingredientorder-<?php echo $i; ?>" name="gmc-recipeingredientorder[]" type="hidden" value="<?php echo $i; ?>" /><td>
+<img alt:="<?php echo __('Reposition ingredient in the list', 'gmc'); ?>" height="16" src="<?php echo gmc_plugin_url() . '/images/cursor-drag.png'; ?>" title="<?php echo __('Reposition ingredient in the list', 'gmc'); ?>" width="16" />  </td><td>
+<input class="gmc-ingredient-quantity-hint" name="gmc-ingredientquantity[]" size="6" value="<?php echo get_post_meta($ingredientId,'gmc-ingredientquantity',true); ?>" />  </td><td>
+<div id="gmc-standard-measurement-area-<?php echo $ingredientId; ?>"><a class="gmc-show-custom-measurement" href="#" id="gmc-show-custom-measurement-<?php echo $ingredientId; ?>" tabindex="-1"><?php _e('Measurement not listed?', 'gmc'); ?></a><br />      <?php $ms=get_post_meta($ingredientId,'gmc-ingredientmeasurement',true); ?>
+<select name="gmc-ingredientmeasurement[]">
 <option value="">
-            None
-          </option><optgroup label="Weight">
-            <?php echo gmc_option_list(array("g" => "Grams", "kg" => "Kilograms", "oz" => "Ounces", "lb" => "Pounds", "imperial pint weight" => "Pint (Imperial)", "usa pint weight" => "Pint (US)"), $ms); ?>
+          <?php _e('None', 'gmc'); ?>
+        </option><optgroup label="<?php echo __('Weight', 'gmc'); ?>">
+          <?php echo gmc_option_list(array('g' => __('Grams', 'gmc'), 'kg' => __('Kilograms', 'gmc'), 'oz' => __('Ounces', 'gmc'), 'lb' => __('Pounds', 'gmc'), "imperial pint weight" => __('Pint (Imperial)', 'gmc'), "usa pint weight" => __('Pint (US)', 'gmc')), $ms); ?>
 
-          </optgroup><optgroup label="Liquids">
-            <?php echo gmc_option_list(array("ml" => "Millilitre", "litre" => "Litre", "imperial fl oz" => "Fluid Ounces (Imperial)", "usa fl oz" => "Fluid Ounces (US)", "juice" => "Juice(s)"), $ms); ?>
+        </optgroup><optgroup label="<?php echo __('Liquids', 'gmc'); ?>">
+          <?php echo gmc_option_list(array("ml" => __('Millilitre', 'gmc'), "litre" => __('Litre', 'gmc'), "imperial fl oz" => __('Fluid Ounces (Imperial)', 'gmc'), "usa fl oz" => __('Fluid Ounces (US)', 'gmc'), "juice" => __('Juice(s)', 'gmc')), $ms); ?>
 
-          </optgroup><optgroup label="Size">
-            <?php echo gmc_option_list(array("small" => "Small", "medium" => "Medium", "large" => "Large"), $ms); ?>
+        </optgroup><optgroup label="<?php echo __('Size', 'gmc'); ?>">
+          <?php echo gmc_option_list(array("small" => __('Small', 'gmc'), "medium" => __('Medium', 'gmc'), "large" => __('Large', 'gmc')), $ms); ?>
 
-          </optgroup><optgroup label="Thickness">
-            <?php echo gmc_option_list(array("thin slice" => "Thin slice(s)", "medium slice" => "Medium slice(s)", "thick slice" => "Thick slice(s)"), $ms); ?>
+        </optgroup><optgroup label="<?php echo __('Thickness', 'gmc'); ?>">
+          <?php echo gmc_option_list(array("thin slice" => __('Thin slice(s)', 'gmc'), "medium slice" => __('Medium slice(s)', 'gmc'), "thick slice" => __('Thick slice(s)', 'gmc')), $ms); ?>
 
-          </optgroup><optgroup label="Other">
-            <?php echo gmc_option_list(array("bunch" => "Bunch", "bottle" => "Bottle", "box" => "Box", "bulb" => "Bulb", "can" => "Can", "clove" => "Clove", "cube" => "Cube", "cup" => "Cup", "drizzle" => "Drizzle", "drop" => "Drop", "glass" => "Glass", "handful" => "Handful", "head" => "Head", "jar" => "Jar", "knob" => "Knob", "packet" => "Packet", "piece" => "Piece", "pinch" => "Pinch", "imperial pint" => "Pint (Imperial)", "usa pint" => "Pint (US)", "rib" => "Rib", "scoop" => "Scoop", "sheet" => "Sheet", "sprinkle" => "Sprinkle", "sprig" => "Sprig", "stalk" => "Stalk", "stick" => "Stick", "tablespoon" => "Tablespoon", "heaped tablespoon" => "Tablespoon (heaped)", "teaspoon" => "Teaspoon", "heaped teaspoon" => "Teaspoon (heaped)", "tin" => "Tin", "wedge" => "Wedge", "zest" => "Zest"), $ms); ?>
+        </optgroup><optgroup label="<?php echo __('Other', 'gmc'); ?>">
+          <?php echo gmc_option_list(array("bunch" => __('Bunch', 'gmc'), "bottle" => __('Bottle', 'gmc'), "box" => __('Box', 'gmc'), "bulb" => __('Bulb', 'gmc'), "can" => __('Can', 'gmc'), "clove" => __('Clove', 'gmc'), "cube" => __('Cube', 'gmc'), "cup" => __('Cup', 'gmc'), "drizzle" => __('Drizzle', 'gmc'), "drop" => __('Drop', 'gmc'), "glass" => __('Glass', 'gmc'), "handful" => __('Handful', 'gmc'), "head" => __('Head', 'gmc'), "jar" => __('Jar', 'gmc'), "knob" => __('Knob', 'gmc'), "packet" => __('Packet', 'gmc'), "piece" => __('Piece', 'gmc'), "pinch" => __('Pinch', 'gmc'), "imperial pint" => __('Pint (Imperial)', 'gmc'), "usa pint" => __('Pint (US)', 'gmc'), "rib" => __('Rib', 'gmc'), "scoop" => __('Scoop', 'gmc'), "sheet" => __('Sheet', 'gmc'), "sprinkle" => __('Sprinkle', 'gmc'), "sprig" => __('Sprig', 'gmc'), "stalk" => __('Stalk', 'gmc'), "stick" => __('Stick', 'gmc'), "tablespoon" => __('Tablespoon', 'gmc'), "heaped tablespoon" => __('Tablespoon (heaped)', 'gmc'), "teaspoon" => __('Teaspoon', 'gmc'), "heaped teaspoon" => __('Teaspoon (heaped)', 'gmc'), "tin" => __('Tin', 'gmc'), "wedge" => __('Wedge', 'gmc'), "zest" => __('Zest', 'gmc')), $ms); ?>
 
-          </optgroup>        </select>      </div><div id="gmc-custom-measurement-area-<?php echo $ingredientId; ?>">
-<label class="gmc-admin-label">
-<b>
-            Custom measurement:
-          </b>          (<a class="gmc-show-standard-measurement" href="#" id="gmc-show-standard-measurement-<?php echo $ingredientId; ?>">Show measurement list</a>)
-        </label>                <?php if (get_post_meta($ingredientId, 'gmc-use-custom-measurement', true)) { ?>
+        </optgroup>      </select>    </div><div id="gmc-custom-measurement-area-<?php echo $ingredientId; ?>"><a class="gmc-show-standard-measurement" href="#" id="gmc-show-standard-measurement-<?php echo $ingredientId; ?>"><?php _e('Show measurement list', 'gmc'); ?></a><br />            <?php if (get_post_meta($ingredientId, 'gmc-use-custom-measurement', true)) { ?>
 
-<input class="gmc-admin-fullline gmc-custom-measurement" id="gmc-custom-measurement-<?php echo $ingredientId; ?>" name="gmc-custom-measurement[]" value="<?php echo get_post_meta($ingredientId, 'gmc-ingredientmeasurement', true); ?>" />                <?php } else { ?>
+<input class="gmc-custom-measurement" id="gmc-custom-measurement-<?php echo $ingredientId; ?>" name="gmc-custom-measurement[]" value="<?php echo get_post_meta($ingredientId, 'gmc-ingredientmeasurement', true); ?>" />            <?php } else { ?>
 
-<input class="gmc-admin-fullline" name="gmc-custom-measurement[]" />        <?php } ?>
-<input class="gmc-use-custom-measurement" id="gmc-use-custom-measurement-<?php echo $ingredientId; ?>" name="gmc-use-custom-measurement[]" type="hidden" value="<?php echo get_post_meta($ingredientId, 'gmc-use-custom-measurement', true); ?>" />      </div><div>
-<label class="gmc-admin-label">
-<span>
-<strong>
-              Ingredient group name (optional):
-            </strong><span class="gmc-tooltip">
-              <img src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="Help" />
-<b><em>
-                </em><p>
-                  Ingredients can be placed into groups such as '
-<strong>Cake base</strong>', '
-<strong>Cake filling</strong>' and '
-<strong>Cake topping</strong>'.
-                </p><p>
-                  Grouping makes it easy for your visitors to see which ingredients are for which part of the recipe.
-                </p>              </b>            </span>          </span>        </label><input class="gmc-admin-fullline" name="gmc-ingredientgroup[]" value="<?php echo get_post_meta($ingredientId,'gmc-ingredientgroup',true); ?>" />      </div><div class="gmc-admin-fullline">
-        <?php $gmcoptional=get_post_meta($ingredientId,'gmc-ingredientoptional',true); ?>
-        <input value="<?php echo $ingredientId; ?>" name="gmc-ingredientoptional[]" type="checkbox" <?php echo ($gmcoptional=="Y" ? "checked='checked'" : ""); ?> />
-        This is an optional ingredient
-<span class="gmc-tooltip">
-            <img src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="Help" />
-<b><em>
-              </em>Could be an ingredient that is not suitable for everyone (e.g. alcohol), or a garnish.
-            </b>          </span><div class="gmc-admin-fullline">
-        </div>                <?php if (!$gmcaddnew) { ?>
+<input name="gmc-custom-measurement[]" />      <?php } ?>
+<input class="gmc-use-custom-measurement" id="gmc-use-custom-measurement-<?php echo $ingredientId; ?>" name="gmc-use-custom-measurement[]" type="hidden" value="<?php echo get_post_meta($ingredientId, 'gmc-use-custom-measurement', true); ?>" />    </div>  </td><td>
+        <?php if ($gmcaddnew) { ?>
+
+<input class="gmc-ingredient-name-hint" id="gmc-admin-new-ingredient-<?php echo $i; ?>" name="gmc-ingredientname[]" size="25" />        <?php } else { ?>
+
+<input class="gmc-ingredient-name-hint" name="gmc-ingredientname[]" size="25" value="<?php echo $ingredient->post_title; ?>" />    <?php } ?>
+  </td><td>
+<input class="gmc-ingredient-note-hint" name="gmc-ingredientnote[]" size="60" value="<?php echo $ingredient->post_content; ?>" />  </td><td>
+<input name="gmc-ingredientgroup[]" size="25" value="<?php echo get_post_meta($ingredientId,'gmc-ingredientgroup',true); ?>" />  </td><td class="icon">
+    <?php $gmcoptional=get_post_meta($ingredientId,'gmc-ingredientoptional',true); ?>
+    <input value="<?php echo $ingredientId; ?>" name="gmc-ingredientoptional[]" type="checkbox" <?php echo ($gmcoptional=="Y" ? "checked='checked'" : ""); ?> />
+  </td><td class="icon deleteIcon">
+        <?php if (!$gmcaddnew) { ?>
 
 <a class="gmc-delete-ingredient" href="#" id="gmc-ingredient-to-delete-<?php echo $ingredientId; ?>">
-            Delete this ingredient
-          </a>        <?php } ?>
-      </div>    </div>  </div><div class="gmc-half">
-<div>
-<label class="gmc-admin-label">
-<span>
-<b>
-            Note:
-          </b>        </span>        (e.g. Plain pork sausages are best)
-      </label>      <textarea class="gmc-admin-fullline autoResize" name="gmc-ingredientnote[]"><?php echo $ingredient->post_content; ?></textarea>
-    </div>  </div><div style="clear:both">
-  </div></div>
+<img alt:="<?php echo __('Delete this ingredient', 'gmc'); ?>" height="16" src="<?php echo gmc_plugin_url() . '/images/delete.png'; ?>" title="<?php echo __('Delete this ingredient', 'gmc'); ?>" width="16" />      </a>    <?php } ?>
+  </td></tr>

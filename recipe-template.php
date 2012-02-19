@@ -3,22 +3,19 @@
 	Plugin Name: GetMeCooking Recipe Template
 	Plugin URI: http://www.getmecooking.com/recipe-template
 	Description: <strong>For food bloggers - allows you to add recipes to your blog</strong>. Includes recipe title, photographs, list of ingredients, recipe steps and Search Engine Optimisation (SEO). Also your recipes can be added to <a href="http://www.getmecooking.com/">http://www.getmecooking.com</a>, which will give your recipes additional functionality, more exposure and increased traffic. Visit the <a href="http://www.getmecooking.com/recipe-template/">information page</a> for full details.
-	Version: 1.13
+	Version: 1.14
 	Author: GetMeCooking
 	Author URI: http://www.getmecooking.com/
 */
 
 define('GMC_URL', 'http://www.getmecooking.com/recipeservice.svc/submitrecipe');
-define('GMC_VERSION', '1.13');
+define('GMC_VERSION', '1.14');
 
 require_once "recipe-template-functions.php";
 
-register_activation_hook( __FILE__, 'gmc_activate' );
+load_plugin_textdomain('gmc', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/');
 
-if (file_exists(dirname(__FILE__).'\recipe-template-function-extras.php'))
-{
-  require_once "recipe-template-function-extras.php";
-}
+register_activation_hook( __FILE__, 'gmc_activate' );
 
 add_action('admin_menu', 'gmc_menu');
 
@@ -65,4 +62,9 @@ add_filter('admin_body_class', 'gmc_admin_body_class');
 add_filter('attachment_fields_to_edit', 'gmc_attachment_fields_to_edit', 1000, 2);
 add_filter('redirect_post_location', 'gmc_redirect_post_location', 10, 2);
 add_filter('list_terms_exclusions','gmc_exclude_recipe_category');
+
+if (file_exists(dirname(__FILE__).'\premium\recipe-template.php'))
+{
+  require_once "premium/recipe-template.php";
+}
 ?>

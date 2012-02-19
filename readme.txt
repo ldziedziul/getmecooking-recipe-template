@@ -78,6 +78,14 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.14 =
+* Can now group recipe steps e.g. For the cake base, For the cake topping...
+* Improved layout for adding a recipe
+* Prep / cook time labels now only show if they have been filled in
+* Insert recipe dialog now orders recipes by alphabetical
+* Fixed ability to press update recipe more than once at a time which caused duplicate ingredients/steps
+* Fixed deleting an ingredient note, it was not working
+
 = 1.13 =
 * Fixed bug where only 1 recipe per post was showing
 
@@ -139,6 +147,9 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 * First release
 
 == Upgrade Notice ==
+
+= 1.14 =
+* Added td.gmc-group-list-title. Please see changes on line 87 and 91-99
 
 = 1.07 =
 * Please reset the CSS back to default in the GetMeCooking settings page due to lots of changes
