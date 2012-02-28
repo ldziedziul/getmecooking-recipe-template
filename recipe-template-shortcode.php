@@ -24,13 +24,9 @@
       <?php } ?>
             <?php if (!$hasStepImage && !$large_image_url) { ?>
 
-<a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-text-<?php echo $post->ID; ?>">
-<img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" />          <?php _e('Print recipe', 'gmc'); ?>
-        </a>            <?php } else { ?>
+<a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-text-<?php echo $post->ID; ?>"><img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" /><?php _e('Print recipe', 'gmc'); ?></a>            <?php } else { ?>
 
-<a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-options-<?php echo $post->ID; ?>">
-<img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" />          <?php _e('Print recipe', 'gmc'); ?>
-        </a><ul class="gmc-print-options-box" id="gmc-print-options-box-<?php echo $post->ID; ?>" style="display:none">
+<a class="gmc-print-options gmc-print-hidden" href="#" id="gmc-print-options-<?php echo $post->ID; ?>"><img src="<?php echo gmc_plugin_url() . '/images/print.png'; ?>" /><?php _e('Print recipe', 'gmc'); ?></a><ul class="gmc-print-options-box" id="gmc-print-options-box-<?php echo $post->ID; ?>" style="display:none">
                     <?php if ($hasStepImage) { ?>
 
 <li>
@@ -369,11 +365,11 @@
                 <?php echo gmc_label_step($i); ?>
 
               </td>              <?php $thumbid=get_post_thumbnail_id($step->ID); ?>
+              <?php $gmc_step_photo_position = get_option('gmc-step-photo-position', 1); ?>
                             <?php if ($thumbid) { ?>
 
                 <?php $altText = $recipeTitle; ?>
                 <?php $large_image_url = wp_get_attachment_image_src($thumbid, 'large'); ?>
-                <?php $gmc_step_photo_position = get_option('gmc-step-photo-position', 1)         ; ?>
 <td>
                                     <?php if($gmc_step_photo_position == '0')                                { ?>
 
@@ -386,6 +382,10 @@
 <a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo')); ?></a><td class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></td>                  <?php } ?>
                 </td>                            <?php } else { ?>
 
+                                <?php if($gmc_step_photo_position == '3') { ?>
+
+<td>
+                  </td>                <?php } ?>
 <td class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></td>              <?php } ?>
             </tr>          <?php } ?>
         </table>            <?php } else { ?>
@@ -410,23 +410,27 @@
 
               </td>            </tr><tr class="gmc-step-list-item">
               <?php $thumbid=get_post_thumbnail_id($step->ID); ?>
+              <?php $gmc_step_photo_position = get_option('gmc-step-photo-position', 1); ?>
                             <?php if ($thumbid) { ?>
 
                 <?php $altText = $recipeTitle; ?>
                 <?php $large_image_url = wp_get_attachment_image_src($thumbid, 'large'); ?>
-                <?php $gmc_step_photo_position = get_option('gmc-step-photo-position', 1); ?>
 <td>
-                                    <?php if($gmc_step_photo_position == '0')                                { ?>
+                                    <?php if($gmc_step_photo_position == '0') { ?>
 
 <a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo'))                 ; ?></a><div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div>                                    <?php } elseif($gmc_step_photo_position == '1')                                      { ?>
 
-<div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div><td><a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo gmc-img-right')); ?></a></td>                                    <?php } elseif($gmc_step_photo_position == '2')                      { ?>
+<div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div><td><a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo gmc-img-right')); ?></a></td>                                    <?php } elseif($gmc_step_photo_position == '2') { ?>
 
 <div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div><a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo')); ?></a>                                    <?php } else { ?>
 
 <a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo')); ?></a><td class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></td>                  <?php } ?>
                 </td>                            <?php } else { ?>
 
+                                <?php if($gmc_step_photo_position == '3') { ?>
+
+<td>
+                  </td>                <?php } ?>
 <td class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></td>              <?php } ?>
             </tr>          <?php } ?>
         </table>      <?php } ?>

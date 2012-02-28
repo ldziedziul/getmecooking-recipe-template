@@ -162,7 +162,7 @@
 <th>
                 <?php _e('What label option would you like between each recipe step?', 'gmc'); ?>
               </th><td><select name="gmc-label-step">
-                  <?php echo gmc_option_list(array("Step 1" => __('Step', 'gmc').' 1', "Step 1." => __('Step', 'gmc').' 1.', "step 1" => __('step', 'gmc').' 1', "step 1." => __('step', 'gmc').' 1.', '1.', '1', "No label" => __('No label', 'gmc')), get_option('gmc-label-step')); ?>
+                  <?php echo gmc_option_list(array(0 => __('Step', 'gmc').' 1', 1 => __('Step', 'gmc').' 1.', 2 => __('step', 'gmc').' 1', 3 => __('step', 'gmc').' 1.', '1.', '1', 6 => __('No label', 'gmc')), get_option('gmc-label-step')); ?>
 
                 </select><span class="gmc-smaller">
                   (<a href="<?php echo gmc_plugin_url().'/docs/label-step-options.png'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
@@ -170,7 +170,7 @@
 <th>
                 <?php _e('Where do you want the recipe step label to appear?', 'gmc'); ?>
               </th><td><select name="gmc-label-step-position">
-                  <?php echo gmc_option_list(array("Above the step text" => __('Above the step text', 'gmc'), "To the left of the step text"  => __('To the left of the step text', 'gmc')), get_option('gmc-label-step-position')); ?>
+                  <?php echo gmc_option_list(array(0 => __('Above the step text', 'gmc'), 1  => __('To the left of the step text', 'gmc')), get_option('gmc-label-step-position')); ?>
 
                 </select><span class="gmc-smaller">
                   (<a href="<?php echo gmc_plugin_url().'/docs/label-step-position-options.png'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
@@ -178,7 +178,7 @@
 <th>
                 <?php _e('Where do you want the recipe step photo to appear?', 'gmc'); ?>
               </th><td><select name="gmc-step-photo-position">
-                  <?php echo gmc_option_list(array("Above the step text" => __('Above the step text', 'gmc'), "To the right of the step text" => __('To the right of the step text', 'gmc'), "Below the step text" => __('Below the step text', 'gmc'), "To the left of the step text" => __('To the left of the step text', 'gmc')), get_option('gmc-step-photo-position')); ?>
+                  <?php echo gmc_option_list(array(0 => __('Above the step text', 'gmc'), 1 => __('To the right of the step text', 'gmc'), 2 => __('Below the step text', 'gmc'), 3 => __('To the left of the step text', 'gmc')), get_option('gmc-step-photo-position')); ?>
 
                 </select><span class="gmc-smaller">
                   (<a href="<?php echo gmc_plugin_url().'/docs/step-photo-position-options.png'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
@@ -186,7 +186,7 @@
 <th>
                 <?php _e('Where do you want the recipe note to appear?', 'gmc'); ?>
               </th><td><select name="gmc-note-position">
-                  <?php echo gmc_option_list(array("Before the recipe steps" => __('Before the recipe steps', 'gmc'), "After the recipe steps" => __('After the recipe steps', 'gmc')), get_option('gmc-note-position')); ?>
+                  <?php echo gmc_option_list(array(0 => __('Before the recipe steps', 'gmc'), 1 => __('After the recipe steps', 'gmc')), get_option('gmc-note-position')); ?>
 
                 </select></td>            </tr><tr>
 <th>

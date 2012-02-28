@@ -78,6 +78,12 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.15 =
+* Introduced a bug in last version where choosing drop down list options on admin page would not have desired output
+* New ingredients had grey text, fixed to be black
+* Removed the tag cloud on admin allergy etc. page
+* Corrected text layout when some steps had photos and others did not
+
 = 1.14 =
 * Can now group recipe steps e.g. For the cake base, For the cake topping...
 * Improved layout for adding a recipe
@@ -147,6 +153,12 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 * First release
 
 == Upgrade Notice ==
+= 1.15 =
+* Added .gmc-print-area img {  padding-right: 5px }
+* ul.gmc_no_list_item { list-style: none; margin-left: 0 }
+* .gmc_list_title { padding-left: 10px; vertical-align: middle }
+* table.gmc_recipe_list, table.gmc_recipe_list td { border: none }
+* table.gmc_recipe_list img { text-align: right }
 
 = 1.14 =
 * Added td.gmc-group-list-title. Please see changes on line 87 and 91-99

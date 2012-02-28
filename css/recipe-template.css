@@ -153,6 +153,10 @@ ul.gmc-print-options-box, ul.gmc-print-options-box li {
   top: 10px;
 }
 
+.gmc-print-area img {
+  padding-right: 5px;
+}
+
 ul.gmc-print-options-box {
   clear: both;
   margin: 0;
@@ -174,6 +178,24 @@ ul.gmc-print-options-box {
 
 .gmc-print-options-box li a:hover {
   color: #999999;
+}
+
+ul.gmc_no_list_item {
+  list-style: none;
+  margin-left: 0;
+}
+
+.gmc_list_title {
+  padding-left: 10px;
+  vertical-align: middle;
+}
+
+table.gmc_recipe_list, table.gmc_recipe_list td {
+  border: none;
+}
+
+table.gmc_recipe_list img {
+  text-align: right;
 }
 
 @media print {

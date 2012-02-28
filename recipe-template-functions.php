@@ -238,7 +238,7 @@ function gmc_init() {
       'labels' => array( 
         'name' => __( 'Allergies', 'gmc' ), 
         'singular_name' => __( 'Allergy', 'gmc' ),
-        'popular_items' => __( 'Popular Allergies', 'gmc' ),
+        'popular_items' => NULL,
         'search_items' => __( 'Search Allergies', 'gmc' ), 
         'all_items' => __( 'All Allergies', 'gmc' ), 
         // 'parent_item' => __( 'Parent Allergy' ), 
@@ -263,7 +263,7 @@ function gmc_init() {
       'labels' => array( 
         'name' => __( 'Courses', 'gmc' ), 
         'singular_name' => __( 'Course', 'gmc' ),
-        'popular_items' => __( 'Popular Courses', 'gmc' ),
+        'popular_items' => NULL,
         'search_items' => __( 'Search Courses', 'gmc' ), 
         'all_items' => __( 'All Courses', 'gmc' ), 
         // 'parent_item' => __( 'Parent Course', 'gmc' ), 
@@ -289,7 +289,7 @@ function gmc_init() {
       'labels' => array( 
         'name' => __( 'Dietaries', 'gmc' ), 
         'singular_name' => __( 'Dietary', 'gmc'),
-        'popular_items' => __( 'Popular Dietaries', 'gmc' ),
+        'popular_items' => NULL,
         'search_items' => __( 'Search Dietaries', 'gmc' ), 
         'all_items' => __( 'All Dietaries', 'gmc' ), 
         // 'parent_item' => __( 'Parent Dietary', 'gmc' ), 
@@ -315,7 +315,7 @@ function gmc_init() {
       'labels' => array( 
         'name' => __( 'Miscs', 'gmc'), 
         'singular_name' => __( 'Misc', 'gmc'),
-        'popular_items' => __( 'Popular Miscs', 'gmc'),
+        'popular_items' => NULL,
         'search_items' => __( 'Search Miscs', 'gmc'), 
         'all_items' => __( 'All Miscs', 'gmc'), 
         // 'parent_item' => __( 'Parent Misc', 'gmc'), 
@@ -341,7 +341,7 @@ function gmc_init() {
       'labels' => array( 
         'name' => __( 'Occasions', 'gmc'), 
         'singular_name' => __( 'Occasion', 'gmc'),
-        'popular_items' => __( 'Popular Occasions', 'gmc'),
+        'popular_items' => NULL,
         'search_items' => __( 'Search Occasions', 'gmc'), 
         'all_items' => __( 'All Occasions', 'gmc'), 
         // 'parent_item' => __( 'Parent Occasion' ), 
@@ -367,7 +367,7 @@ function gmc_init() {
       'labels' => array( 
         'name' => __( 'Regions', 'gmc'), 
         'singular_name' => __( 'Region', 'gmc'),
-        'popular_items' => __( 'Popular Regions', 'gmc'),
+        'popular_items' => NULL,
         'search_items' => __( 'Search Regions', 'gmc'), 
         'all_items' => __( 'All Regions', 'gmc'), 
         // 'parent_item' => __( 'Parent Region' ), 
@@ -1064,10 +1064,10 @@ function gmc_mainrecipe_box($post, $metabox) {
 	
 	<div id="gmc-note">
 	  <?php 
-		$note_position = get_option('gmc-note-position') == '' ? 'before' : 'after';
+		$note_position = get_option('gmc-note-position') == '' ? __('before', 'gmc') : __('after', 'gmc');
 		$note_link = "<a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options"."'>$note_position</a>";
 	  ?>
-	  <p>Anything you type here will appear <?php echo $note_link; ?> the recipe steps.</p> <!-- TODO translate variables? -->
+    <p><?php printf(__('Anything you type here will appear %s the recipe steps.', 'gmc'), $note_link); ?></p>
     <p id="gmc-note-desc"><?php _e("Recommend some changes to put a twist on the recipe or things to look out for that could ruin the recipe e.g. don't let the mixture boil", 'gmc');?></p>
 	</div>
 	
@@ -1075,26 +1075,30 @@ function gmc_mainrecipe_box($post, $metabox) {
 	  <?php
 		$gmcid=get_post_meta($post->ID,"gmc-id",true); 
 		$gmcusername=get_option("gmc-username");
-		
-		if (empty($gmcusername)) { //TODO translate variables?
-		echo "<p>You are currently using this plugin as a guest user. To get more functionality, please <a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options"."'>enter your GetMeCooking details</a>.</p>";
+    $details_url = get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options";
+
+		if (empty($gmcusername)) {
+		  printf( __('<p>You are currently using this plugin as a guest user. To get more functionality, please <a href="%s">enter your GetMeCooking details</a>.</p>', 'gmc'), $details_url);
 		} else {
-		echo "<p>You have told us that your GetMeCooking username is <strong>".$gmcusername."</strong>.<br/>";//TODO translate variables?
-		echo "<p>You can <a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options"."'>change your details here</a>.</p>";//TODO translate variables?
+      printf( __('<p>You have told us that your GetMeCooking username is <strong>%s</strong>.<br/>', 'gmc'), $gmcusername);
+  		printf( __('<p>You can <a href="%s">change your details here</a></p>', 'gmc'), $details_url);
 		} 
 		
 		echo "<p>";
-		if (get_option('gmc-hide-recipes'))  //TODO translate variables?
-		echo "You have opted out of send this recipe to GetMeCooking. (<a href='".get_bloginfo('url')."/wp-admin/admin.php?page=getmecooking_options#gmc-share-the-love"."'>I've changed my mind, I want my recipes to appear on GetMeCooking</a>)";
+		if (get_option('gmc-hide-recipes')) {
+      $share_the_love = get_bloginfo('url').'/wp-admin/admin.php?page=getmecooking_options#gmc-share-the-love';
+		  printf( __('You have opted out of sending this recipe to GetMeCooking. (<a href="%s">I\'ve changed my mind, I want my recipes to appear on GetMeCooking</a>)', 'gmc'), $share_the_love);
+    }
 		else
 		{
-      echo __('You have opted in to send this recipe to GetMeCooking.', 'gmc') . ' ';
+      _e('You have opted in to send this recipe to GetMeCooking.', 'gmc');
+      echo ' ';
       if (empty($gmcusername)) {
         _e('Once approved by the staff it will appear on <a href="http://www.getmecooking.com/recipes">www.getmecooking.com</a>.', 'gmc');
       }
       else {
-        //TODO translate variables?
-        echo 'Once approved by the staff it will appear on <a href="http://www.getmecooking.com/user/' . strtolower($gmcusername) . '">http://www.getmecooking.com/user/' . strtolower($gmcusername) . '</a>';
+        $user_profile_url = 'http://www.getmecooking.com/user/' . strtolower($gmcusername);
+        printf( __('Once approved by the staff it will appear on <a href="%s">%s</a>', 'gmc'), $user_profile_url, $user_profile_url);
       }
     }
 		echo "</p>";
@@ -2112,7 +2116,7 @@ function gmc_admin_post_thumbnail_html($content) {
   global $post;
   
   if ($post->post_type=="gmc_recipe") {
-	$content=preg_replace('/Set featured image/','Set photograph of finished Recipe', $content); //TODO translate issue - how I get the phrase set featured image?
+	$content=preg_replace('/Set featured image/','Set photograph of finished Recipe', $content); //TODO not used?
 	$content=preg_replace('/Remove featured image/','Remove photograph of finished Recipe', $content);
   }
 
@@ -2468,7 +2472,7 @@ function gmc_label_step($step_id)
 	  case '5':
 		return $step_id;
 		break;
-	  case '6':
+	  case '6':    
 		return;
 		break;
 	  default:
