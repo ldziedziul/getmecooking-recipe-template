@@ -78,6 +78,9 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.16 =
+* The initial allergies etc. were not being added to the database
+
 = 1.15 =
 * Introduced a bug in last version where choosing drop down list options on admin page would not have desired output
 * New ingredients had grey text, fixed to be black
@@ -153,6 +156,10 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 * First release
 
 == Upgrade Notice ==
+= 1.16=
+* Removed padding-left from .gmc_list_title
+* Added padding-left:10px;padding-right:10px; to table.gmc_recipe_list img
+
 = 1.15 =
 * Added .gmc-print-area img {  padding-right: 5px }
 * ul.gmc_no_list_item { list-style: none; margin-left: 0 }

@@ -1,8 +1,4 @@
 <?php
-/*
-  Plugin support functions
-*/
-
 $gmc_skip_content=false;
 
 function gmc_plugin_url() {
@@ -14,6 +10,11 @@ function gmc_plugin_filepath() {
 }
 
 function populate_taxonomies() {
+  if(get_option("gmc_populated_taxonomies"))
+  {
+    return;
+  }
+
   wp_insert_term(__('Egg', 'gmc'), 'gmc_allergy');
   wp_insert_term(__('Fish', 'gmc'), 'gmc_allergy');
   wp_insert_term(__('Milk', 'gmc'), 'gmc_allergy');
@@ -56,6 +57,8 @@ function populate_taxonomies() {
   wp_insert_term(__('Formal Party', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Halloween', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Thanksgiving', 'gmc'), 'gmc_occasion');
+
+  add_option("gmc_populated_taxonomies", 'true', '', 'no');
 }
 
 function gmc_menu() {
@@ -123,7 +126,6 @@ function gmc_init() {
 	array(  'labels' => array(
 			'name' => __('Recipes', 'gmc'),
 			'singular_name' => __('Recipe', 'gmc'),
-			//'add_new' => __( 'Add New', 'gmc'),
 			'add_new_item' => __( 'Add New Recipe', 'gmc'),
 			'edit' => __( 'Edit', 'gmc'),
 			'edit_item' => __( 'Edit Recipe', 'gmc'),
@@ -133,10 +135,7 @@ function gmc_init() {
 			'search_items' => __( 'Search Recipes', 'gmc'),
 			'not_found' => __( 'No Recipes found', 'gmc'),
 			'not_found_in_trash' => __( 'No Recipes found in Trash', 'gmc')
-			//'parent' => __( 'Parent Recipe' ), // !!!
-			//'parent_item_colon' => __('Parent Recipe: ') // !!!
 		  ),
-		  //'menu_position' => 5.999,
       'menu_icon' => gmc_plugin_url().'/images/icon-admin-menu.png',
 		  'publicly_queryable' => true,
 		  'show_ui' => true,
@@ -147,33 +146,12 @@ function gmc_init() {
 		  'query_var' => true,
 		  'supports' => array('title',
 							  'editor',
-							  //'excerpt',
-							  //'trackbacks',
-							  //'custom-fields',
-							  //'comments',
-							  //'revisions',
 							  'thumbnail'
-							  //'author',
-							  //'page-attributes'
 							  )) );
 
   register_post_type('gmc_recipestep', 
-	array(  //'labels' => array(
-			// 'name' => __('Recipe Steps', 'gmc'),
-			// 'singular_name' => __( 'Step', 'gmc'),
-			// 'add_new' => __( 'Add New' ),
-			// 'add_new_item' => __( 'Add New Recipe Step', 'gmc'),
-			// 'edit' => __( 'Edit' ),
-			// 'edit_item' => __( 'Edit Recipe Step', 'gmc'),
-			// 'new_item' => __( 'New Recipe Step', 'gmc'),
-			// 'view' => __( 'View Recipe Step', 'gmc'),
-			// 'view_item' => __( 'View Recipe Step', 'gmc'),
-			// 'search_items' => __( 'Search Recipe Steps', 'gmc'),
-			// 'not_found' => __( 'No Recipe Steps found', 'gmc'),
-			// 'not_found_in_trash' => __( 'No Recipe Steps found in Trash', 'gmc')
-		  //),
+	array(
 		  'publicly_queryable' => false,
-//          'menu_position' => 7,
 		  'show_ui' => false,
 		  'show_in_menu' => false,
 		  'show_in_nav_menus' => false,
@@ -184,34 +162,13 @@ function gmc_init() {
 		  'query_var' => true,
 		  'supports' => array('title',
 							  'editor',
-							  //'excerpt',
-							  //'trackbacks',
-							  //'custom-fields',
-							  //'comments'
-							  //'revisions',
 							  'thumbnail'
-							  //'author',
-							  //'page-attributes'
 							  )
 			));
 
   register_post_type('gmc_recipeingredient', 
-	 array(  //'labels' => array(
-			// 'name' => __( 'Recipe Ingredients' ),
-			// 'singular_name' => __( 'Recipe Ingredient'),
-			// 'add_new' => __( 'Add New' ),
-			// 'add_new_item' => __( 'Add New Recipe Ingredient' ),
-			// 'edit' => __( 'Edit' ),
-			// 'edit_item' => __( 'Edit Recipe Ingredient' ),
-			// 'new_item' => __( 'New Recipe Ingredient' ),
-			// 'view' => __( 'View Recipe Ingredient' ),
-			// 'view_item' => __( 'View Recipe Ingredient' ),
-			// 'search_items' => __( 'Search Recipe Ingredients' ),
-			// 'not_found' => __( 'No Recipe Ingredients found' ),
-			// 'not_found_in_trash' => __( 'No Recipe Ingredients found in Trash' )
-		  // ),
+	 array(
 		  'publicly_queryable' => false,
-//          'menu_position' => 7,
 		  'show_ui' => false,
 		  'show_in_menu' => false,
 		  'show_in_nav_menus' => false,
@@ -222,14 +179,7 @@ function gmc_init() {
 		  'query_var' => true,
 		  'supports' => array('title',
 							  'editor',
-							  //'excerpt',
-							  //'trackbacks',
-							  //'custom-fields',
-							  //'comments'
-							  //'revisions',
 							  'thumbnail'
-							  //'author',
-							  //'page-attributes'
 							  )
 			));
   
@@ -240,9 +190,7 @@ function gmc_init() {
         'singular_name' => __( 'Allergy', 'gmc' ),
         'popular_items' => NULL,
         'search_items' => __( 'Search Allergies', 'gmc' ), 
-        'all_items' => __( 'All Allergies', 'gmc' ), 
-        // 'parent_item' => __( 'Parent Allergy' ), 
-        // 'parent_item_colon' => __( 'Parent Allergy:' ),
+        'all_items' => __( 'All Allergies', 'gmc' ),
         'edit_item' => __( 'Edit Allergy', 'gmc' ), 
         'update_item' => __( 'Update Allergy', 'gmc' ), 
         'add_new_item' => __( 'Add New Allergy', 'gmc' ), 
@@ -265,9 +213,7 @@ function gmc_init() {
         'singular_name' => __( 'Course', 'gmc' ),
         'popular_items' => NULL,
         'search_items' => __( 'Search Courses', 'gmc' ), 
-        'all_items' => __( 'All Courses', 'gmc' ), 
-        // 'parent_item' => __( 'Parent Course', 'gmc' ), 
-        // 'parent_item_colon' => __( 'Parent Course:' ), 
+        'all_items' => __( 'All Courses', 'gmc' ),
         'edit_item' => __( 'Edit Course', 'gmc' ), 
         'update_item' => __( 'Update Course', 'gmc' ), 
         'add_new_item' => __( 'Add New Course', 'gmc' ), 
@@ -291,9 +237,7 @@ function gmc_init() {
         'singular_name' => __( 'Dietary', 'gmc'),
         'popular_items' => NULL,
         'search_items' => __( 'Search Dietaries', 'gmc' ), 
-        'all_items' => __( 'All Dietaries', 'gmc' ), 
-        // 'parent_item' => __( 'Parent Dietary', 'gmc' ), 
-        // 'parent_item_colon' => __( 'Parent Dietary:' ), 
+        'all_items' => __( 'All Dietaries', 'gmc' ),
         'edit_item' => __( 'Edit Dietary', 'gmc' ), 
         'update_item' => __( 'Update Dietary', 'gmc' ), 
         'add_new_item' => __( 'Add New Dietary', 'gmc' ), 
@@ -317,9 +261,7 @@ function gmc_init() {
         'singular_name' => __( 'Misc', 'gmc'),
         'popular_items' => NULL,
         'search_items' => __( 'Search Miscs', 'gmc'), 
-        'all_items' => __( 'All Miscs', 'gmc'), 
-        // 'parent_item' => __( 'Parent Misc', 'gmc'), 
-        // 'parent_item_colon' => __( 'Parent Misc:' ), 
+        'all_items' => __( 'All Miscs', 'gmc'),
         'edit_item' => __( 'Edit Misc', 'gmc'), 
         'update_item' => __( 'Update Misc', 'gmc'), 
         'add_new_item' => __( 'Add New Misc', 'gmc'), 
@@ -344,8 +286,6 @@ function gmc_init() {
         'popular_items' => NULL,
         'search_items' => __( 'Search Occasions', 'gmc'), 
         'all_items' => __( 'All Occasions', 'gmc'), 
-        // 'parent_item' => __( 'Parent Occasion' ), 
-        // 'parent_item_colon' => __( 'Parent Occasion:' ), 
         'edit_item' => __( 'Edit Occasion', 'gmc'), 
         'update_item' => __( 'Update Occasion', 'gmc'), 
         'add_new_item' => __( 'Add New Occasion', 'gmc'), 
@@ -369,9 +309,7 @@ function gmc_init() {
         'singular_name' => __( 'Region', 'gmc'),
         'popular_items' => NULL,
         'search_items' => __( 'Search Regions', 'gmc'), 
-        'all_items' => __( 'All Regions', 'gmc'), 
-        // 'parent_item' => __( 'Parent Region' ), 
-        // 'parent_item_colon' => __( 'Parent Region:' ), 
+        'all_items' => __( 'All Regions', 'gmc'),
         'edit_item' => __( 'Edit Region', 'gmc'), 
         'update_item' => __( 'Update Region', 'gmc'), 
         'add_new_item' => __( 'Add New Region', 'gmc'), 
@@ -477,16 +415,22 @@ function gmc_init() {
 
 function gmc_activate()
 {
+  gmc_init();
+  populate_taxonomies();
+
   global $wpdb;
   $recipe_count = $wpdb->get_var($wpdb->prepare( "SELECT COUNT(ID) FROM $wpdb->posts WHERE post_type= 'gmc_recipe' OR post_type = 'recipe'"));
   
   if ($recipe_count == 0)
   {
-    populate_taxonomies();
-    
     if(!get_option("gmc_version"))
     {
       add_option("gmc_version", GMC_VERSION, '', 'no');
+
+      if(!get_option("gmc_initial_version"))
+      {
+        add_option("gmc_initial_version", GMC_VERSION, '', 'no');
+      }
     }
   }
 }
@@ -518,6 +462,11 @@ function gmc_update_old_version() {
     $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipeingredient'	WHERE post_type = 'recipeingredient'");
   }
   
+  if (get_option("gmc_version") < 1.16)
+  {
+    populate_taxonomies();
+  }
+
   if(!get_option("gmc_version"))
   {
     add_option("gmc_version", GMC_VERSION, '', 'no');
@@ -1058,7 +1007,7 @@ function gmc_mainrecipe_box($post, $metabox) {
 	</div>
 
 	<div id="gmc-desc">
-	  <p><?php _e('The description is a 1 - 2 line summary that is used by search engines and <a href="http://www.getmecooking.com">GetMeCooking</a>. This will not be visible on your blog post.', 'gmc');?></p>
+	  <p><?php _e('The description is a 1 - 2 line summary that is used by search engines and <a href="http://www.getmecooking.com">GetMeCooking</a>. If you have the premium plugin and choose the appropriate layout then this text may appear on a recipe listing page too.', 'gmc');?></p>
 	  <textarea id="gmc-description" class="gmc-admin-fullline" rows="5" name="gmc-description"><?php echo get_post_meta($post->ID,"gmc-description",true); ?></textarea>
 	</div>
 	

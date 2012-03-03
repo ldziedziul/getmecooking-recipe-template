@@ -186,7 +186,6 @@ ul.gmc_no_list_item {
 }
 
 .gmc_list_title {
-  padding-left: 10px;
   vertical-align: middle;
 }
 
@@ -196,6 +195,8 @@ table.gmc_recipe_list, table.gmc_recipe_list td {
 
 table.gmc_recipe_list img {
   text-align: right;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 @media print {
