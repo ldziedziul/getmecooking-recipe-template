@@ -16,7 +16,7 @@
           <?php _e('Have we met?', 'gmc'); ?>
         </h3><div class="inside">
 <p>
-            <?php _e('Tell us your <a href="http://www.getmecooking.com/">GetMeCooking</a> username to get acknowledgement, a list of recipes on your profile page and <a href="http://www.getmecooking.com/recipe-template-info#why-link">other features</a>.', 'gmc'); ?>
+            <?php _e('Tell us your <a href="http://www.getmecooking.com/">GetMeCooking</a> username to get acknowledgement, a list of recipes on your profile page and <a href="http://www.getmecooking.com/recipe-template-info#featuresLinkToGMC">other features</a>.', 'gmc'); ?>
           </p><p>
             <?php _e('If you don\'t already have a user profile on GetMeCooking, you can <a href="http://www.getmecooking.com/login/">create a free user account</a> and then get listed on our <a href="http://www.getmecooking.com/blog-directory">food blog directory</a>.', 'gmc'); ?>
           </p>        </div>        <?php } else { ?>

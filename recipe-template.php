@@ -3,17 +3,18 @@
 	Plugin Name: GetMeCooking Recipe Template
 	Plugin URI: http://www.getmecooking.com/recipe-template
 	Description: <strong>For food bloggers - allows you to add recipes to your blog</strong>. Includes recipe title, photographs, list of ingredients, recipe steps and Search Engine Optimisation (SEO). Also your recipes can be added to <a href="http://www.getmecooking.com/">http://www.getmecooking.com</a>, which will give your recipes additional functionality, more exposure and increased traffic. Visit the <a href="http://www.getmecooking.com/recipe-template/">information page</a> for full details.
-	Version: 1.16
+	Version: 1.17
 	Author: GetMeCooking
 	Author URI: http://www.getmecooking.com/
 */
 
 define('GMC_URL', 'http://www.getmecooking.com/recipeservice.svc/submitrecipe');
-define('GMC_VERSION', '1.16');
+define('GMC_VERSION', '1.17');
+$premium_files = dirname( dirname(__FILE__) ).DIRECTORY_SEPARATOR.'getmecooking-recipe-template-premium'.DIRECTORY_SEPARATOR.'recipe-template.php';
+define('GMC_PREMIUM_FILES', $premium_files);
 
 require_once "recipe-template-functions.php";
-
-load_plugin_textdomain('gmc', false, dirname( plugin_basename( __FILE__ ) ) . DIRECTORY_SEPARATOR . 'languages');
+load_plugin_textdomain('gmc', false, dirname( dirname(__FILE__) ).DIRECTORY_SEPARATOR.'getmecooking-recipe-template-premium'.DIRECTORY_SEPARATOR . 'languages');
 
 register_activation_hook( __FILE__, 'gmc_activate' );
 
@@ -34,6 +35,8 @@ add_action('admin_print_styles', 'gmc_admin_print_styles');
 add_action('add_meta_boxes', 'gmc_add_meta_boxes');
 
 add_action('save_post', 'gmc_save_recipe', 10, 2);
+add_action('wp_trash_post', 'gmc_trash_post');
+add_action('wp_untrash_post', 'gmc_untrash_post');
 
 add_action('after_wp_tiny_mce', 'gmc_insert_recipe_dialog');
 
@@ -63,7 +66,6 @@ add_filter('attachment_fields_to_edit', 'gmc_attachment_fields_to_edit', 1000, 2
 add_filter('redirect_post_location', 'gmc_redirect_post_location', 10, 2);
 add_filter('list_terms_exclusions','gmc_exclude_recipe_category');
 
-$premium_files = dirname( dirname(__FILE__) ).DIRECTORY_SEPARATOR.'getmecooking-recipe-template-premium'.DIRECTORY_SEPARATOR.'recipe-template.php';
 if (file_exists($premium_files))
 {
   require_once $premium_files;

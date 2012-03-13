@@ -409,8 +409,36 @@ function gmc_init() {
   if (!gmc_is_recipe_admin_page()) {
     gmc_add_recipe_button();
   }
+
+$url = get_bloginfo("template_url");
+    $temp = explode("wp-content/themes/",$url);
+    $active_theme_name = $temp[1];
+    $theme_path =get_theme_root()."/".$active_theme_name;
+    $theme_path = str_replace('/', DIRECTORY_SEPARATOR, $theme_path);
+
+  if(!get_option("gmc_premium_files") && file_exists(GMC_PREMIUM_FILES))
+  {
+    $url = get_bloginfo("template_url");
+    $temp = explode("wp-content/themes/",$url);
+    $active_theme_name = $temp[1];
+    $theme_path =get_theme_root()."/".$active_theme_name;
+    $theme_path = str_replace('/', DIRECTORY_SEPARATOR, $theme_path);
+
+    gmc_copy_to_premium('taxonomy-allergy.php', $theme_path);
+    gmc_copy_to_premium('taxonomy-course.php', $theme_path);
+    gmc_copy_to_premium('taxonomy-dietary.php', $theme_path);
+    gmc_copy_to_premium('taxonomy-misc.php', $theme_path);
+    gmc_copy_to_premium('taxonomy-occasion.php', $theme_path);
+
+    add_option("gmc_premium_files", 'true', '', 'no');
+  }
   
   gmc_update_old_version();
+}
+
+function gmc_copy_to_premium($file, $theme_path)
+{
+  copy(dirname( dirname(__FILE__) ) . DIRECTORY_SEPARATOR . 'getmecooking-recipe-template-premium' . DIRECTORY_SEPARATOR . $file, $theme_path . DIRECTORY_SEPARATOR . $file);
 }
 
 function gmc_activate()
@@ -1520,7 +1548,7 @@ function gmc_update_recipe_taxonomy_terms($recipe_id, $recipe_count, $recipe_cat
           $terms = wp_get_object_terms($recipe_id, $recipe_category);
           foreach ($terms as $term)
           {
-            if (!in_array($term, $term_result))
+            if (!in_array($term->name, $term_result))
             {
               array_push($term_result, $term->name);
             }
@@ -1550,14 +1578,14 @@ function gmc_get_recipe_ids_for_post($post_id)
   return $wpdb->get_col( $wpdb->prepare( "
 	SELECT meta_value
 	FROM {$wpdb->postmeta} 
-	WHERE meta_key = 'gmc_local_id' AND post_id = '%s'
+	WHERE meta_key = 'gmc_local_id' AND post_id = %d
   ", $post_id));
 }
 
 function gmc_get_recipe_count_for_post($post_id)
 {
   global $wpdb;
-  return $wpdb->get_var($wpdb->prepare( "SELECT COUNT(meta_id) FROM $wpdb->postmeta WHERE meta_key= 'gmc_local_id' AND post_id = '%s'", $post_id) );
+  return $wpdb->get_var($wpdb->prepare( "SELECT COUNT(meta_id) FROM $wpdb->postmeta WHERE meta_key= 'gmc_local_id' AND post_id = %d", $post_id) );
 }
 
 function gmc_update_term_taxonomy_count($term_result, $taxonomy)
@@ -1567,18 +1595,24 @@ function gmc_update_term_taxonomy_count($term_result, $taxonomy)
 	foreach ($term_result as $term_item) {
     $term = get_term_by('name', $term_item, $taxonomy);
     $term_taxonomy_id = $term->term_taxonomy_id;
-    
-		$count = $wpdb->get_var( $wpdb->prepare( "
-      SELECT COUNT(object_id) FROM $wpdb->term_relationships WHERE term_taxonomy_id = %d AND object_id in(
-        SELECT meta_value FROM $wpdb->postmeta WHERE post_id in (
-          SELECT DISTINCT object_id FROM $wpdb->term_relationships 
-          WHERE term_taxonomy_id = %d
-          AND (
-            (SELECT post_status FROM $wpdb->posts WHERE ID = object_id) = 'publish'
-          )
-        )
-      )", $term->term_id, $term_taxonomy_id ) );
       
+    $count = $wpdb->get_var( $wpdb->prepare( "
+      SELECT COUNT(DISTINCT p.ID) FROM {$wpdb->posts} AS p
+      INNER JOIN {$wpdb->term_relationships} AS r
+      ON p.ID = r.object_id
+      INNER JOIN {$wpdb->postmeta} AS m
+      ON m.meta_value = p.ID
+      WHERE meta_key = 'gmc_local_id'
+      AND p.post_type='gmc_recipe' AND p.post_status = 'publish'
+      AND post_id IN (
+        SELECT DISTINCT object_id FROM {$wpdb->term_relationships} WHERE term_taxonomy_id = %d
+      )
+      AND r.term_taxonomy_id IN
+      (
+        SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id = %d AND taxonomy = %s
+      )
+    ", $term_taxonomy_id, $term->term_id, "gmc_$taxonomy"));
+
 		do_action( 'edit_term_taxonomy', $term_taxonomy_id, $taxonomy );
 		$wpdb->update( $wpdb->term_taxonomy, compact( 'count' ), array( 'term_taxonomy_id' => $term_taxonomy_id ) );
 		do_action( 'edited_term_taxonomy', $term_taxonomy_id, $taxonomy );
@@ -1681,23 +1715,64 @@ function gmc_update_post($post_ID, $post_content) {
     }
   }
    
+  $recipes_removed = array();
   //anything left was in the blog post but is no longer
   foreach ($recipes_in_post as $recipe_id) {
     delete_post_meta($post_ID, 'gmc_local_id', $recipe_id);
+    array_push($recipes_removed, $recipe_id);
   }
 
-  gmc_update_post_taxonomy_terms($post_ID, $allergy_result, 'allergy');
-  gmc_update_post_taxonomy_terms($post_ID, $course_result, 'course');
-  gmc_update_post_taxonomy_terms($post_ID, $dietary_result, 'dietary');
-  gmc_update_post_taxonomy_terms($post_ID, $misc_result, 'misc');
-  gmc_update_post_taxonomy_terms($post_ID, $occasion_result, 'occasion');
-  gmc_update_post_taxonomy_terms($post_ID, $region_result, 'region');
+  gmc_update_post_taxonomy_terms($post_ID, $allergy_result, 'allergy', $recipes_removed);
+  gmc_update_post_taxonomy_terms($post_ID, $course_result, 'course', $recipes_removed);
+  gmc_update_post_taxonomy_terms($post_ID, $dietary_result, 'dietary', $recipes_removed);
+  gmc_update_post_taxonomy_terms($post_ID, $misc_result, 'misc', $recipes_removed);
+  gmc_update_post_taxonomy_terms($post_ID, $occasion_result, 'occasion', $recipes_removed);
+  gmc_update_post_taxonomy_terms($post_ID, $region_result, 'region', $recipes_removed);
 }
 
-function gmc_update_post_taxonomy_terms($post_ID, $result, $post_category)
+function gmc_trash_post($post_ID)
+{
+  // $needle = '[recipe \d+]';
+  // $result = preg_match_all($needle, get_post($post_ID)->post_content, $matches);
+  
+  // $recipes_in_post = get_post_meta($post_ID, 'gmc_local_id');
+
+  // if ($result)
+  // {
+  //   $recipes_removed = array();
+
+  //   foreach ($matches[0] as $recipe_id) {
+  //     $recipe_id = substr($recipe_id, 7);
+  //     if(gmc_get_post_count_for_recipe($recipe_id) == 1)
+  //     {
+  //       //TODO update the counts
+  //     }
+  //   }
+  // }
+}
+
+function gmc_untrash_post($post_ID)
+{
+  //TODO
+}
+
+function gmc_update_post_taxonomy_terms($post_ID, $result, $post_category, $recipes_removed = NULL)
 {
   wp_set_post_terms($post_ID, $result, $post_category);
-  gmc_update_term_taxonomy_count($result, $post_category);
+
+  //If the recipe tag has been removed from this post but is in use elsewhere then the count will be wrong without getting the other posts result  
+   if (!empty($recipes_removed))
+   {
+     foreach ($recipes_removed as $recipe_id) {
+        $new_result = gmc_populate_term_result($recipe_id, "gmc_$post_category", array());
+       
+        gmc_update_term_taxonomy_count($new_result, $post_category);
+      }
+    }
+    else
+    {
+    gmc_update_term_taxonomy_count($result, $post_category);
+  }
 }
 
 function gmc_populate_term_result($recipe_id, $recipe_category, $result)
@@ -2210,7 +2285,7 @@ function gmc_time($hour, $minute)
     }
     else if ($dblHour > 1)
     {
-      $hours .= intval($dblHour) . __('hours', 'gmc');
+      $hours .= intval($dblHour) . ' ' . __('hours', 'gmc');
     }
 
     if ($dblMinutes == 1)
@@ -2492,5 +2567,5 @@ function in_array_field($needle, $needle_field, $haystack, $strict = false) {
                 return true; 
     } 
     return false; 
-} 
+}
 ?>

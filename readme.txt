@@ -78,6 +78,10 @@ Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooki
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.17 =
+* Reworded some text
+* Added support for premium version
+
 = 1.16 =
 * The initial allergies etc. were not being added to the database
 

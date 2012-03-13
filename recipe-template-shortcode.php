@@ -60,14 +60,14 @@
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-serves") ? get_option("gmc-label-serves") . ':' : __('Serves', 'gmc'); ?>
 
-        </td><td itemprop="recipeYield"><?php echo $servings; ?></td></tr>    <?php } ?>
+        </td><td class="gmc-summary-value" itemprop="recipeYield"><?php echo $servings; ?></td></tr>    <?php } ?>
         <?php if ($prepHour > 0 || $prepMinute > 0) { ?>
 
 <tr>
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-prep-time") ? get_option("gmc-label-prep-time") . ':' : __('Prep time', 'gmc'); ?>
 
-        </td><td content="<?php echo $searchEngineTime; ?>" itemprop="prepTime"><?php echo gmc_time($prepHour,$prepMinute); ?></td></tr>    <?php } ?>
+        </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="prepTime"><?php echo gmc_time($prepHour,$prepMinute); ?></td></tr>    <?php } ?>
     <?php $searchEngineTime = search_engine_time($prepHour, $prepMinute); ?>
         <?php if ($cookHour > 0 || $cookMinute > 0) { ?>
 
@@ -75,7 +75,7 @@
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-cook-time") ? get_option("gmc-label-cook-time") . ':' : __('Cook time', 'gmc')       ; ?>
 
-        </td><td content="<?php echo $searchEngineTime; ?>" itemprop="cookTime"><?php echo gmc_time($cookHour,$cookMinute); ?></td></tr>    <?php } ?>
+        </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="cookTime"><?php echo gmc_time($cookHour,$cookMinute); ?></td></tr>    <?php } ?>
     <?php $searchEngineTime = search_engine_time($cookHour, $cookMinute); ?>
         <?php if (($prepHour > 0 || $prepMinute > 0) && ($cookHour > 0 || $cookMinute > 0)) { ?>
 
@@ -83,7 +83,7 @@
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-total-time") ? get_option("gmc-label-total-time") . ':' : __('Total time', 'gmc')       ; ?>
 
-        </td><td content="<?php echo $searchEngineTime; ?>" itemprop="totalTime"><?php echo gmc_total_time($prepHour,$prepMinute,$cookHour,$cookMinute); ?></td></tr>    <?php } ?>
+        </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="totalTime"><?php echo gmc_total_time($prepHour,$prepMinute,$cookHour,$cookMinute); ?></td></tr>    <?php } ?>
     <?php $searchEngineTime = search_engine_total_time($prepHour, $prepMinute, $cookHour, $cookMinute); ?>
     <?php $allergies = wp_get_object_terms($post->ID, 'gmc_allergy'); ?>
         <?php if (!empty($allergies)) { ?>
@@ -97,7 +97,7 @@
 
             <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'allergy').", "; ?>
           <?php } ?>
-        </td><td>
+        </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
@@ -113,7 +113,7 @@
 
             <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'dietary').", "; ?>
           <?php } ?>
-        </td><td>
+        </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
@@ -129,7 +129,7 @@
 
             <?php $output.= '<span itemprop="recipeCategory">'. gmc_recipe_filter_link($gmp->name, $large_image_url, 'course').'</span>, '; ?>
           <?php } ?>
-        </td><td>
+        </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
@@ -145,7 +145,7 @@
 
             <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'misc').", "; ?>
           <?php } ?>
-        </td><td>
+        </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
@@ -161,7 +161,7 @@
 
             <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'occasion').", "; ?>
           <?php } ?>
-        </td><td>
+        </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
@@ -172,7 +172,7 @@
 <td class="gmc-heading">
           <?php echo get_option("gmc-label-region") ? get_option("gmc-label-region") . ':' : __('Region', 'gmc'); ?>
 
-        </td><td itemprop="recipeCuisine">
+        </td><td class="gmc-summary-value" itemprop="recipeCuisine">
           <?php echo gmc_recipe_filter_link($region[0]->name, $large_image_url, 'region'); ?>
 
         </td>      </tr>    <?php } ?>
@@ -204,7 +204,7 @@
             <?php echo get_option("gmc-label-source-website") ? get_option("gmc-label-source-website") . ':' : __('Website', 'gmc'); ?>
 
           <?php } ?>
-        </td><td>
+        </td><td class="gmc-summary-value">
           <?php echo $author; ?>
 
         </td>      </tr>    <?php } ?>
@@ -351,7 +351,7 @@
                     <?php foreach ($steps as $step) { ?>
 
             <?php $i++; ?>
-            <?php $group_title = get_post_meta($step->ID, 'gmc_stepgroup', true)           ; ?>
+            <?php $group_title = get_post_meta($step->ID, 'gmc_stepgroup', true); ?>
                         <?php if (!empty($group_title) && $group_title != $previous_group_title) { ?>
 
 <tr>
@@ -371,11 +371,11 @@
                 <?php $altText = $recipeTitle; ?>
                 <?php $large_image_url = wp_get_attachment_image_src($thumbid, 'large'); ?>
 <td>
-                                    <?php if($gmc_step_photo_position == '0')                                { ?>
+                                    <?php if($gmc_step_photo_position == '0') { ?>
 
-<a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo'))                 ; ?></a><div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div>                                    <?php } elseif($gmc_step_photo_position == '1')                                      { ?>
+<a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo'))                 ; ?></a><div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div>                                    <?php } elseif($gmc_step_photo_position == '1') { ?>
 
-<div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div><td><a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo gmc-img-right'))               ; ?></a></td>                                    <?php } elseif($gmc_step_photo_position == '2')                      { ?>
+<div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div><td><a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo gmc-img-right'))               ; ?></a></td>                                    <?php } elseif($gmc_step_photo_position == '2') { ?>
 
 <div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div><a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo')); ?></a>                                    <?php } else { ?>
 
@@ -395,7 +395,7 @@
                     <?php foreach ($steps as $step) { ?>
 
             <?php $i++; ?>
-            <?php $group_title = get_post_meta($step->ID, 'gmc_stepgroup', true)           ; ?>
+            <?php $group_title = get_post_meta($step->ID, 'gmc_stepgroup', true); ?>
                         <?php if (!empty($group_title) && $group_title != $previous_group_title) { ?>
 
 <tr>
@@ -418,7 +418,7 @@
 <td>
                                     <?php if($gmc_step_photo_position == '0') { ?>
 
-<a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo'))                 ; ?></a><div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div>                                    <?php } elseif($gmc_step_photo_position == '1')                                      { ?>
+<a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo'))                 ; ?></a><div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div>                                    <?php } elseif($gmc_step_photo_position == '1') { ?>
 
 <div class="gmc-step-desc" itemprop="recipeInstructions"><?php echo nl2br($step->post_content); ?></div><td><a href="<?php echo $large_image_url[0]; ?>"><?php echo get_the_post_thumbnail($step->ID, "medium", array('class' => 'gmc-step-photo gmc-img-right')); ?></a></td>                                    <?php } elseif($gmc_step_photo_position == '2') { ?>
 
