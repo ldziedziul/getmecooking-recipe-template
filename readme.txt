@@ -28,8 +28,8 @@ The premium version gives you more features:
 * Recipe index page - list all of your recipes on any page or blog post with a choice of different layout options
 * Show recipes by category - display a list of categories (allergies, courses, etc.) on any page or blog post. Click on a category to display a list of relevant recipes
 * Display fresh content - display up to 10 of your your most recently added recipes on any page or blog post
-* Advanced management - See which recipes you have added to a blog post, multiple blog posts, or not yet added
-* In-blog Linking of Recipes - Recipes link to posts on your blog instead of linking to [GetMeCooking](http://www.getmecooking.com)
+* Advanced management - see which recipes you have added to a blog post, multiple blog posts, or not yet added
+* In-blog linking of recipes - recipes link to posts on your blog instead of linking to [GetMeCooking](http://www.getmecooking.com)
  
 A video overview and more information is [available here](http://www.getmecooking.com/recipe-template)
 
