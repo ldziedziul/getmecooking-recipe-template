@@ -12,15 +12,23 @@ For food bloggers. Display one or more recipes per page in an easy to read forma
 
 The Recipe Template plugin makes it quick and easy for you to:
 
-* Add recipes to your blog
+* Add many recipes to a blog post, or the same recipe in many posts
+* Specify if the recipe is relevant for food allergies and intolerances
 * Personalise the colours, heading descriptions and layout of recipes
-* Add Search Engine Optimisation
+* Search Engine Optimised
 
 Your visitors will be able to:
 
-* Print just the recipe (not the whole blog post, which might be several pages)
+* Print just the recipe, not the whole blog post. Choose with all photos, just main photo or just text
 * Click on photographs to see larger versions
 * Filter and search for recipes (requires an optional link to [GetMeCooking](http://www.getmecooking.com))
+
+The premium version gives you more features:
+* Recipe index page - list all of your recipes on any page or blog post with a choice of different layout options
+* Show recipes by category - display a list of categories (allergies, courses, etc.) on any page or blog post. Click on a category to display a list of relevant recipes
+* Display fresh content - display up to 10 of your your most recently added recipes on any page or blog post
+* Advanced management - See which recipes you have added to a blog post, multiple blog posts, or not yet added
+* In-blog Linking of Recipes - Recipes link to posts on your blog instead of linking to [GetMeCooking](http://www.getmecooking.com)
  
 A video overview and more information is [available here](http://www.getmecooking.com/recipe-template)
 
@@ -40,7 +48,7 @@ Yes, there are simple options to customise many aspects of the recipe. Don't lik
 
 = Can visitors print just the recipe? =
 
-They sure can, each recipe has its own print link.
+They sure can, each recipe has its own print link. Print just the recipe, not the whole blog post. Choose with all photos, just main photo or just text.
 
 = Does this plugin take care of Search Engine Optimisation (SEO)? =
 
@@ -64,7 +72,7 @@ Everything is optional and headings will only appear if you have typed in the re
 
 = So how do I use your plugin? =
 
-Come sit closer little Timmy, [I'll tell you all about it](http://www.getmecooking.com/recipe-template-info#how-to-use).
+Come sit closer little Timmy, [watch the video](http://www.getmecooking.com/recipe-template) or  [read about it](http://www.getmecooking.com/recipe-template-info#installingThePlugin).
 
 == Screenshots ==
 
