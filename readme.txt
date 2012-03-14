@@ -24,6 +24,7 @@ Your visitors will be able to:
 * Filter and search for recipes (requires an optional link to [GetMeCooking](http://www.getmecooking.com))
 
 The premium version gives you more features:
+
 * Recipe index page - list all of your recipes on any page or blog post with a choice of different layout options
 * Show recipes by category - display a list of categories (allergies, courses, etc.) on any page or blog post. Click on a category to display a list of relevant recipes
 * Display fresh content - display up to 10 of your your most recently added recipes on any page or blog post
