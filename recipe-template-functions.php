@@ -884,11 +884,11 @@ function gmc_mainrecipe_box($post, $metabox) {
 
 <div id="recipe-data" class="gmc-tabs">
   <div class="gmc-tabs-nav">
-	<ul>
-	  <li><a href="#params"><?php _e('Recipe Details', 'gmc'); ?></a></li>
+	<ul>	  
 	  <li><a href="#ingredients"><?php _e('Recipe Ingredients', 'gmc'); ?></a></li>
 	  <li><a href="#steps"><?php _e('Recipe Steps', 'gmc'); ?></a></li>
-	  <li><a href="#gmc-desc"><?php _e('Recipe Description', 'gmc'); ?></a></li>
+    <li><a href="#params"><?php _e('Recipe Details', 'gmc'); ?></a></li>
+	  <li><a href="#gmc-desc"><?php _e('Recipe Summary', 'gmc'); ?></a></li>
 	  <li><a href="#gmc-note"><?php _e('Recipe Note', 'gmc'); ?></a></li>
 	  <li><a href="#transfer"><?php _e('GetMeCooking User Details', 'gmc'); ?></a></li>
 	</ul>
