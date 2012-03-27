@@ -31,7 +31,7 @@ The premium version gives you more features:
 * Advanced management - see which recipes you have added to a blog post, multiple blog posts, or not yet added
 * In-blog linking of recipes - recipes link to posts on your blog instead of linking to [GetMeCooking](http://www.getmecooking.com)
  
-A video overview and more information is [available here](http://www.getmecooking.com/recipe-template)
+A video overview and more information is [available here](http://www.getmecooking.com/wordpress-recipe-plugin)
 
 == Installation ==
 
@@ -73,7 +73,7 @@ Everything is optional and headings will only appear if you have typed in the re
 
 = So how do I use your plugin? =
 
-Come sit closer little Timmy, [watch the video](http://www.getmecooking.com/recipe-template) or  [read about it](http://www.getmecooking.com/recipe-template-info#installingThePlugin).
+Come sit closer little Timmy, [watch the video](http://www.getmecooking.com/wordpress-recipe-plugin) or  [read about it](http://www.getmecooking.com/recipe-template-info#installingThePlugin).
 
 == Screenshots ==
 
