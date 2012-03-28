@@ -702,23 +702,7 @@ function gmc_send_xml_curl($url, $xml) {
 
   // Send to remote and return data to caller.
   $result = curl_exec($ch);
-  
-  try {
-	if (curl_errno($ch) ) {
-	  libxml_use_internal_errors(true);
-	  $sxe = simplexml_load_string($xml);
-	  if (!$sxe) {
-		foreach(libxml_get_errors() as $error) {
-		  $message .= "\t" . $error->message;
-		}
-	  }
-	
-	  $message .= "\t" . $xml;      
-	  mail('contact@getmecooking.com', 'GMC WordPress error', $message);
-	} 
-  }
-  catch(Exception $e) {}
-  
+      
   curl_close($ch);
   return $result;
 }
