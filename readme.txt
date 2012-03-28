@@ -87,6 +87,9 @@ Come sit closer little Timmy, [watch the video](http://www.getmecooking.com/word
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.18 =
+* We were receiving error logging emails which broke the plugin directory guidelines
+
 = 1.17 =
 * Reworded some text
 * Added support for premium version
