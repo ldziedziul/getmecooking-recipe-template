@@ -9,6 +9,173 @@ function gmc_plugin_filepath() {
   return plugin_dir_path(__FILE__);
 }
 
+function gmc_sample_recipe() {
+  $main_recipe = array(
+     'post_title' => 'Chocolate chip muffins - example recipe',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_type' => 'gmc_recipe'
+  );
+
+  $recipe_id = wp_insert_post($main_recipe);
+
+  $ingredient = array(
+     'post_title' => 'self-raising flour',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 1,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientquantity', 175);
+  add_post_meta($ingredient_id, 'gmc-ingredientmeasurement', 'g');
+
+  $ingredient = array(
+     'post_title' => 'margarine',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 2,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientquantity', 50);
+  add_post_meta($ingredient_id, 'gmc-ingredientmeasurement', 'g');
+
+  $ingredient = array(
+     'post_title' => 'caster sugar',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 3,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientquantity', 50);
+  add_post_meta($ingredient_id, 'gmc-ingredientmeasurement', 'g');
+
+  $ingredient = array(
+     'post_title' => 'eggs',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 4,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientquantity', 2);
+  add_post_meta($ingredient_id, 'gmc-ingredientmeasurement', 'medium');
+
+  $ingredient = array(
+     'post_title' => 'milk',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 5,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientquantity', 4);
+  add_post_meta($ingredient_id, 'gmc-ingredientmeasurement', 'tablespoon');
+
+  $ingredient = array(
+     'post_title' => 'vanilla extract',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 6,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientquantity', 1);
+  add_post_meta($ingredient_id, 'gmc-ingredientmeasurement', 'teaspoon');
+
+  $ingredient = array(
+     'post_title' => 'chocolate',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 7,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientquantity', 200);
+  add_post_meta($ingredient_id, 'gmc-ingredientmeasurement', 'g');
+
+  $ingredient = array(
+     'post_content' => 'a sprinkling for a crunchy top',
+     'post_title' => 'sugar',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 8,
+     'post_type' => 'gmc_recipeingredient'
+  );
+
+  $ingredient_id = wp_insert_post($ingredient);
+  add_post_meta($ingredient_id, 'gmc-ingredientoptional', 'Y');
+
+  $step = array(
+     'post_content' => 'Place the flour and caster sugar into a bowl and create a well in the middle for the other ingredients. 
+
+Mix the eggs, vanilla extract, milk and margarine and then pour it into the bowl with the dry ingredients. 
+
+Mix well until it is lump free and then break the chocolate into small pieces and add them.',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 1,
+     'post_type' => 'gmc_recipestep'
+  );
+
+  wp_insert_post($step);
+
+  $step = array(
+     'post_content' => 'Pour the muffin mixture into a muffin tin filling each mould up to two thirds full. 
+
+Place a block of chocolate into the middle of each muffin. Then sprinkle some sugar over the top of each.',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 2,
+     'post_type' => 'gmc_recipestep'
+  );
+
+  wp_insert_post($step);
+
+  $step = array(
+     'post_content' => 'Cook for around 20 minutes in a preheated oven at 200ºC / 390ºF / gas mark 5. After 18 minutes or so check to see if they are cooked enough. 
+
+Insert a knife into one of the muffins and if no mixture is on the knife then they are cooked! 
+
+Allow to cool for at least 5 minutes before eating.',
+     'post_status' => 'publish',
+     'post_author' => 1,
+     'post_parent' => $recipe_id,
+     'menu_order' => 3,
+     'post_type' => 'gmc_recipestep'
+  );
+
+  wp_insert_post($step);
+
+  add_post_meta($recipe_id, 'gmc-nr-servings', '4-6');
+  add_post_meta($recipe_id, 'gmc-prep-time-mins', '10');
+  add_post_meta($recipe_id, 'gmc-cooking-time-mins', '20');
+  add_post_meta($recipe_id, 'gmc-description', 'Slightly crunchy on the outside at the top and soft in the middle.');
+  wp_set_post_terms($recipe_id, array(__('Dessert', 'gmc'), __('Snack', 'gmc')), 'gmc_course');
+  wp_set_post_terms($recipe_id, array(__('Egg', 'gmc'), __('Milk', 'gmc'), __('Soy', 'gmc'), __('Tree Nuts', 'gmc'), __('Wheat', 'gmc')), 'gmc_allergy');
+  wp_set_post_terms($recipe_id, array(__('Child Friendly', 'gmc'), __('Serve Cold', 'gmc')), 'gmc_misc');
+  wp_set_post_terms($recipe_id, __('European', 'gmc'), 'gmc_region');
+}
+
 function populate_taxonomies() {
   if(get_option("gmc_populated_taxonomies"))
   {
@@ -57,6 +224,8 @@ function populate_taxonomies() {
   wp_insert_term(__('Formal Party', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Halloween', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Thanksgiving', 'gmc'), 'gmc_occasion');
+
+  gmc_sample_recipe();
 
   add_option("gmc_populated_taxonomies", 'true', '', 'no');
 }
@@ -702,7 +871,7 @@ function gmc_send_xml_curl($url, $xml) {
 
   // Send to remote and return data to caller.
   $result = curl_exec($ch);
-      
+
   curl_close($ch);
   return $result;
 }

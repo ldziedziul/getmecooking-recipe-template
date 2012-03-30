@@ -73,7 +73,7 @@ Everything is optional and headings will only appear if you have typed in the re
 
 = So how do I use your plugin? =
 
-Come sit closer little Timmy, [watch the video](http://www.getmecooking.com/wordpress-recipe-plugin) or  [read about it](http://www.getmecooking.com/recipe-template-info#installingThePlugin).
+Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/wordpress-recipe-plugin) or [read about it](http://www.getmecooking.com/recipe-template-info#installingThePlugin).
 
 == Screenshots ==
 
