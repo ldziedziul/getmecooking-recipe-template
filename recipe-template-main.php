@@ -160,6 +160,11 @@
 <table class="gmc-table">
 <tr>
 <th>
+                <?php _e('Do you want to use the wide theme?', 'gmc'); ?>
+              </th><td><input id="gmc-widecss" value="Y" name="gmc-widecss" type="checkbox" <?php echo (get_option('gmc-widecss')=='Y' ? 'checked="checked"' : ''); ?>/><span class="gmc-smaller">
+                  (<a href="<?php echo gmc_plugin_url().'/docs/wide-theme.png'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
+                </span></td>            </tr><tr>
+<th>
                 <?php _e('What label option would you like between each recipe step?', 'gmc'); ?>
               </th><td><select name="gmc-label-step">
                   <?php echo gmc_option_list(array(0 => __('Step', 'gmc').' 1', 1 => __('Step', 'gmc').' 1.', 2 => __('step', 'gmc').' 1', 3 => __('step', 'gmc').' 1.', '1.', '1', 6 => __('No label', 'gmc')), get_option('gmc-label-step')); ?>

@@ -30,36 +30,52 @@ a.gmc-print-options {
 .gmc-recipe-main-photo {
   display: inline;
   float: left;
+  margin-bottom: 10px;
 }
 .gmc-recipe-main-photo img {
   height: auto;
 }
 
 /*The information next to the main photo */
-table.gmc-recipe-summary {
+table.gmc-recipe-summary, table.gmc-recipe-summary-narrow {
   border: 0;
   border-spacing: 0;
-  width: 250px;
-  /* If the summary information is appearing under the main photo, lower the width. */
-  font-size: 0.8em;
   float: right;
   padding: 0 0 10px 0;
   margin: 0;
 }
 
-.gmc-recipe-summary td {
+table.gmc-recipe-summary {
+  width: 250px;
+  font-size: 0.8em;
+}
+
+table.gmc-recipe-summary-narrow {
+  clear: left;
+  float: left;
+  width: auto;
+}
+
+.gmc-recipe-summary td, .gmc-recipe-summary-narrow td {
   border: 0;
   padding-top: 0;
   padding-bottom: 2px;
 }
 
-td.gmc-heading {
+td.gmc-heading, td.gmc-heading-narrow {
   font-weight: bold;
   padding-right: 10px;
   text-align: right;
   vertical-align: text-top;
-  width: 70px;
   /* If "total time" shows on 2 lines, increase the width */
+}
+
+td.gmc-heading {
+  width: 70px;
+}
+
+.no-main-photo td:first-child {
+  width: inherit;
 }
 
 .gmc-recipe-description {
@@ -130,8 +146,10 @@ img.gmc-step-photo {
   text-align: right;
 }
 
-.no-main-photo {
-  float: left !important;
+table.no-main-photo {
+  float: left;
+  width: inherit;
+  font-size: inherit;
 }
 
 .gmc-web-hidden {
@@ -151,7 +169,10 @@ ul.gmc-print-options-box, ul.gmc-print-options-box li {
 }
 
 .gmc-print-area img {
-  padding-right: 5px;
+  padding: 0 5px 0 0;
+  margin: 0;
+  border: none;
+  vertical-align: text-bottom;
 }
 
 ul.gmc-print-options-box {
@@ -188,6 +209,10 @@ ul.gmc_no_list_item {
 
 table.gmc_recipe_list, table.gmc_recipe_list td {
   border: none;
+}
+
+table.gmc_recipe_list td {
+  vertical-align: middle;
 }
 
 table.gmc_recipe_list img {

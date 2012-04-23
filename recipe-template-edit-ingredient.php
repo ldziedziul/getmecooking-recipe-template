@@ -1,8 +1,12 @@
 <?php global $post; ?>
-<?php $ingredientId = $ingredient->ID;; ?>
-<?php if ($gmcaddnew) { ?>
+<?php $ingredient_post_title = null; ?>
+<?php $ingredient_post_content = null; ?>
+<?php $ingredientId = 'unique-ingred'; ?>
+<?php if (!$gmc_add_new) { ?>
 
-  <?php $ingredientId = 'unique-ingred';; ?>
+  <?php $ingredientId = $ingredient->ID; ?>
+  <?php $ingredient_post_title = $ingredient->post_title; ?>
+  <?php $ingredient_post_content = $ingredient->post_content; ?>
 <?php } ?>
 <tr class="gmc-singleingredient" id="gmc-ingredients-ingredient-<?php echo $i; ?>">
 <input name="gmc-recipeingredientid[]" type="hidden" value="<?php echo $ingredientId; ?>" /><input id="gmc-recipeingredientorder-<?php echo $i; ?>" name="gmc-recipeingredientorder[]" type="hidden" value="<?php echo $i; ?>" /><td>
@@ -33,18 +37,18 @@
 
 <input name="gmc-custom-measurement[]" />      <?php } ?>
 <input class="gmc-use-custom-measurement" id="gmc-use-custom-measurement-<?php echo $ingredientId; ?>" name="gmc-use-custom-measurement[]" type="hidden" value="<?php echo get_post_meta($ingredientId, 'gmc-use-custom-measurement', true); ?>" />    </div>  </td><td>
-        <?php if ($gmcaddnew) { ?>
+        <?php if ($gmc_add_new) { ?>
 
 <input class="gmc-ingredient-name-hint" id="gmc-admin-new-ingredient-<?php echo $i; ?>" name="gmc-ingredientname[]" size="25" />        <?php } else { ?>
 
-<input class="gmc-ingredient-name-hint" name="gmc-ingredientname[]" size="25" value="<?php echo $ingredient->post_title; ?>" />    <?php } ?>
+<input class="gmc-ingredient-name-hint" name="gmc-ingredientname[]" size="25" value="<?php echo $ingredient_post_title; ?>" />    <?php } ?>
   </td><td>
-<input class="gmc-ingredient-note-hint" name="gmc-ingredientnote[]" size="60" value="<?php echo $ingredient->post_content; ?>" />  </td><td>
+<input class="gmc-ingredient-note-hint" name="gmc-ingredientnote[]" size="60" value="<?php echo $ingredient_post_content; ?>" />  </td><td>
 <input name="gmc-ingredientgroup[]" size="25" value="<?php echo get_post_meta($ingredientId,'gmc-ingredientgroup',true); ?>" />  </td><td class="icon">
     <?php $gmcoptional=get_post_meta($ingredientId,'gmc-ingredientoptional',true); ?>
     <input value="<?php echo $ingredientId; ?>" name="gmc-ingredientoptional[]" type="checkbox" <?php echo ($gmcoptional=="Y" ? "checked='checked'" : ""); ?> />
   </td><td class="icon deleteIcon">
-        <?php if (!$gmcaddnew) { ?>
+        <?php if (!$gmc_add_new) { ?>
 
 <a class="gmc-delete-ingredient" href="#" id="gmc-ingredient-to-delete-<?php echo $ingredientId; ?>">
 <img alt:="<?php echo __('Delete this ingredient', 'gmc'); ?>" height="16" src="<?php echo gmc_plugin_url() . '/images/delete.png'; ?>" title="<?php echo __('Delete this ingredient', 'gmc'); ?>" width="16" />      </a>    <?php } ?>

@@ -52,19 +52,19 @@
   <?php $prepMinute = get_post_meta($post->ID,"gmc-prep-time-mins",true); ?>
   <?php $cookHour = get_post_meta($post->ID,"gmc-cooking-time-hours",true); ?>
   <?php $cookMinute = get_post_meta($post->ID,"gmc-cooking-time-mins",true); ?>
-<table class="gmc-recipe-summary <?php echo empty($large_image_url[0]) ? 'no-main-photo' : ''; ?>">
+<table class="gmc-recipe-summary<?php echo $gmc_narrow_css; ?><?php echo empty($large_image_url[0]) ? ' no-main-photo' : ''; ?>">
     <?php $servings = get_post_meta($post->ID,"gmc-nr-servings",true); ?>
         <?php if (!empty($servings)) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-serves") ? get_option("gmc-label-serves") . ':' : __('Serves', 'gmc'); ?>
 
         </td><td class="gmc-summary-value" itemprop="recipeYield"><?php echo $servings; ?></td></tr>    <?php } ?>
         <?php if ($prepHour > 0 || $prepMinute > 0) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-prep-time") ? get_option("gmc-label-prep-time") . ':' : __('Prep time', 'gmc'); ?>
 
         </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="prepTime"><?php echo gmc_time($prepHour,$prepMinute); ?></td></tr>    <?php } ?>
@@ -72,7 +72,7 @@
         <?php if ($cookHour > 0 || $cookMinute > 0) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-cook-time") ? get_option("gmc-label-cook-time") . ':' : __('Cook time', 'gmc')       ; ?>
 
         </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="cookTime"><?php echo gmc_time($cookHour,$cookMinute); ?></td></tr>    <?php } ?>
@@ -80,7 +80,7 @@
         <?php if (($prepHour > 0 || $prepMinute > 0) && ($cookHour > 0 || $cookMinute > 0)) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-total-time") ? get_option("gmc-label-total-time") . ':' : __('Total time', 'gmc')       ; ?>
 
         </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="totalTime"><?php echo gmc_total_time($prepHour,$prepMinute,$cookHour,$cookMinute); ?></td></tr>    <?php } ?>
@@ -89,7 +89,7 @@
         <?php if (!empty($allergies)) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-allergy") ? get_option("gmc-label-allergy") . ':' : __('Allergy', 'gmc'); ?>
 
           <?php $output = ''; ?>
@@ -105,7 +105,7 @@
         <?php if (!empty($dietary)) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-dietary") ? get_option("gmc-label-dietary") . ':' : __('Dietary', 'gmc'); ?>
 
           <?php $output = ''; ?>
@@ -121,7 +121,7 @@
         <?php if (!empty($mealType)) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-meal-type") ? get_option("gmc-label-meal-type") . ':' : __('Meal type', 'gmc'); ?>
 
           <?php $output = ''; ?>
@@ -137,7 +137,7 @@
         <?php if (!empty($misc)) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-misc") ? get_option("gmc-label-misc") . ':' : __('Misc', 'gmc'); ?>
 
           <?php $output = ''; ?>
@@ -153,7 +153,7 @@
         <?php if (!empty($occasions)) { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-occasion") ? get_option("gmc-label-occasion") . ':' : __('Occasion', 'gmc'); ?>
 
           <?php $output = ''; ?>
@@ -169,7 +169,7 @@
         <?php if (!empty($region))      { ?>
 
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-region") ? get_option("gmc-label-region") . ':' : __('Region', 'gmc'); ?>
 
         </td><td class="gmc-summary-value" itemprop="recipeCuisine">
@@ -185,7 +185,7 @@
         <?php $author = gmc_create_author_link($author, $author_url); ?>
       <?php } ?>
 <tr>
-<td class="gmc-heading">
+<td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php $source_type = get_post_meta($post->ID, 'gmc-source-type', true); ?>
                     <?php if($source_type == 'Author') { ?>
 
@@ -443,5 +443,5 @@
 </div><?php if (get_option('gmc-hide-powered-by') != 'Y') { ?>
 
 <div class="gmc-powered-by">
-    <a href="http://www.getmecooking.com/recipe-template"><?php _e('Powered by GetMeCooking', 'gmc');?></a>
+    <a href="http://www.getmecooking.com/wordpress-recipe-plugin"><?php _e('Powered by GetMeCooking', 'gmc');?></a>
   </div><?php } ?>

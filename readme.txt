@@ -87,6 +87,17 @@ Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/w
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.19 =
+* Added option to say your theme is narrow, this changes the layout and puts the recipe summary information below the main photo rather than try to squeeze it to the right
+* If there is no main photo, the narrow theme css is used so the summary text will no longer be bunched up
+* Can now delete photos from steps
+* Can now re-order recipe steps apart from in IE9
+* The print icon / print text did not line up on all themes, should do now
+* Renamed [recipe 1] to [gmc_recipe 1] to prevent possible conflicts with other plugins/themes
+* Added a sample recipe for new installations
+* Added a help tab on the add recipe page
+* Fixed a bug when using a custom course type where the slug was different from the name
+
 = 1.18 =
 * We were receiving error logging emails which broke the plugin directory guidelines
 
@@ -172,6 +183,9 @@ Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/w
 * First release
 
 == Upgrade Notice ==
+= 1.19=
+* Lots of CSS changes, best off resetting and re-adding your changes if still needed
+
 = 1.16=
 * Removed padding-left from .gmc_list_title
 * Added padding-left:10px;padding-right:10px; to table.gmc_recipe_list img

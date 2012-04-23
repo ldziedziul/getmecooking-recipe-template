@@ -3,18 +3,17 @@
 	Plugin Name: GetMeCooking Recipe Template
 	Plugin URI: http://www.getmecooking.com/wordpress-recipe-plugin
 	Description: <strong>For food bloggers - allows you to add recipes to your blog</strong>. Includes recipe title, photographs, list of ingredients, recipe steps and Search Engine Optimisation (SEO). Also your recipes can be added to <a href="http://www.getmecooking.com/">http://www.getmecooking.com</a>, which will give your recipes additional functionality, more exposure and increased traffic. Visit the <a href="http://www.getmecooking.com/recipe-template/">information page</a> for full details.
-	Version: 1.18
+	Version: 1.19
 	Author: GetMeCooking
 	Author URI: http://www.getmecooking.com/
 */
 
 define('GMC_URL', 'http://www.getmecooking.com/recipeservice.svc/submitrecipe');
-define('GMC_VERSION', '1.18');
+define('GMC_VERSION', '1.19');
 $premium_files = dirname( dirname(__FILE__) ).DIRECTORY_SEPARATOR.'getmecooking-recipe-template-premium'.DIRECTORY_SEPARATOR.'recipe-template.php';
 define('GMC_PREMIUM_FILES', $premium_files);
 
 require_once "recipe-template-functions.php";
-load_plugin_textdomain('gmc', false, dirname( dirname(__FILE__) ).DIRECTORY_SEPARATOR.'getmecooking-recipe-template-premium'.DIRECTORY_SEPARATOR . 'languages');
 
 register_activation_hook( __FILE__, 'gmc_activate' );
 
@@ -35,8 +34,8 @@ add_action('admin_print_styles', 'gmc_admin_print_styles');
 add_action('add_meta_boxes', 'gmc_add_meta_boxes');
 
 add_action('save_post', 'gmc_save_recipe', 10, 2);
-add_action('wp_trash_post', 'gmc_trash_post');
-add_action('wp_untrash_post', 'gmc_untrash_post');
+add_action('trash_post', 'gmc_trash_post');
+add_action('untrash_post', 'gmc_untrash_post');
 
 add_action('after_wp_tiny_mce', 'gmc_insert_recipe_dialog');
 
@@ -51,7 +50,7 @@ add_action('admin_footer', 'gmc_admin_footer');
 
 add_action('parent_file', 'gmc_parent_menu');
 
-add_shortcode('recipe', 'gmc_recipe_shortcode');
+add_shortcode('gmc_recipe', 'gmc_recipe_shortcode');
 
 add_filter('the_content', 'gmc_the_content', 10);
 add_filter('tiny_mce_version', 'gmc_refresh_mce');
