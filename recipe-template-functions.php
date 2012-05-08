@@ -254,26 +254,6 @@ function gmc_main() {
 	require_once('recipe-template-main.php');
 }
 
-function gmc_head() {
-//  if (function_exists('wp_tiny_mce')) {
-//    wp_tiny_mce();
-//  }
-//  remove_all_filters('mce_external_plugins');
-}
-
-function gmc_admin_head() {
-//  if (function_exists('wp_tiny_mce')) {
-//    wp_tiny_mce();
-//  }
-//  remove_all_filters('mce_external_plugins');
-}
-
-function gmc_admin_init() {
-	//if($_POST['gmc_save'] == 'Y') {
-	  //gmc_save();
-  //}
-}
-
 function gmc_after_setup_theme() {
 if ( !function_exists('post-thumbnails') && function_exists('add_theme_support') ) {
   add_theme_support('post-thumbnails');
@@ -589,6 +569,7 @@ function gmc_init() {
     gmc_copy_to_premium('taxonomy-dietary.php', $theme_path);
     gmc_copy_to_premium('taxonomy-misc.php', $theme_path);
     gmc_copy_to_premium('taxonomy-occasion.php', $theme_path);
+    gmc_copy_to_premium('taxonomy-region.php', $theme_path);
 
     add_option("gmc_premium_files", 'true', '', 'no');
   }
@@ -609,33 +590,36 @@ function gmc_activate()
 }
 
 function gmc_update_old_version() {
+  if (get_option("gmc_version") <= 1.11)
+  {    
+    //convert data to taxonomy
+    $post_key = 'gmc-recopt-region';
+    $regions = gmc_get_post_meta_unknown_id($post_key);
+  
+    foreach ($regions as $region)
+    {
+      wp_set_post_terms($region->post_id, $region->meta_value, 'gmc_region');
+      delete_post_meta($region->post_id, $post_key);
+    }
+    
+    gmc_convert_to_taxonomy('gmc-recopt-when', 'gmc_course');
+    gmc_convert_to_taxonomy('gmc-recopt-occasion', 'gmc_occasion');
+    gmc_convert_to_taxonomy('gmc-recopt-allergies', 'gmc_allergy');
+    gmc_convert_to_taxonomy('gmc-recopt-dietary', 'gmc_dietary');
+    gmc_convert_to_taxonomy('gmc-recopt-other', 'gmc_misc');
+    
+    global $wpdb;
+    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipe'  WHERE post_type = 'recipe'");
+    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipestep'  WHERE post_type = 'recipestep'");
+    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipeingredient'  WHERE post_type = 'recipeingredient'");
+  }
+
   if (get_option("gmc_version") <= 1.18)
   {
     add_option("gmc-widecss", 'Y');
-  
-    //Go through all posts and update [recipe x] to [gmc_recipe x]
-    global $wpdb;
-    $sql = $wpdb->prepare("SELECT ID, post_content
-      FROM {$wpdb->posts}
-      WHERE 
-      post_status = 'publish' AND (post_type = 'page' OR post_type = 'post')
-      AND post_modified > (
-        SELECT post_modified from {$wpdb->posts} WHERE ID = (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = 'gmc-id' ORDER BY post_id ASC LIMIT 1)
-      )
-    ");
-
-    foreach ($wpdb->get_results($sql) as $key => $row)
-    {
-      $new_content = str_replace('[recipe ', '[gmc_recipe ', $row->post_content);
-
-      $my_post = array();
-      $my_post['ID'] = $row->ID;
-      $my_post['post_content'] = $new_content;
-    
-      wp_update_post($my_post);
-    }
 
     //correct term_taxonomy data
+    global $wpdb;
     $sql = $wpdb->prepare("SELECT tax.term_id, taxonomy, name, slug
       FROM {$wpdb->term_taxonomy} tax
       INNER JOIN {$wpdb->terms} term
@@ -655,7 +639,18 @@ function gmc_update_old_version() {
           );
       }
     }
-  }  
+  }
+  if (get_option("gmc_version") <= 1.19)
+  {
+    //Go through all posts and update [recipe x] to [gmc_recipe x]
+    global $wpdb;
+    $wpdb->query("UPDATE {$wpdb->posts} SET post_content = replace(post_content, '[recipe', '[gmc_recipe') WHERE post_type = 'page' OR post_type = 'post'");
+
+    if(get_option('gmc_order') && strpos('region', get_option('gmc_order')) === false)
+    {
+      update_option("gmc_order", get_option('gmc_order') . ',region');
+    }
+  }
 
   if(!get_option("gmc_version"))
   {
@@ -674,6 +669,17 @@ function gmc_update_old_version() {
     }
     
     update_option("gmc_version", GMC_VERSION);
+  }
+}
+
+function gmc_convert_to_taxonomy($post_key, $taxonomy) {
+  $posts = gmc_get_post_meta_unknown_id($post_key);
+  foreach ($posts as $post)
+  {
+    $values = (array)unserialize(get_post_meta($post->post_id,$post_key,true));
+    wp_set_post_terms($post->post_id, $values, $taxonomy);      
+    
+    delete_post_meta($post->post_id, $post_key);
   }
 }
 
@@ -1300,6 +1306,7 @@ function gmc_save_settings() {
   }
   
   updateOrDeleteOption("gmc-widecss", $_POST["gmc-widecss"]);
+  updateOrDeleteOption("gmc-img-popup", $_POST["gmc-img-popup"]);
   updateOrDeleteOption("gmc-label-step", $_POST["gmc-label-step"]);  
   updateOrDeleteOption("gmc-label-step-position", $_POST["gmc-label-step-position"]);
   
@@ -2053,83 +2060,27 @@ function gmc_option_list($options, $selected, $onlyvalues = false) {
   return $result;
 }
 
-function gmc_print_styles() {
-  if (is_admin()) {
-	return;
-  }
+function gmc_enqueue_scripts() {
+  wp_enqueue_script('jquery');
+  wp_enqueue_script('thickbox');
+  wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('jquery'),GMC_VERSION,true);
+
+  wp_enqueue_style('thickbox');
 
   $overridecss=get_option('gmc-overridecss');
   $gmccss=get_option('gmc-shortcodecss');
 
   if (empty($overridecss)) {
-	wp_register_style('recipe-template', gmc_plugin_url().'/css/recipe-template.css', false, GMC_VERSION);
-	wp_enqueue_style( 'recipe-template');
+  wp_register_style('recipe-template', gmc_plugin_url().'/css/recipe-template.css', false, GMC_VERSION);
+  wp_enqueue_style( 'recipe-template');
   } else {
-	echo "<style type='text/css'>\n";
-	echo stripslashes($gmccss);
-	echo "</style>\n";
+  echo "<style type='text/css'>\n";
+  echo stripslashes($gmccss);
+  echo "</style>\n";
   }
-}
-
-function gmc_admin_print_styles() {
-  if (!gmc_is_recipe_admin_page()) {
-    global $pagenow;
-    if ($pagenow == 'post.php') {
-      wp_register_style('recipe-template-admin', gmc_plugin_url().'/css/recipe-template-admin.css', false, GMC_VERSION);
-      wp_enqueue_style( 'recipe-template-admin');
-    }
-    return;
-  }
-      
-  wp_register_style('jquery.alerts', gmc_plugin_url().'/css/jquery.alerts.css');
-  wp_enqueue_style( 'jquery.alerts');
-
-  wp_register_style('chosen', gmc_plugin_url().'/css/chosen.css');
-  wp_enqueue_style( 'chosen');
-  
-  wp_register_style('codemirror', gmc_plugin_url().'/css/codemirror.css');
-  wp_enqueue_style( 'codemirror');
-  
-  wp_register_style('codemirrordefault', gmc_plugin_url().'/css/codemirrordefault.css');
-  wp_enqueue_style( 'codemirrordefault');
-	
-  wp_register_style('jquery.miniColors', gmc_plugin_url().'/css/jquery.miniColors.css');
-  wp_enqueue_style( 'jquery.miniColors');
-	
-  wp_enqueue_style('thickbox');
-
-  global $pagenow;
-  if ($pagenow == 'media-upload.php') {
-	if (isset($_REQUEST['post_id'])) {
-	  $p=get_post($_REQUEST['post_id']);
-	  
-	  if ($p->post_type!="gmc_recipe") {
-		return;
-	  }
-	}
-  }
-
-  wp_register_style('recipe-template-admin', gmc_plugin_url().'/css/recipe-template-admin.css', false, GMC_VERSION);
-  wp_enqueue_style( 'recipe-template-admin');
-}
-
-function gmc_enqueue_scripts() {
-  if (is_admin()) {
-	return;
-  }
-  
-  //TODO need them in both places, some pages dont call here when they should etc
-  wp_enqueue_script('thickbox');  
-  wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('thickbox'),GMC_VERSION,true);
 }
 
 function gmc_admin_enqueue_scripts() {
-  if (!gmc_is_recipe_admin_page()) {
-	wp_enqueue_script('thickbox');	
-	wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('thickbox'),GMC_VERSION,true);
-	return;
-  }
-  
   wp_enqueue_script('jquery');
   wp_enqueue_script('jquery-ui-sortable');
   wp_enqueue_script('jquery-ui-tabs');
@@ -2140,10 +2091,10 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_script('jquery.miniColors',gmc_plugin_url().'/js/jquery.miniColors.min.js');
   wp_enqueue_script('thickbox');
 
-  wp_enqueue_script('codemirror', gmc_plugin_url().'/js/codemirror.js','1.0',true);
-  wp_enqueue_script('codemirrorcss', gmc_plugin_url().'/js/css.js','1.0',true);
+  wp_enqueue_script('codemirror', gmc_plugin_url().'/js/codemirror.js',GMC_VERSION,true);
+  wp_enqueue_script('codemirrorcss', gmc_plugin_url().'/js/css.js',GMC_VERSION,true);
   
-  wp_enqueue_script('autoresize.jquery', gmc_plugin_url().'/js/autoresize.jquery.min.js','1.0',true);
+  wp_enqueue_script('autoresize.jquery', gmc_plugin_url().'/js/autoresize.jquery.min.js',GMC_VERSION,true);
 
   // this way we can override tb_remove() :)
   wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true);
@@ -2167,6 +2118,37 @@ function gmc_admin_enqueue_scripts() {
 															'nonce' => wp_create_nonce( 'gmc-nonce' )
 															));
   }
+
+  wp_register_style('jquery.alerts', gmc_plugin_url().'/css/jquery.alerts.css');
+  wp_enqueue_style( 'jquery.alerts');
+
+  wp_register_style('chosen', gmc_plugin_url().'/css/chosen.css');
+  wp_enqueue_style( 'chosen');
+  
+  wp_register_style('codemirror', gmc_plugin_url().'/css/codemirror.css');
+  wp_enqueue_style( 'codemirror');
+  
+  wp_register_style('codemirrordefault', gmc_plugin_url().'/css/codemirrordefault.css');
+  wp_enqueue_style( 'codemirrordefault');
+  
+  wp_register_style('jquery.miniColors', gmc_plugin_url().'/css/jquery.miniColors.css');
+  wp_enqueue_style( 'jquery.miniColors');
+  
+  wp_enqueue_style('thickbox');
+
+  global $pagenow;
+  if ($pagenow == 'media-upload.php') {
+    if (isset($_REQUEST['post_id'])) {
+      $p=get_post($_REQUEST['post_id']);
+      
+      if ($p->post_type!="gmc_recipe") {
+      return;
+      }
+    }
+  }
+
+  wp_register_style('recipe-template-admin', gmc_plugin_url().'/css/recipe-template-admin.css', false, GMC_VERSION);
+  wp_enqueue_style( 'recipe-template-admin');
 }
 
 function gmc_show_recipe($id, $showtitle=true) {
@@ -2185,6 +2167,7 @@ function gmc_show_recipe($id, $showtitle=true) {
   $gmcCssPrint = get_option('gmc-overridecss');
   $gmc_narrow_css = get_option('gmc-widecss') ? '' : '-narrow';
   $hasStepImage = false;
+  $gmc_img_popup = get_option('gmc-img-popup');
 
   require "recipe-template-shortcode.php";
 
@@ -2270,6 +2253,7 @@ function gmc_insert_recipe_dialog() {
   echo '<li><a id="gmc-all-recipes" href="#">'. __('All recipes') . '</a></li>';
   echo '<li><a id="gmc-latest-recipes" href="#">'. __('Latest recipes') . '</a></li>';
   echo '<li><a id="gmc-recipe-categories" href="#">'. __('Recipe categories') . '</a></li>';
+  echo '<li><a id="gmc-archived-recipes" href="#">'. __('Archived recipes') . '</a></li>';
   echo '</ul>';
   echo "</div>\n";
 }
@@ -2322,9 +2306,6 @@ function gmc_media_upload_tabs($tabs) {
   //}
 
 	return $tabs;
-}
-
-function gmc_admin_footer() {
 }
 
 function gmc_enter_title_here($title, $post) {

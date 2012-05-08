@@ -85,7 +85,7 @@
 <h3><?php _e('Want to help?', 'gmc'); ?></h3><div class="inside">
 <p>
             <?php _e('If you would like to help fund further improvements to this plugin (and feed the GetMeCooking team), please send us a donation (we really appreciate it!).', 'gmc'); ?>
-          </p>          <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=TJ2X9BHYUGEWU"><img id="gmc-donate" width="122" height="47" alt="Donate towards the GetMeCooking Recipe Template plugin for WordPress" src="http://grandslambert.com/files/2010/06/btn_donateCC_LG.gif" title="Donate towards the GetMeCooking Recipe Template plugin for WordPress" class="aligncenter size-full wp-image-174"></a>
+          </p>          <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=TJ2X9BHYUGEWU"><img id="gmc-donate" width="160" height="47" alt="Donate towards the GetMeCooking Recipe Template plugin for WordPress" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" title="Donate towards the GetMeCooking Recipe Template plugin for WordPress" class="aligncenter size-full wp-image-174"></a>
         </div>      </div><div class="postbox">
 <h3><?php _e('Feedback, help and support', 'gmc'); ?></h3><div class="inside">
 <p>
@@ -163,6 +163,11 @@
                 <?php _e('Do you want to use the wide theme?', 'gmc'); ?>
               </th><td><input id="gmc-widecss" value="Y" name="gmc-widecss" type="checkbox" <?php echo (get_option('gmc-widecss')=='Y' ? 'checked="checked"' : ''); ?>/><span class="gmc-smaller">
                   (<a href="<?php echo gmc_plugin_url().'/docs/wide-theme.png'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
+                </span></td>            </tr><tr>
+<th>
+                <?php _e('When clicking a thumbnail, should the photo popup?', 'gmc'); ?>
+              </th><td><input id="gmc-img-popup" value="Y" name="gmc-img-popup" type="checkbox" <?php echo (get_option('gmc-img-popup')=='Y' ? 'checked="checked"' : ''); ?>/><span class="gmc-smaller">
+                  (<a href="<?php echo gmc_plugin_url().'/docs/img-popup.jpg'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
                 </span></td>            </tr><tr>
 <th>
                 <?php _e('What label option would you like between each recipe step?', 'gmc'); ?>

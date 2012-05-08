@@ -128,6 +128,7 @@ td.gmc-step-list-title {
   padding-bottom: 10px;
   padding-top: 0;
   vertical-align: top;
+  text-align: inherit;
 }
 
 img.gmc-step-photo {

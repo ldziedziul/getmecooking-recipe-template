@@ -87,6 +87,11 @@ Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/w
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.20 =
+* Added option when clicking images to show them in a popup rather than a blank page
+* Re-added ability to set status / visibility of a recipe. Needed for new archive shortcode in premium plugin
+* Removed option to drag / drop recipe steps as causing mac bug to not add photos
+
 = 1.19 =
 * Added option to say your theme is narrow, this changes the layout and puts the recipe summary information below the main photo rather than try to squeeze it to the right
 * If there is no main photo, the narrow theme css is used so the summary text will no longer be bunched up
