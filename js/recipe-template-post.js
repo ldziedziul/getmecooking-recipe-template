@@ -1,0 +1,1 @@
+jQuery(document).ready(function(){jQuery("#gmc-insert-recipe-button").click(function(){tinyMCE.activeEditor.execCommand("mceInsertContent",false,"[gmc_recipe "+jQuery("#gmc-insert-recipe-list").val()+"]");tinyMCEPopup.close();return false})})

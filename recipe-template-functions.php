@@ -2096,8 +2096,16 @@ function gmc_admin_enqueue_scripts() {
   
   wp_enqueue_script('autoresize.jquery', gmc_plugin_url().'/js/autoresize.jquery.min.js',GMC_VERSION,true);
 
+  global $post;
   // this way we can override tb_remove() :)
-  wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true);
+  if ($post->post_type=='gmc_recipe')
+  {
+    wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true);
+  }
+  else
+  {
+    wp_enqueue_script('recipe-template-post',gmc_plugin_url().'/js/recipe-template-post.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true); 
+  }
 
   wp_enqueue_script('swfupload');
   wp_enqueue_script('swfupload-queue', array('swfupload'));
@@ -2107,7 +2115,6 @@ function gmc_admin_enqueue_scripts() {
 
   wp_enqueue_script('gmc-ajax-request', gmc_plugin_url().'/js/recipe-template-ajax.js', array( 'jquery', 'swfupload', 'swfupload-queue', 'gmc-swfupload-handlers' ),GMC_VERSION,true);
 
-  global $post;
   if (!empty($post))
   {
   wp_localize_script('gmc-ajax-request', 'GMCAjax', array('postID' => $post->ID,

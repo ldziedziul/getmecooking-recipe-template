@@ -87,6 +87,9 @@ Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/w
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.21 =
+* 1.20 had removed the upload/insert button from the add post page
+
 = 1.20 =
 * Added option when clicking images to show them in a popup rather than a blank page
 * Re-added ability to set status / visibility of a recipe. Needed for new archive shortcode in premium plugin
