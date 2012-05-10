@@ -6,11 +6,11 @@ Requires at least: 3.0
 Tested up to: 3.3
 Stable tag: trunk
 
-For food bloggers. Display one or more recipes per page in an easy to read format with print, recipe search, custom layout, SEO and other features.
+A WordPress recipe plugin for food bloggers. Display one or more recipes per page in an easy to read format with print, recipe search, custom layout, SEO and other features.
 
 == Description ==
 
-The Recipe Template plugin makes it quick and easy for you to:
+This WordPress recipe plugin makes it quick and easy for you to:
 
 * Add many recipes to a blog post, or the same recipe in many posts
 * Specify if the recipe is relevant for food allergies and intolerances
@@ -51,7 +51,7 @@ Yes, there are simple options to customise many aspects of the recipe. Don't lik
 
 They sure can, each recipe has its own print link. Print just the recipe, not the whole blog post. Choose with all photos, just main photo or just text.
 
-= Does this plugin take care of Search Engine Optimisation (SEO)? =
+= Does this WordPress recipe plugin take care of Search Engine Optimisation (SEO)? =
 
 Don't worry about the search engine bots, we speak their language.
 
@@ -71,7 +71,7 @@ Yes - just edit the recipe. No need to do anything in the blog post
 
 Everything is optional and headings will only appear if you have typed in the relevant information. If you want the recipe to appear on GetMeCooking then we do need a photo of the finished recipe.
 
-= So how do I use your plugin? =
+= So how do I use your WordPress recipe plugin? =
 
 Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/wordpress-recipe-plugin) or [read about it](http://www.getmecooking.com/recipe-template-info#installingThePlugin).
 
