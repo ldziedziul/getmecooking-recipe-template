@@ -1,15 +1,12 @@
 <?php global $post; ?>
 <?php $large_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large'); ?>
 <?php $steps=get_posts('post_status=publish&post_type=gmc_recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
-<?php if(!empty($gmcCssPrint)) { ?>
-
-<input class="gmcPrintCssPath" type="hidden" value="<?php echo gmc_plugin_url().'/css/recipe-template.css?ver='.GMC_VERSION; ?>" /><?php } ?>
 <div class="gmc-recipe" id="gmc-print-<?php echo $post->ID; ?>" itemscope itemtype="http://schema.org/Recipe" style="<?php echo gmc_recipe_main_style(); ?>">
   <?php $parent_title = $tmppost->post_title; ?>
   <?php $recipe_title = get_the_title(); ?>
     <?php if ($showtitle) { ?>
 
-<h2 class="gmc-recipe-title <?php echo strtolower($recipe_title) == strtolower($parent_title) ? 'gmc-web-hidden' : ''; ?>" itemprop="name"><?php echo $recipe_title; ?></h2><div class="gmc-print-area">
+<h2 class="gmc-recipe-title <?php echo $gmc_hide_title == 'Y' ? 'gmc-web-hidden' : ''; ?>" itemprop="name"><?php echo $recipe_title; ?></h2><div class="gmc-print-area">
             <?php if ($steps) { ?>
 
                 <?php foreach ($steps as $step) { ?>
@@ -150,7 +147,7 @@
 
         </td>      </tr>    <?php } ?>
     <?php $occasion = wp_get_object_terms($post->ID, 'gmc_occasion'); ?>
-        <?php if (!empty($occasions)) { ?>
+        <?php if (!empty($occasion)) { ?>
 
 <tr>
 <td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
@@ -218,6 +215,7 @@
   <?php $ingredients=get_posts('post_status=publish&post_type=gmc_recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
     <?php if ($ingredients) { ?>
 
+    <?php $containsOptional = false; ?>
 <div class="gmc-recipe-ingredients"><h2 class="gmc-recipe-subtitle"><?php echo get_option("gmc-label-ingredients") ? get_option("gmc-label-ingredients") : __('Ingredients', 'gmc'); ?></h2><?php $distinctGroupNames = gmc_distinct_group_names($post->ID); ?>
             <?php if (!empty($distinctGroupNames)) { ?>
 
@@ -368,7 +366,6 @@
               <?php $gmc_step_photo_position = get_option('gmc-step-photo-position', 1); ?>
                             <?php if ($thumbid) { ?>
 
-                <?php $altText = $recipeTitle; ?>
                 <?php $large_image_url = wp_get_attachment_image_src($thumbid, 'large'); ?>
 <td>
                                     <?php if($gmc_step_photo_position == '0') { ?>
@@ -413,7 +410,6 @@
               <?php $gmc_step_photo_position = get_option('gmc-step-photo-position', 1); ?>
                             <?php if ($thumbid) { ?>
 
-                <?php $altText = $recipeTitle; ?>
                 <?php $large_image_url = wp_get_attachment_image_src($thumbid, 'large'); ?>
 <td>
                                     <?php if($gmc_step_photo_position == '0') { ?>

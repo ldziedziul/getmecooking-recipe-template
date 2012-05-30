@@ -17,10 +17,10 @@
 <option value="">
           <?php _e('None', 'gmc'); ?>
         </option><optgroup label="<?php echo __('Weight', 'gmc'); ?>">
-          <?php echo gmc_option_list(array('g' => __('Grams', 'gmc'), 'kg' => __('Kilograms', 'gmc'), 'oz' => __('Ounces', 'gmc'), 'lb' => __('Pounds', 'gmc'), "imperial pint weight" => __('Pint (Imperial)', 'gmc'), "usa pint weight" => __('Pint (US)', 'gmc')), $ms); ?>
+          <?php echo gmc_option_list(array('g' => __('Grams', 'gmc'), 'kg' => __('Kilograms', 'gmc'), 'oz' => __('Ounces', 'gmc'), 'lb' => __('Pounds', 'gmc'), "imperial pint weight" => __('Pint (Imperial)', 'gmc'), "usa pint weight" => __('Pint (US)', 'gmc'), "imperial quart" => __('Quart (Imperial)', 'gmc'), "usa dry quart" => __('Quart (US)', 'gmc')), $ms); ?>
 
         </optgroup><optgroup label="<?php echo __('Liquids', 'gmc'); ?>">
-          <?php echo gmc_option_list(array("ml" => __('Millilitre', 'gmc'), "litre" => __('Litre', 'gmc'), "imperial fl oz" => __('Fluid Ounces (Imperial)', 'gmc'), "usa fl oz" => __('Fluid Ounces (US)', 'gmc'), "juice" => __('Juice(s)', 'gmc')), $ms); ?>
+          <?php echo gmc_option_list(array("ml" => __('Millilitre', 'gmc'), "l" => __('Litre', 'gmc'), "imperial fl oz" => __('Fluid Ounces (Imperial)', 'gmc'), "usa fl oz" => __('Fluid Ounces (US)', 'gmc'), "juice" => __('Juice(s)', 'gmc'), "imperial pint" => __('Pint (Imperial)', 'gmc'), "usa pint" => __('Pint (US)', 'gmc'), "imperial quart" => __('Quart (Imperial)', 'gmc'), "usa liquid quart" => __('Quart (US)', 'gmc')), $ms); ?>
 
         </optgroup><optgroup label="<?php echo __('Size', 'gmc'); ?>">
           <?php echo gmc_option_list(array("small" => __('Small', 'gmc'), "medium" => __('Medium', 'gmc'), "large" => __('Large', 'gmc')), $ms); ?>
@@ -29,7 +29,7 @@
           <?php echo gmc_option_list(array("thin slice" => __('Thin slice(s)', 'gmc'), "medium slice" => __('Medium slice(s)', 'gmc'), "thick slice" => __('Thick slice(s)', 'gmc')), $ms); ?>
 
         </optgroup><optgroup label="<?php echo __('Other', 'gmc'); ?>">
-          <?php echo gmc_option_list(array("bunch" => __('Bunch', 'gmc'), "bottle" => __('Bottle', 'gmc'), "box" => __('Box', 'gmc'), "bulb" => __('Bulb', 'gmc'), "can" => __('Can', 'gmc'), "clove" => __('Clove', 'gmc'), "cube" => __('Cube', 'gmc'), "cup" => __('Cup', 'gmc'), "drizzle" => __('Drizzle', 'gmc'), "drop" => __('Drop', 'gmc'), "glass" => __('Glass', 'gmc'), "handful" => __('Handful', 'gmc'), "head" => __('Head', 'gmc'), "jar" => __('Jar', 'gmc'), "knob" => __('Knob', 'gmc'), "packet" => __('Packet', 'gmc'), "piece" => __('Piece', 'gmc'), "pinch" => __('Pinch', 'gmc'), "imperial pint" => __('Pint (Imperial)', 'gmc'), "usa pint" => __('Pint (US)', 'gmc'), "rib" => __('Rib', 'gmc'), "scoop" => __('Scoop', 'gmc'), "sheet" => __('Sheet', 'gmc'), "sprinkle" => __('Sprinkle', 'gmc'), "sprig" => __('Sprig', 'gmc'), "stalk" => __('Stalk', 'gmc'), "stick" => __('Stick', 'gmc'), "tablespoon" => __('Tablespoon', 'gmc'), "heaped tablespoon" => __('Tablespoon (heaped)', 'gmc'), "teaspoon" => __('Teaspoon', 'gmc'), "heaped teaspoon" => __('Teaspoon (heaped)', 'gmc'), "tin" => __('Tin', 'gmc'), "wedge" => __('Wedge', 'gmc'), "zest" => __('Zest', 'gmc')), $ms); ?>
+          <?php echo gmc_option_list(array("bag" => __('Bag', 'gmc'), "bunch" => __('Bunch', 'gmc'), "bottle" => __('Bottle', 'gmc'), "box" => __('Box', 'gmc'), "bulb" => __('Bulb', 'gmc'), "can" => __('Can', 'gmc'), "carton" => __('Carton', 'gmc'), "clove" => __('Clove', 'gmc'), "cm" => __('centimetre', 'gmc'), "cube" => __('Cube', 'gmc'), "cup" => __('Cup', 'gmc'), "dash" => __('Dash', 'gmc'), "drizzle" => __('Drizzle', 'gmc'), "drop" => __('Drop', 'gmc'), "glass" => __('Glass', 'gmc'), "handful" => __('Handful', 'gmc'), "head" => __('Head', 'gmc'), "inch" => __('Inch', 'gmc'), "jar" => __('Jar', 'gmc'), "knob" => __('Knob', 'gmc'), "leaf" => __('Leaf', 'gmc'), "packet" => __('Packet', 'gmc'), "piece" => __('Piece', 'gmc'), "pinch" => __('Pinch', 'gmc'), "rib" => __('Rib', 'gmc'), "scoop" => __('Scoop', 'gmc'), "sheet" => __('Sheet', 'gmc'), "shot" => __('Shot', 'gmc'), "splash" => __('Splash', 'gmc'), "sprinkle" => __('Sprinkle', 'gmc'), "sprig" => __('Sprig', 'gmc'), "stalk" => __('Stalk', 'gmc'), "stick" => __('Stick', 'gmc'), "tablespoon" => __('Tablespoon', 'gmc'), "heaped tablespoon" => __('Tablespoon (heaped)', 'gmc'), "teaspoon" => __('Teaspoon', 'gmc'), "heaped teaspoon" => __('Teaspoon (heaped)', 'gmc'), "tin" => __('Tin', 'gmc'), "tube" => __('Tube', 'gmc'), "wedge" => __('Wedge', 'gmc'), "zest" => __('Zest', 'gmc')), $ms); ?>
 
         </optgroup>      </select>    </div><div id="gmc-custom-measurement-area-<?php echo $ingredientId; ?>"><a class="gmc-show-standard-measurement" href="#" id="gmc-show-standard-measurement-<?php echo $ingredientId; ?>"><?php _e('Show measurement list', 'gmc'); ?></a><br />            <?php if (get_post_meta($ingredientId, 'gmc-use-custom-measurement', true)) { ?>
 
@@ -51,5 +51,5 @@
         <?php if (!$gmc_add_new) { ?>
 
 <a class="gmc-delete-ingredient" href="#" id="gmc-ingredient-to-delete-<?php echo $ingredientId; ?>">
-<img alt:="<?php echo __('Delete this ingredient', 'gmc'); ?>" height="16" src="<?php echo gmc_plugin_url() . '/images/delete.png'; ?>" title="<?php echo __('Delete this ingredient', 'gmc'); ?>" width="16" />      </a>    <?php } ?>
+<img alt="<?php echo __('Delete this ingredient', 'gmc'); ?>" height="16" src="<?php echo gmc_plugin_url() . '/images/delete.png'; ?>" title="<?php echo __('Delete this ingredient', 'gmc'); ?>" width="16" />      </a>    <?php } ?>
   </td></tr>

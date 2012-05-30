@@ -151,6 +151,9 @@
                 <?php _e('Directions', 'gmc'); ?>
               </th><td><input type="text" name="gmc-label-directions" value="<?php echo get_option("gmc-label-directions");?>" /></td>            </tr><tr>
 <th>
+                <?php _e('Step', 'gmc'); ?>
+              </th><td><input type="text" name="gmc-label-step-text" value="<?php echo get_option("gmc-label-step-text");?>" /></td>            </tr><tr>
+<th>
                 <?php _e('Note', 'gmc'); ?>
               </th><td><input type="text" name="gmc-label-note" value="<?php echo get_option("gmc-label-note");?>" /></td>            </tr><tr>
 <td>
@@ -170,9 +173,17 @@
                   (<a href="<?php echo gmc_plugin_url().'/docs/img-popup.jpg'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
                 </span></td>            </tr><tr>
 <th>
+                <?php _e('Hide recipe title if it matches the blog post title?', 'gmc'); ?>
+              </th><td><input id="gmc-hide-title" value="Y" name="gmc-hide-title" type="checkbox" <?php echo (get_option('gmc-hide-title')=='Y' ? 'checked="checked"' : ''); ?>/><span class="gmc-smaller">
+                  (<a href="<?php echo gmc_plugin_url().'/docs/hide-title.jpg'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
+                </span></td>            </tr><tr>
+<th>
                 <?php _e('What label option would you like between each recipe step?', 'gmc'); ?>
-              </th><td><select name="gmc-label-step">
-                  <?php echo gmc_option_list(array(0 => __('Step', 'gmc').' 1', 1 => __('Step', 'gmc').' 1.', 2 => __('step', 'gmc').' 1', 3 => __('step', 'gmc').' 1.', '1.', '1', 6 => __('No label', 'gmc')), get_option('gmc-label-step')); ?>
+              </th><td><?php $step_text = __('Step', 'gmc');; ?><?php if (get_option('gmc-label-step-text')) { ?>
+
+                  <?php $step_text = get_option('gmc-label-step-text'); ?>
+                <?php } ?><select name="gmc-label-step">
+                  <?php echo gmc_option_list(array(0 => "$step_text 1", 1 => "$step_text 1.", '1.', '1', 4 => __('No label', 'gmc')), get_option('gmc-label-step')); ?>
 
                 </select><span class="gmc-smaller">
                   (<a href="<?php echo gmc_plugin_url().'/docs/label-step-options.png'; ?>"><?php _e('example screenshot', 'gmc');?></a>)
@@ -230,6 +241,8 @@
             <img class="gmc-tooltip" src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="<?php _e('Help', 'gmc'); ?>" title="<?php _e("Remember to tick 'Use your own CSS' and to 'Save settings'.", 'gmc'); ?>" />
           </p><p>
             <?php _e('To learn about Cascading Style Sheets (CSS), please see the <a href="http://www.w3schools.com/css/css_intro.asp">W3Schools introduction to CSS</a>', 'gmc'); ?>
+          </p><p>
+            <?php _e('Any print-only CSS you add is only shown on the preview page with Google Chrome but when you print it will be applied.', 'gmc'); ?>
           </p><table class="gmc-table">
 <tbody>
 <tr valign="top">

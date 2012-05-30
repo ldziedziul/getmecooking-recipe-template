@@ -221,8 +221,10 @@ function populate_taxonomies() {
   wp_insert_term(__('Birthday Party', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Casual Party', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Christmas', 'gmc'), 'gmc_occasion');
+  wp_insert_term(__('Easter', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Formal Party', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Halloween', 'gmc'), 'gmc_occasion');
+  wp_insert_term(__('Valentines day', 'gmc'), 'gmc_occasion');
   wp_insert_term(__('Thanksgiving', 'gmc'), 'gmc_occasion');
 
   gmc_sample_recipe();
@@ -574,6 +576,15 @@ function gmc_init() {
     add_option("gmc_premium_files", 'true', '', 'no');
   }
   
+  $file_name = plugin_dir_path(__FILE__) . 'css' . DIRECTORY_SEPARATOR . 'recipe-template-custom.css';
+
+  if (get_option("gmc-overridecss") == "Y" && !file_exists($file_name))
+  {
+    $file_handle = fopen($file_name, 'w');
+    fwrite($file_handle, get_option("gmc-shortcodecss"));
+    fclose($file_handle);
+  }
+  
   populate_taxonomies();
 
   gmc_update_old_version();
@@ -649,6 +660,37 @@ function gmc_update_old_version() {
     if(get_option('gmc_order') && strpos('region', get_option('gmc_order')) === false)
     {
       update_option("gmc_order", get_option('gmc_order') . ',region');
+    }
+  }
+  if (get_option("gmc_version") <= 1.21)
+  {
+    global $wpdb;
+    $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = 'l' WHERE meta_value = 'litre' AND meta_key = 'gmc-ingredientmeasurement'");
+    
+    wp_insert_term(__('Easter', 'gmc'), 'gmc_occasion');
+    wp_insert_term(__('Valentines day', 'gmc'), 'gmc_occasion');
+
+    if (get_option('gmc-label-step'))
+    {
+      switch (get_option('gmc-label-step'))
+      {
+        case '2':
+          update_option('gmc-label-step', 0);
+        break;
+        case '3':
+          update_option('gmc-label-step', 1);
+        break;
+        case '4':
+          update_option('gmc-label-step', 2);
+        break;
+        case '5':
+          update_option('gmc-label-step', 3);
+        break;
+        case '6':
+          update_option('gmc-label-step', 4);
+        break;
+        default:
+      }      
     }
   }
 
@@ -762,42 +804,34 @@ function gmc_remove_meta_boxes() {
   }
 }
 */
-function gmc_step_thumbnail_box($p) {
+function gmc_step_thumbnail_box($post) {
+  $thumbnail_id = get_post_thumbnail_id($post->ID);
+  echo '<input type="hidden" id="gmcStepThumbnail-'.$post->ID.'" name="gmcStepThumbnail-'.$post->ID.'" value="' . $thumbnail_id . '" />';
 
-  echo "<div class='gmc-post-thumbnail' id='gmc-post-thumbnail-".$p->ID."' >";
-  echo "<div class='gmc-upload-button' id='gmc-upload-button-".$p->ID."' ></div>";
-  //echo '<input class="gmc-upload-cancel" id="gmc-upload-cancel-'.$p->ID.'" type="button" value="Cancel All Uploads" onclick="swfu.cancelQueue();" disabled="disabled" />';
-  echo "<div class='gmc-upload-progress' id='gmc-upload-progress-".$p->ID."'>&nbsp;</div>";
+  $has_step_thumbnail = '';
 
-  $ajax_nonce = wp_create_nonce( "set_post_thumbnail-$p->ID" );
-  if (has_post_thumbnail($p->ID))
+  if (empty($thumbnail_id))
   {
-    echo '<a href="#" id="remove-step-thumbnail-' . $p->ID . '" onclick="gmcRemoveStepThumbnail(\'' . $p->ID . '\', \'' . $ajax_nonce . '\');return false;">' . __('Remove photo', 'gmc') . '</a>';
-  }
-  else
-  {
-   echo '<a class="hidden" href="#" id="remove-step-thumbnail-' . $p->ID . '" onclick="gmcRemoveStepThumbnail(\'' . $p->ID . '\', \'' . $ajax_nonce . '\');return false;">' . __('Remove photo', 'gmc') . '</a>';
+    $has_step_thumbnail = ' style="display:none"';
   }
 
-  echo "<div class='gmc-upload-thumbnail' id='gmc-upload-thumbnail-".$p->ID."'>";
-  echo get_the_post_thumbnail($p->ID, "medium");
-  echo "</div>";
-  echo "</div>";
+
+  echo '<input id="gmcUploadStepButton-'.$post->ID.'" type="button" value="' . __('Add photograph', 'gmc') . '" /> <a id="gmcRemoveStepThumbnail-'.$post->ID.'" class="removeStepThumbnail" href="#"'.$has_step_thumbnail.'>' . __('Remove photograph', 'gmc') . '</a>';
+  echo '<div id="gmcStepThumbnailPreview-'.$post->ID.'">';
+  echo get_the_post_thumbnail($post->ID, "medium");
+  echo '</div>';
 }
 
 function gmc_main_photo_thumbnail_box() {
   global $post;
 
-  echo '<p>' . __('Select a large photo - the images will be resized for you into a clickable thumbnail.', 'gmc') . ' ';
+  echo '<p>' . __('Choose a large photo - it will be resized for you into a clickable thumbnail.', 'gmc') . ' ';
   echo '<img class="gmc-tooltip" src="' . gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc') .'" title="'. __('The size of the main recipe image is determined by <strong>Dashboard | Settings | Media</strong> (thumbnail image = Medium size, full size image = Large size)', 'gmc') .'" /></label></p>';
-  echo "<div class='gmc-post-thumbnail' id='gmc-post-thumbnail-".$post->ID."' >";
-  echo "<div class='gmc-upload-button' id='gmc-upload-button-".$post->ID."' ></div>";
-  //echo '<input class="gmc-upload-cancel" id="gmc-upload-cancel-'.$post->ID.'" type="button" value="Cancel All Uploads" onclick="swfu.cancelQueue();" disabled="disabled" />';
-  echo "<div class='gmc-upload-progress' id='gmc-upload-progress-".$post->ID."'>&nbsp;</div>";
-  echo "<div class='gmc-upload-thumbnail' id='gmc-upload-thumbnail-".$post->ID."'>";
+  echo '<input type="hidden" id="gmcMainImage" name="gmcMainImage" value="' . get_post_thumbnail_id() . '" />';
+  echo '<input id="gmcUploadImageButton" type="button" value="' . __('Add photograph', 'gmc') . '" /> <a id="gmcRemoveMainImage" href="#">' . __('Remove photograph', 'gmc') . '</a>';
+  echo '<div id="gmcMainThumbnailPreview">';
   the_post_thumbnail("medium");
-  echo "</div>";
-  echo "</div>";
+  echo '</div>';
 }
 
 function gmc_add_meta_boxes() {
@@ -1012,13 +1046,20 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
   foreach($steps as $step) {
     $xs=$xsteps->addChild('Step');
     
-    $thumbid=get_post_thumbnail_id($step->ID);
-    if ($thumbid)
+    $image_id = get_post_meta($step->ID, '_thumbnail_id', true);
+
+    if ($image_id > 0)
     {
-      $thumbnail = get_post($thumbid);
-      $xs->addChild('AltText',gmc_xml_safe_data($thumbnail->post_title));
-    }    
-    
+      $alt = get_post_meta($image_id, '_wp_attachment_image_alt', true);
+
+      if (count($alt))
+      {
+        $xs->addChild('AltText',gmc_xml_safe_data($alt));
+      }
+
+      $xs->addChild('Title',gmc_xml_safe_data(get_post($image_id)->post_title));
+    }
+
     $xs->addChild('Description',gmc_xml_safe_data($step->post_content));
     $xs->addChild('Photo',gmc_xml_safe_data(gmc_get_post_thumb_src($step->ID)));
     $xs->addChild('GroupName',gmc_xml_safe_data(get_post_meta($step->ID,'gmc_stepgroup',true)));
@@ -1126,7 +1167,10 @@ function gmc_mainrecipe_box($post, $metabox) {
 		$i=1;
 		foreach ($steps as $step) {
 	  echo '<div id="gmc-steps-step-'.$i.'" class="gmc-singlestep postbox" >'."\n";
-	  echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Step', 'gmc').' <span class="gmc-stepnumber">'.$i.'</span></h3>'."\n";
+	  echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Step', 'gmc').' <span class="gmc-stepnumber">'.$i;
+    echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#"><img alt="'.__("Delete this step", "gmc").'" height="16" src="'. gmc_plugin_url() . '/images/delete.png" title="'. __('Delete this step', 'gmc').'" width="16" /></a>';
+    echo '</span></h3>'."\n";    
+
 	  echo '<div class="inside">'."\n";
 
 	  echo "<input type='hidden' name='stepid[]' value='".$step->ID."' />"."\n";
@@ -1145,8 +1189,8 @@ function gmc_mainrecipe_box($post, $metabox) {
     echo '<div class="gmc-stepdesc-box">'."\n";
 	  echo "<input type='text' class='gmc-admin-halfline' name='gmc-stepgroup[]' value='".get_post_meta($step->ID, 'gmc_stepgroup', true)."' />\n";
 	  echo '</div>'."\n";
-	  echo '<label class="gmc-admin-label gmc-admin-step-label"><strong>'.__('Alt text (optional - only used if you have added a photograph)', 'gmc').'</strong> ';
-	  echo '<img class="gmc-tooltip" src="' . gmc_plugin_url().'/images/help.png" alt="'.__('Help', 'gmc').'" title="'.__('How would you describe the photograph if you could not see it? (e.g. Muffin mixture poured into a muffin tray)', 'gmc').'" /></label>';
+	  //echo '<label class="gmc-admin-label gmc-admin-step-label"><strong>'.__('Alt text (optional - only used if you have added a photograph)', 'gmc').'</strong> ';
+	  //echo '<img class="gmc-tooltip" src="' . gmc_plugin_url().'/images/help.png" alt="'.__('Help', 'gmc').'" title="'.__('How would you describe the photograph if you could not see it? (e.g. Muffin mixture poured into a muffin tray)', 'gmc').'" /></label>';
 	  
 	  $thumbid=get_post_thumbnail_id($step->ID);
 	  $alttext = '';
@@ -1155,11 +1199,11 @@ function gmc_mainrecipe_box($post, $metabox) {
 		$thumbnail = get_post($thumbid);
 		$alttext = $thumbnail->post_title;
 	  }
-    echo '<div class="gmc-stepdesc-box">'."\n";
-	  echo '<input type="text" class="gmc-admin-alt-text-input" name="gmc-step-alt-text[]" value="'.$alttext.'"/>';
-    echo '</div>'."\n";
+    //echo '<div class="gmc-stepdesc-box">'."\n";
+	  echo '<input type="hidden" class="gmc-admin-alt-text-input" name="gmc-step-alt-text[]" value="'.$alttext.'"/>';
+    //echo '</div>'."\n";
 	  echo '<div style="clear:both"></div>';
-	  echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#">'.__('Delete step', 'gmc').'</a>';
+	  //echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#">'.__('Delete step', 'gmc').'</a>';
 	  echo '</div></div>'."\n";
 	  
 	  $i++;
@@ -1269,9 +1313,17 @@ function gmc_save_settings() {
   // CSS
   updateOrDeleteOption("gmc-overridecss", $_POST["gmc-overridecss"]);
   
+  if ($_POST["gmc-overridecss"] == "Y")
+  {
+    $file_name = plugin_dir_path(__FILE__) . 'css' . DIRECTORY_SEPARATOR . 'recipe-template-custom.css';
+    $file_handle = fopen($file_name, 'w') or die(__("Unable to create custom CSS file. Please make sure the CSS directory has write permissions", 'gmc'));
+    fwrite($file_handle, $_POST["gmc-shortcodecss"]);
+    fclose($file_handle);
+  }
+
   if(!empty($_POST["gmc-shortcodecss"]))
   {
-	update_option("gmc-shortcodecss", $_POST["gmc-shortcodecss"]);
+  	update_option("gmc-shortcodecss", $_POST["gmc-shortcodecss"]);
   }
   
   if(!empty($_POST["gmc_resetcss"]))
@@ -1307,6 +1359,7 @@ function gmc_save_settings() {
   
   updateOrDeleteOption("gmc-widecss", $_POST["gmc-widecss"]);
   updateOrDeleteOption("gmc-img-popup", $_POST["gmc-img-popup"]);
+  updateOrDeleteOption("gmc-hide-title", $_POST["gmc-hide-title"]);
   updateOrDeleteOption("gmc-label-step", $_POST["gmc-label-step"]);  
   updateOrDeleteOption("gmc-label-step-position", $_POST["gmc-label-step-position"]);
   
@@ -1352,7 +1405,8 @@ function gmc_save_settings() {
   updateOrDeleteOption("gmc-label-source-mag", $_POST["gmc-label-source-mag"]);
   updateOrDeleteOption("gmc-label-source-website", $_POST["gmc-label-source-website"]);  
   updateOrDeleteOption("gmc-label-ingredients", $_POST["gmc-label-ingredients"]);  
-  updateOrDeleteOption("gmc-label-directions", $_POST["gmc-label-directions"]);  
+  updateOrDeleteOption("gmc-label-directions", $_POST["gmc-label-directions"]);
+  updateOrDeleteOption("gmc-label-step-text", $_POST["gmc-label-step-text"]);
   updateOrDeleteOption("gmc-label-note", $_POST["gmc-label-note"]);
   
   if(!empty($_POST["gmc-username"])) {
@@ -1391,6 +1445,14 @@ function updateOrDeleteMeta($id, $key, $value) {
 }
 
 function gmc_save_recipe_to_db($post_ID, $post) {
+  if (empty($_POST['gmcMainImage']))
+  {
+    global $wpdb;
+    $wpdb->query("UPDATE {$wpdb->posts} SET post_parent = 0 where post_type = 'attachment' AND post_parent = $post_ID");
+  }
+
+  updateOrDeleteMeta($post_ID, "_thumbnail_id", $_POST['gmcMainImage']);
+
   // generic params
   updateOrDeleteMeta($post_ID, "gmc-nr-servings", $_POST['gmc-nr-servings']);  
   updateOrDeleteMeta($post_ID, "gmc-prep-time-hours", $_POST['gmc-prep-time-hours']);  
@@ -1502,78 +1564,68 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 
   //steps
   if (isset($_POST['stepid'])) {
-	$i=1;
+  	$i=1;
 
-	$step_to_delete = $_POST['gmc_step_to_delete'];
-	
-	foreach($_POST['stepid'] as $key => $stepid) {
-	  $my_post=array();
-	  $my_post['menu_order']=$i;
-
-	  if ($_POST['steptitle'][$key]) {
-		$my_post['post_title']=$_POST['steptitle'][$key];
-	  }
-	  if ($_POST['stepdescription'][$key]) {
-		$my_post['post_content']=$_POST['stepdescription'][$key];
-	  }
-	  
-	  if (empty($stepid)) {
-      if(!empty($_POST['stepdescription'][$key]))
-      {
-        $my_post['post_type'] = 'gmc_recipestep';
-        $my_post['post_parent'] = $post_ID;
-        $my_post['post_status'] = 'publish';
-        $my_post['post_author'] = $current_user->ID;
-      
-        $stepid = wp_insert_post($my_post);
+  	$step_to_delete = $_POST['gmc_step_to_delete'];
+  	
+  	foreach($_POST['stepid'] as $key => $stepid) {
+  	  $my_post=array();
+  	  $my_post['menu_order']=$i;  	  
+  		$my_post['post_title']=$_POST['post_title'] . ' ' . __('step','gmc');
+  	  
+  	  if ($_POST['stepdescription'][$key]) {
+  		$my_post['post_content']=$_POST['stepdescription'][$key];
+  	  }
+  	  
+  	  if (empty($stepid)) {
+        if(!empty($_POST['stepdescription'][$key]))
+        {
+          $my_post['post_type'] = 'gmc_recipestep';
+          $my_post['post_parent'] = $post_ID;
+          $my_post['post_status'] = 'publish';
+          $my_post['post_author'] = $current_user->ID;
         
+          $stepid = wp_insert_post($my_post);
+          
+          if(!empty($_POST['gmc-stepgroup'][$key]))
+          {
+            update_post_meta($stepid, 'gmc_stepgroup', $_POST['gmc-stepgroup'][$key]);
+          }
+        }
+  	  }    
+  	  else if (!empty($step_to_delete) && $step_to_delete == $stepid) {
+    	  //Unattach any previous photo associated to this recipe step
+    		$atts=get_posts('post_type=attachment&post_status=inherit&post_parent='.$step_to_delete);
+    		
+    		gmc_unattach_photo($atts, $post_ID);
+    		
+    		wp_delete_post($step_to_delete,true);
+  	  }
+  	  else
+  	  {
+    		$my_post['ID']=$stepid;
+    	  
         if(!empty($_POST['gmc-stepgroup'][$key]))
         {
           update_post_meta($stepid, 'gmc_stepgroup', $_POST['gmc-stepgroup'][$key]);
         }
-      }
-	  }    
-	  else if (!empty($step_to_delete) && $step_to_delete == $stepid) {
-	  //Unattach any previous photo associated to this recipe step
-		$atts=get_posts('post_type=attachment&post_status=inherit&post_parent='.$step_to_delete);
-		
-		gmc_unattach_photo($atts, $post_ID);
-		
-		wp_delete_post($step_to_delete,true);
-	  }
-	  else
-	  {
-		$my_post['ID']=$stepid;
-	  
-    if(!empty($_POST['gmc-stepgroup'][$key]))
-    {
-      update_post_meta($stepid, 'gmc_stepgroup', $_POST['gmc-stepgroup'][$key]);
-    }
-    else
-    {
-      delete_post_meta($stepid, 'gmc_stepgroup');
-    }
-    
-		wp_update_post($my_post);
-		$thumbid = get_post_thumbnail_id($stepid);
-		
-		if ($thumbid > 0)
-		{
-		  $thumbnail = get_post($thumbid);
-		  if(!empty($_POST['gmc-step-alt-text'][$key]))
-		  {            
-		  $thumbnail->post_title = $_POST['gmc-step-alt-text'][$key];
-		  }
-		  else
-		  {
-		  $thumbnail->post_title = '';
-		  }
-		  
-		  wp_update_post($thumbnail);
-		}
-	  }
-	  $i++;
-	}
+        else
+        {
+          delete_post_meta($stepid, 'gmc_stepgroup');
+        }
+        
+    		wp_update_post($my_post);
+
+        updateOrDeleteMeta($stepid, "_thumbnail_id", $_POST['gmcStepThumbnail-'.$stepid]);
+
+        if (empty($_POST['gmcStepThumbnail-'.$stepid]))
+        {
+          global $wpdb;
+          $wpdb->query("UPDATE {$wpdb->posts} SET post_parent = 0 where post_type = 'attachment' AND post_parent = $stepid");
+        }
+  	  }
+  	  $i++;
+  	}
   }
 
   // ingredients
@@ -2072,12 +2124,10 @@ function gmc_enqueue_scripts() {
 
   if (empty($overridecss)) {
   wp_register_style('recipe-template', gmc_plugin_url().'/css/recipe-template.css', false, GMC_VERSION);
-  wp_enqueue_style( 'recipe-template');
   } else {
-  echo "<style type='text/css'>\n";
-  echo stripslashes($gmccss);
-  echo "</style>\n";
+  wp_register_style('recipe-template', gmc_plugin_url().'/css/recipe-template-custom.css', false, GMC_VERSION);
   }
+  wp_enqueue_style( 'recipe-template');
 }
 
 function gmc_admin_enqueue_scripts() {
@@ -2089,24 +2139,17 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_script('chosen.jquery.min',gmc_plugin_url().'/js/chosen.jquery.min.js');
   wp_enqueue_script('jquery.alerts',gmc_plugin_url().'/js/jquery.alerts.min.js');
   wp_enqueue_script('jquery.miniColors',gmc_plugin_url().'/js/jquery.miniColors.min.js');
+  wp_enqueue_script('media-upload');
   wp_enqueue_script('thickbox');
 
   wp_enqueue_script('codemirror', gmc_plugin_url().'/js/codemirror.js',GMC_VERSION,true);
   wp_enqueue_script('codemirrorcss', gmc_plugin_url().'/js/css.js',GMC_VERSION,true);
   
   wp_enqueue_script('autoresize.jquery', gmc_plugin_url().'/js/autoresize.jquery.min.js',GMC_VERSION,true);
-
-  global $post;
-  // this way we can override tb_remove() :)
-  if ($post->post_type=='gmc_recipe')
-  {
-    wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true);
-  }
-  else
-  {
-    wp_enqueue_script('recipe-template-post',gmc_plugin_url().'/js/recipe-template-post.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true); 
-  }
-
+  
+  wp_enqueue_script('gmc-file-upload', gmc_plugin_url().'/js/gmc-file-upload.js', array('jquery','media-upload','thickbox'),GMC_VERSION,true);
+  wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true);
+  
   wp_enqueue_script('swfupload');
   wp_enqueue_script('swfupload-queue', array('swfupload'));
   
@@ -2115,6 +2158,7 @@ function gmc_admin_enqueue_scripts() {
 
   wp_enqueue_script('gmc-ajax-request', gmc_plugin_url().'/js/recipe-template-ajax.js', array( 'jquery', 'swfupload', 'swfupload-queue', 'gmc-swfupload-handlers' ),GMC_VERSION,true);
 
+  global $post;
   if (!empty($post))
   {
   wp_localize_script('gmc-ajax-request', 'GMCAjax', array('postID' => $post->ID,
@@ -2125,6 +2169,12 @@ function gmc_admin_enqueue_scripts() {
 															'nonce' => wp_create_nonce( 'gmc-nonce' )
 															));
   }
+
+  /*if ($_GET['gmc_recipe']))
+  {
+    wp_register_style('gmc-media-upload', gmc_plugin_url().'/css/gmc-media-upload.css');
+    wp_enqueue_style( 'gmc-media-upload');
+  }*/
 
   wp_register_style('jquery.alerts', gmc_plugin_url().'/css/jquery.alerts.css');
   wp_enqueue_style( 'jquery.alerts');
@@ -2171,10 +2221,10 @@ function gmc_show_recipe($id, $showtitle=true) {
 //  echo htmlentities(gmc_get_recipe_xml($post));
 //  echo "</pre>\n";
 
-  $gmcCssPrint = get_option('gmc-overridecss');
   $gmc_narrow_css = get_option('gmc-widecss') ? '' : '-narrow';
   $hasStepImage = false;
   $gmc_img_popup = get_option('gmc-img-popup');
+  $gmc_hide_title = get_option('gmc-hide-title');
 
   require "recipe-template-shortcode.php";
 
@@ -2355,26 +2405,6 @@ function gmc_plugin_action_links($links, $file) {
   }
 
   return $links;
-}
-
-function gmc_attachment_fields_to_edit($form_fields, $p) {
-
-//  error_log(print_r($form_fields, 1));
-
-  if (!empty($p->post_parent)) {
-	$parent=get_post($p->post_parent);
-
-	if ($parent->post_type=='gmc_recipe' || $parent->post_type=='gmc_recipestep' || $parent->post_type=='gmc_recipeingredient') {
-	  unset($form_fields['post_excerpt']);
-	  unset($form_fields['post_content']);
-//      unset($form_fields['url']);
-	  unset($form_fields['align']);
-	  unset($form_fields['image-size']);
-//  		$form_fields['buttons'] = array( 'tr' => "\t\t<tr class='submit'><td></td><td class='savesend'>$send $thumbnail $delete</td></tr>\n" );
-	}
-  }
-
-  return $form_fields;
 }
 
 function gmc_redirect_post_location($location, $post_id) {
@@ -2586,42 +2616,146 @@ function print_ingredient_description($ingredient)
   if(!empty($measurement))
   {
 	switch ($measurement)
-	{ //TODO translate issues
+	{
+    case 'bag':
+      $measurement = gmc_pluralise(__('Bag', 'gmc'), __('bags', 'gmc'), $quantity);
+    break;
 	  case 'bunch':
+      $measurement = gmc_pluralise(__('Bunch', 'gmc'), __('bunches', 'gmc'), $quantity);
+    break;
+    case 'bottle':
+      $measurement = gmc_pluralise(__('Bottle', 'gmc'), __('bottles', 'gmc'), $quantity);
+    break;
+    case 'box':
+      $measurement = gmc_pluralise(__('Box', 'gmc'), __('boxes', 'gmc'), $quantity);
+    break;
+    case 'bulb':
+      $measurement = gmc_pluralise(__('Bulb', 'gmc'), __('bulbs', 'gmc'), $quantity);
+    break;
+    case 'can':
+      $measurement = gmc_pluralise(__('Can', 'gmc'), __('cans', 'gmc'), $quantity);
+    break;
+    case 'carton':
+      $measurement = gmc_pluralise(__('Carton', 'gmc'), __('cartons', 'gmc'), $quantity);
+    break;    
+    case 'clove':
+      $measurement = gmc_pluralise(__('Clove', 'gmc'), __('cloves', 'gmc'), $quantity);
+    break;
+    case 'cube':
+      $measurement = gmc_pluralise(__('Cube', 'gmc'), __('cubes', 'gmc'), $quantity);
+    break;
+    case 'cup':
+      $measurement = gmc_pluralise(__('Cup', 'gmc'), __('cups', 'gmc'), $quantity);
+    break;
+    case 'dash':
+      $measurement = gmc_pluralise(__('Dash', 'gmc'), __('dashes', 'gmc'), $quantity);
+    break;
+    case 'drop':
+      $measurement = gmc_pluralise(__('Drop', 'gmc'), __('drops', 'gmc'), $quantity);
+    break;    
+    case 'glass':
+      $measurement = gmc_pluralise(__('Glass', 'gmc'), __('glasses', 'gmc'), $quantity);
+    break;
+    case 'handful':
+      $measurement = gmc_pluralise(__('Handful', 'gmc'), __('handfuls', 'gmc'), $quantity);
+    break;
+    case 'head':
+      $measurement = gmc_pluralise(__('Head', 'gmc'), __('heads', 'gmc'), $quantity);
+    break;
+    case 'inch':
+      $measurement = '"';
+    break;
+    case 'jar':
+      $measurement = gmc_pluralise(__('Jar', 'gmc'), __('jars', 'gmc'), $quantity);
+    break;
+    case 'knob':
+      $measurement = gmc_pluralise(__('Knob', 'gmc'), __('knobs', 'gmc'), $quantity);
+    break;
+    case 'leaf':
+      $measurement = gmc_pluralise(__('Leaf', 'gmc'), __('leaves', 'gmc'), $quantity);
+    break;
+    case 'packet':
+      $measurement = gmc_pluralise(__('Packet', 'gmc'), __('packets', 'gmc'), $quantity);
+    break;
+    case 'piece':
+      $measurement = gmc_pluralise(__('Piece', 'gmc'), __('pieces', 'gmc'), $quantity);
+    break;
 	  case 'pinch':
-		if ($quantity > 1)
-		  $measurement .= 'es';
+		  $measurement = gmc_pluralise(__('Pinch', 'gmc'), __('pinches', 'gmc'), $quantity);
 		break;
+    case 'rib':
+      $measurement = gmc_pluralise(__('Rib', 'gmc'), __('ribs', 'gmc'), $quantity);
+    break;
+    case 'scoop':
+      $measurement = gmc_pluralise(__('Scoop', 'gmc'), __('scoops', 'gmc'), $quantity);
+    break;
+    case 'sheet':
+      $measurement = gmc_pluralise(__('Sheet', 'gmc'), __('sheets', 'gmc'), $quantity);
+    break;
+    case 'shot':
+      $measurement = gmc_pluralise(__('Shot', 'gmc'), __('shots', 'gmc'), $quantity);
+    break;
+    case 'splash':
+      $measurement = gmc_pluralise(__('Splash', 'gmc'), __('splashes', 'gmc'), $quantity);
+    break;
+    case 'sprinkle':
+      $measurement = gmc_pluralise(__('Sprinkle', 'gmc'), __('sprinkles', 'gmc'), $quantity);
+    break;
+    case 'sprig':
+      $measurement = gmc_pluralise(__('Sprig', 'gmc'), __('sprigs', 'gmc'), $quantity);
+    break;
+    case 'stalk':
+      $measurement = gmc_pluralise(__('Stalk', 'gmc'), __('stalks', 'gmc'), $quantity);
+    break;
+    case 'stick':
+      $measurement = gmc_pluralise(__('Stick', 'gmc'), __('sticks', 'gmc'), $quantity);
+    break;
+    case 'tablespoon':
+      $measurement = gmc_pluralise(__('Tablespoon', 'gmc'), __('tablespoons', 'gmc'), $quantity);
+    break;
+    case 'heaped tablespoon':
+      $measurement = gmc_pluralise(__($measurement, 'gmc'), __('heaped tablespoons', 'gmc'), $quantity);
+    break;
+    case 'teaspoon':
+      $measurement = gmc_pluralise(__('Teaspoon', 'gmc'), __('teaspoons', 'gmc'), $quantity);
+    break;
+    case 'heaped teaspoon':
+      $measurement = gmc_pluralise(__($measurement, 'gmc'), __('heaped teaspoons', 'gmc'), $quantity);
+    break;
+    case 'tin':
+      $measurement = gmc_pluralise(__('Tin', 'gmc'), __('tins', 'gmc'), $quantity);
+    break;
+    case 'tube':
+      $measurement = gmc_pluralise(__('Tube', 'gmc'), __('tubes', 'gmc'), $quantity);
+    break;
+    case 'wedge':
+      $measurement = gmc_pluralise(__('Wedge', 'gmc'), __('wedges', 'gmc'), $quantity);
+    break;
 	  case 'imperial fl oz':
 	  case 'usa fl oz':	  
-		$measurement = 'fl oz';
+		  $measurement = __('fl oz', 'gmc');
 		break;
 	  case 'imperial pint':
 	  case 'usa pint':
     case 'usa pint weight':
     case 'imperial pint weight':
-		$measurement = 'pint';
+		  $measurement = __('pint', 'gmc');
 		break;
-	  case 'g':
-	  case 'kg':
-	  case 'ml':
-	  case 'l':
-	  case 'oz':
-	  case 'lb':	  
-	  case 'small':
-	  case 'medium':
-	  case 'large':
-		break;
+    case 'juice':
+      $measurement = gmc_pluralise(__('Juice', 'gmc'), __('juices', 'gmc'), $quantity);
+    break;
+    case 'thin slice':
+      $measurement = gmc_pluralise(__($measurement, 'gmc'), __('thin slices', 'gmc'), $quantity);
+    break;
+    case 'medium slice':
+      $measurement = gmc_pluralise(__($measurement, 'gmc'), __('medium slices', 'gmc'), $quantity);
+    break;
+    case 'thick slice':
+      $measurement = gmc_pluralise(__($measurement, 'gmc'), __('thick slices', 'gmc'), $quantity);
+    break;
 	  default:
-    if ($quantity > 1)
-    {
-      $last = $measurement[strlen($measurement)-1];
-      
-      if($last != "s")
-      $measurement .= 's';
-    }
 	}
-  //TODO translate issues
+  
 	if ($measurement == 'g' || $measurement == 'kg' || $measurement == 'ml' || $measurement == 'l' || $measurement == 'oz' || $measurement == 'lb' || $measurement == 'fl oz')
 	  $output .= "$measurement $title";
 	else
@@ -2636,6 +2770,16 @@ function print_ingredient_description($ingredient)
 	$output .= " ($description)";
 	
   return $output;
+}
+
+function gmc_pluralise($singular, $plural, $quantity)
+{
+  if ($quantity > 1)
+  {
+    return $plural;
+  }
+
+  return strtolower($singular);
 }
 
 function gmc_recipe_filter_link($filter, $has_photo, $category)
@@ -2677,31 +2821,29 @@ function gmc_distinct_group_names($recipe_id)
 
 function gmc_label_step($step_id)
 {
+  $step_text = __('Step', 'gmc');
+
+  if (get_option('gmc-label-step-text'))
+  {
+    $step_text = get_option('gmc-label-step-text');
+  }
+
 	switch (get_option('gmc-label-step'))
 	{
-	  case '0':
-		return __('Step', 'gmc') . " $step_id";
-		break;
 	  case '1':
-		return __('Step', 'gmc') . " $step_id.";
+    return "$step_text $step_id.";
 		break;
 	  case '2':
-		return __('step', 'gmc') . " $step_id";
-		break;
-	  case '3':
-		return __('step', 'gmc') . " $step_id.";
-		break;
-	  case '4':
 		return "$step_id.";
 		break;
-	  case '5':
+	  case '3':
 		return $step_id;
 		break;
-	  case '6':    
+	  case '4':    
 		return;
 		break;
 	  default:
-		return __('Step', 'gmc') . " $step_id";
+		return "$step_text $step_id";
 	}
 }
 
@@ -2781,6 +2923,105 @@ function gmc_all_posts_from_earliest_usage($wpdb, $post_type)
     )
   ");
 }
+
+function gmc_attachment_fields_to_edit($form_fields, $post)
+{
+  $post_id = !empty( $_GET['post_id'] ) ? (int) $_GET['post_id'] : 0;
+  $post_type = get_post_type($post_id);
+  $attachment_parent_id = !empty($post->post_parent) ? $post->post_parent : 0;
+  $attachment_post_type = get_post_type($attachment_parent_id);
+  $library_tab = ( isset($_GET['tab']) && 'library' == $_GET['tab']) ? true : false;
+  $is_gmc_post = false;
+
+  if ($post_type == 'gmc_recipe' || $attachment_post_type == 'gmc_recipe' || $post_type == 'gmc_recipestep' || $attachment_post_type == 'gmc_recipestep')
+  {
+    $is_gmc_post = true;
+  }
+
+  if((!$library_tab || isset($_GET['post_type'])) && $is_gmc_post && substr( $post->post_mime_type, 0, 5 ) == 'image'){
+    unset( $form_fields['post_excerpt'] );
+    unset( $form_fields['post_content'] );
+    unset( $form_fields['url'] );
+    unset( $form_fields['image_url'] );
+    unset( $form_fields['align'] );
+
+    $form_fields['buttons'] = array(
+        'label' => '',
+        'value' => '',
+        'input' => 'html'
+    );
+
+    $filename = basename( $post->guid );
+    $attachment_id = $post->ID;
+    $use_this_image = '<input type="submit" name="send['.$attachment_id.']" id="send['.$attachment_id.']" class="button wp-image-'.$attachment_id.'" value="'.__("Use This Image", "gmc").'">';
+
+    if ( current_user_can( 'delete_post', $attachment_id ) ) {
+        if ( !EMPTY_TRASH_DAYS ) {
+            $form_fields['buttons']['html'] = $use_this_image . "<a href='" . wp_nonce_url( "post.php?action=delete&amp;post=$attachment_id", 'delete-attachment_' . $attachment_id ) . "' id='del[$attachment_id]' class='delete'>" . __( 'Delete Permanently' ) . '</a>';
+        } elseif ( !MEDIA_TRASH ) {
+            $form_fields['buttons']['html'] = $use_this_image . "<a href='#' class='del-link' onclick=\"document.getElementById('del_attachment_$attachment_id').style.display='block';return false;\">" . __( 'Delete' ) . "</a>
+                     <div id='del_attachment_$attachment_id' class='del-attachment' style='display:none;'>" . sprintf( __( 'You are about to delete <strong>%s</strong>.' ), $filename ) . "
+                     <a href='" . wp_nonce_url( "post.php?action=delete&amp;post=$attachment_id", 'delete-attachment_' . $attachment_id ) . "' id='del[$attachment_id]' class='button'>" . __( 'Continue' ) . "</a>
+                     <a href='#' class='button' onclick=\"this.parentNode.style.display='none';return false;\">" . __( 'Cancel' ) . "</a>
+                     </div>";
+        } else {
+            $form_fields['buttons']['html'] = $use_this_image . "<a href='" . wp_nonce_url( "post.php?action=trash&amp;post=$attachment_id", 'trash-attachment_' . $attachment_id ) . "' id='del[$attachment_id]' class='delete'>" . __( 'Move to Trash' ) . "</a><a href='" . wp_nonce_url( "post.php?action=untrash&amp;post=$attachment_id", 'untrash-attachment_' . $attachment_id ) . "' id='undo[$attachment_id]' class='undo hidden'>" . __( 'Undo' ) . "</a>";
+        }
+    }
+    else {
+        $form_fields['buttons']['html'] = '';
+    }    
+  }
+
+  return $form_fields;
+}
+
+function gmc_type_url_form_media($html)
+{  
+  $post_id = !empty( $_GET['post_id'] ) ? (int) $_GET['post_id'] : 0;
+  $post_type = get_post_type($post_id);
+
+  if($post_type != 'gmc_recipe' || $post_type != 'gmc_recipestep')
+      return $html;
+
+    // Used to hide the unwanted table rows
+  $display_none = 'style="display:none"';
+
+  $html = <<<HTML
+   <p class="media-types">
+      <label><input type="radio" name="media_type" value="image" id="image-only" checked='checked' /> Image</label> &nbsp; &nbsp; <label><input type="radio" name="media_type" value="generic" id="not-image" /> Audio, Video, or Other File</label>
+  </p> 
+  <table class="describe ">
+      <tbody> 
+          <tr> <th valign="top" scope="row" class="label" style="width:130px;"> <span class="alignleft"><label for="src">URL</label></span> <span class="alignright"><abbr id="status_img" title="required" class="required">*</abbr></span> </th> <td class="field"><input id="src" name="src" value="" type="text" aria-required="true" onblur="addExtImage.getImageData()" /></td> </tr>
+          <tr> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="title">Title</label></span> <span class="alignright"><abbr title="required" class="required">*</abbr></span> </th> <td class="field"><input id="title" name="title" value="" type="text" aria-required="true" /></td> </tr>
+          <tr class="not-image" {$display_none}><td></td><td><p class="help">Link text, e.g. &#8220;Ransom Demands (PDF)&#8221;</p></td></tr>
+          <tr class="image-only" {$display_none}> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="alt">Alternate Text</label></span> </th> <td class="field"><input id="alt" name="alt" value="" type="text" aria-required="true" /> <p class="help">Alt text for the image, e.g. &#8220;The Mona Lisa&#8221;</p></td> </tr>
+          <tr class="image-only" {$display_none}> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="caption">Image Caption</label></span> </th> <td class="field"><input id="caption" name="caption" value="" type="text" /></td> </tr>
+          <tr class="align image-only" {$display_none}> <th valign="top" scope="row" class="label"><p><label for="align">Alignment</label></p></th> <td class="field"> <input name="align" id="align-none" value="none" onclick="addExtImage.align='align'+this.value" type="radio" checked="checked" /> <label for="align-none" class="align image-align-none-label">None</label> <input name="align" id="align-left" value="left" onclick="addExtImage.align='align'+this.value" type="radio" /> <label for="align-left" class="align image-align-left-label">Left</label> <input name="align" id="align-center" value="center" onclick="addExtImage.align='align'+this.value" type="radio" /> <label for="align-center" class="align image-align-center-label">Center</label> <input name="align" id="align-right" value="right" onclick="addExtImage.align='align'+this.value" type="radio" /> <label for="align-right" class="align image-align-right-label">Right</label> </td> </tr>
+          <tr class="image-only" {$display_none}> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="url">Link Image To:</label></span> </th> <td class="field"><input id="url" name="url" value="" type="text" /><br /> <button type="button" class="button" value="" onclick="document.forms[0].url.value=null">None</button> <button type="button" class="button" value="" onclick="document.forms[0].url.value=document.forms[0].src.value">Link to image</button> <p class="help">Enter a link URL or click above for presets.</p></td> </tr>
+          <tr class="image-only"> <td></td> <td> <input type="button" class="button" id="go_button" style="color:#bbb;" onclick="addExtImage.insert()" value="Insert into Post" /> </td> </tr>
+          <tr class="not-image"> <td></td> <td> <input type="submit" name="insertonlybutton" id="insertonlybutton" class="button" value="Insert into Post" /> </td> </tr>
+      </tbody>
+  </table>
+HTML;
+
+    return $html;
+}
+
+function gmc_remove_media_tabs($tabs)
+{
+  if (isset($_REQUEST['post_type'])) {
+    $post_type = $_REQUEST['post_type'];
+    
+    if ($post_type == 'gmc_recipe' || $post_type == 'gmc_recipestep')
+    {
+      unset($tabs['gallery']);
+    }
+  }
+  return $tabs;
+}
+
 
 function startsWith($haystack, $needle)
 {

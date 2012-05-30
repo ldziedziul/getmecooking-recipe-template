@@ -87,6 +87,12 @@ Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/w
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.22 =
+* Replaced upload photo buttons with built-in WordPress uploader
+* Added option to hide recipe title if it's the same as the blog post title
+* Can change the heading for the word 'step' which is used for each step
+* Occassions werent being shown in blog posts
+
 = 1.21 =
 * 1.20 had removed the upload/insert button from the add post page
 

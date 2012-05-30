@@ -22,14 +22,14 @@
     </label><input class="gmc-admin-input" name="gmc-nr-servings" value="<?php echo get_post_meta($post->ID, 'gmc-nr-servings', true); ?>" /><label>
       <?php _e('(e.g. 1 or 1 - 2)', 'gmc')     ; ?>
       <img class="gmc-tooltip" src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="<?php _e('Help', 'gmc') ?>" title="<?php _e('People like information. The more useful your blog is, the more engaged your visitors will be.', 'gmc');?>" />
-    </label>  </div><div>
+    </label>  </div><br /><div>
 <label class="gmc-admin-recipe-details">
       <?php _e('Total preparation time', 'gmc'); ?>
     </label><input class="gmc-admin-input" name="gmc-prep-time-hours" value="<?php echo get_post_meta($post->ID, 'gmc-prep-time-hours', true); ?>" /><label>
       <?php _e('hours', 'gmc'); ?>
     </label><input class="gmc-admin-input" name="gmc-prep-time-mins" value="<?php echo get_post_meta($post->ID, 'gmc-prep-time-mins', true); ?>" /><label>
       <?php _e('minutes', 'gmc'); ?>
-    </label>  </div><div>
+    </label>  </div><br /><div>
 <label class="gmc-admin-recipe-details">
       <?php _e('Total cooking time', 'gmc'); ?>
     </label><input class="gmc-admin-input" name="gmc-cooking-time-hours" value="<?php echo get_post_meta($post->ID, 'gmc-cooking-time-hours', true); ?>" /><label>
@@ -37,39 +37,39 @@
     </label><input class="gmc-admin-input" name="gmc-cooking-time-mins" value="<?php echo get_post_meta($post->ID, 'gmc-cooking-time-mins', true); ?>" /><label>
       <?php _e('minutes', 'gmc'); ?>
     </label>  </div><br /><div>
-  </div><label class="gmc-admin-label">
-    <?php _e('Recipe source (if applicable)', 'gmc'); ?>
-  </label>  <?php $selected_source =get_post_meta($post->ID, 'gmc-source-type', true); ?>
+<label class="gmc-admin-label">
+      <?php _e('Recipe source (if applicable)', 'gmc'); ?>
+    </label>    <?php $selected_source =get_post_meta($post->ID, 'gmc-source-type', true); ?>
 <select class="gmc-admin-recipe-details" id="gmc-source-type" name="gmc-source-type">
 <option value="">
-      <?php _e('No source', 'gmc'); ?>
-      <?php echo gmc_option_list(array("Author" => __('Author', 'gmc'), "Book" => __('Book', 'gmc'), "Magazine" => __('Magazine', 'gmc'), "Website" => __('Website', 'gmc')), $selected_source); ?>
+        <?php _e('No source', 'gmc'); ?>
+        <?php echo gmc_option_list(array("Author" => __('Author', 'gmc'), "Book" => __('Book', 'gmc'), "Magazine" => __('Magazine', 'gmc'), "Website" => __('Website', 'gmc')), $selected_source); ?>
 
-    </option>  </select><div id="gmc-source-author">
+      </option>    </select><div id="gmc-source-author">
 <label class="gmc-admin-recipe-details" id="gmc-source-name-label">
-      <?php _e('Name of author', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-author-name" value="<?php echo $selected_source == 'Author' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />  </div><div id="gmc-source-author-url">
+        <?php _e('Name of author', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-author-name" value="<?php echo $selected_source == 'Author' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />    </div><div id="gmc-source-author-url">
 <label class="gmc-admin-recipe-details" id="gmc-source-url-label">
-      <?php _e('Author website', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-author-url" value="<?php echo $selected_source == 'Author' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />  </div><div id="gmc-source-book">
+        <?php _e('Author website', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-author-url" value="<?php echo $selected_source == 'Author' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />    </div><div id="gmc-source-book">
 <label class="gmc-admin-recipe-details" id="gmc-source-name-label">
-      <?php _e('Name of book', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-book-name" value="<?php echo $selected_source == 'Book' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />  </div><div id="gmc-source-book-url">
+        <?php _e('Name of book', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-book-name" value="<?php echo $selected_source == 'Book' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />    </div><div id="gmc-source-book-url">
 <label class="gmc-admin-recipe-details" id="gmc-source-url-label">
-      <?php _e('Book website', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-book-url" value="<?php echo $selected_source == 'Book' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />  </div><div id="gmc-source-mag">
+        <?php _e('Book website', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-book-url" value="<?php echo $selected_source == 'Book' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />    </div><div id="gmc-source-mag">
 <label class="gmc-admin-recipe-details" id="gmc-source-name-label">
-      <?php _e('Name of magazine', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-mag-name" value="<?php echo $selected_source == 'Magazine' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />  </div><div id="gmc-source-mag-url">
+        <?php _e('Name of magazine', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-mag-name" value="<?php echo $selected_source == 'Magazine' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />    </div><div id="gmc-source-mag-url">
 <label class="gmc-admin-recipe-details" id="gmc-source-url-label">
-      <?php _e('Magazine website', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-mag-url" value="<?php echo $selected_source == 'Magazine' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />  </div><div id="gmc-source-website">
+        <?php _e('Magazine website', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-mag-url" value="<?php echo $selected_source == 'Magazine' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />    </div><div id="gmc-source-website">
 <label class="gmc-admin-recipe-details" id="gmc-source-name-label">
-      <?php _e('Name of website', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-website-name" value="<?php echo $selected_source == 'Website' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />  </div><div id="gmc-source-website-url">
+        <?php _e('Name of website', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-website-name" value="<?php echo $selected_source == 'Website' ? get_post_meta($post->ID, 'gmc-source-name', true) : ''; ?>" />    </div><div id="gmc-source-website-url">
 <label class="gmc-admin-recipe-details" id="gmc-source-url-label">
-      <?php _e('Website URL', 'gmc'); ?>
-    </label><input class="gmc-admin-author" name="gmc-source-website-url" value="<?php echo $selected_source == 'Website' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />  </div><hr /><br /><div class="gmc-half">
+        <?php _e('Website URL', 'gmc'); ?>
+      </label><input class="gmc-admin-author" name="gmc-source-website-url" value="<?php echo $selected_source == 'Website' ? get_post_meta($post->ID, 'gmc-source-url', true) : ''; ?>" />    </div>  </div><hr /><br /><div class="gmc-half">
 <div class="padder">
     </div><div id="gmc-standard-region-area">
 <label class="gmc-admin-label">
