@@ -288,7 +288,9 @@ function gmc_init() {
 			'not_found_in_trash' => __( 'No Recipes found in Trash', 'gmc')
 		  ),
       'menu_icon' => gmc_plugin_url().'/images/icon-admin-menu.png',
+      'public' => true,
 		  'publicly_queryable' => true,
+      'show_in_nav_menus' => false,
 		  'show_ui' => true,
 		  'exclude_from_search' => true,
 		  'capability_type' => 'page',
@@ -298,7 +300,9 @@ function gmc_init() {
 		  'supports' => array('title',
 							  'editor',
 							  'thumbnail'
-							  )) );
+							  ),
+       'taxonomies' => array('post_tag')
+       ) );
 
   register_post_type('gmc_recipestep', 
 	array(
@@ -776,34 +780,11 @@ function gmc_register_recipe_button($buttons) {
    return $buttons;
 }
 
-
 function gmc_refresh_mce($ver) {
   $ver += 3;
   return $ver;
 }
 
-function gmc_get_object_terms($terms, $object_ids, $taxonomies, $args) {
-  global $wpdb;
-
-  foreach ($terms as $singleterm) {
-	$rels = $wpdb->get_row("SELECT tr.term_taxonomy_id, tr.meta FROM $wpdb->term_relationships AS tr WHERE tr.term_taxonomy_id = ".$singleterm->term_taxonomy_id." AND tr.object_id = ".$singleterm->object_id);
-	if ($rels) {
-	  $singleterm->meta=$rels->meta;
-	}
-  }
-
-//  error_log(print_r($terms,1));
-
-  return $terms;
-}
-/*
-function gmc_remove_meta_boxes() {
-  $post_types=get_post_types('','names'); 
-  foreach ($post_types as $post_type ) {
-	remove_meta_box("postimagediv", $post_type, "side");
-  }
-}
-*/
 function gmc_step_thumbnail_box($post) {
   $thumbnail_id = get_post_thumbnail_id($post->ID);
   echo '<input type="hidden" id="gmcStepThumbnail-'.$post->ID.'" name="gmcStepThumbnail-'.$post->ID.'" value="' . $thumbnail_id . '" />';
@@ -867,27 +848,13 @@ function gmc_send_xml($url, $params = null) {
   if (!$fp) {
 	$res = false;
   } else {
-	// If you're trying to troubleshoot problems, try uncommenting the
-	// next two lines; it will show you the HTTP response headers across
-	// all the redirects:
-	//$meta = stream_get_meta_data($fp);
-	//var_dump($meta['wrapper_data']);
-	$res = stream_get_contents($fp);
+	 $res = stream_get_contents($fp);
   }
 
   if ($res === false) {
 	throw new Exception("$verb $url failed: $php_errormsg");
   }
-/*
-  switch ($format) {
-	case 'xml':
-	  $r = simplexml_load_string($res);
-	  if ($r === null) {
-		throw new Exception("failed to decode $res as xml");
-	  }
-	  return $r;
-  }
-*/
+
   return $res;
 }
 
@@ -902,10 +869,6 @@ function gmc_send_xml_curl($url, $xml) {
   curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
 
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // ask for results to be returned
-//  if(CurlHelper::checkHttpsURL($url)) { 
-//    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-//    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-//  }
 
   // Send to remote and return data to caller.
   $result = curl_exec($ch);
@@ -924,16 +887,6 @@ function gmc_get_recipe_xml($recipe, $gmcid="0") {
   $ingredients=get_posts('post_status=publish&post_type=gmc_recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$recipe->ID);
 
   $xml=new SimpleXMLElement('<Recipe xmlns="http://www.getmecooking.com/recipeservice/submitrecipe" />');
-
-//  $xml->addAttribute('version', '2.0');
-
-//  $xml=new SimpleXMLElement('<Recipe/>', null, false, "http://www.getmecooking.com/recipeservice/submitrecipe", false);
-//  $xrecipe=$xml->addChild('recipe');
-
-  // generic data
-//  if (!empty($gmcid)) {
-//    $xml->addChild('Id', $gmcid);
-//  }
 
   if (get_post_meta($recipe->ID, "gmc-source-name", true))
   {
@@ -1085,76 +1038,60 @@ function gmc_mainrecipe_box($post, $metabox) {
 	<ul>	  
 	  <li><a href="#ingredients"><?php _e('Recipe Ingredients', 'gmc'); ?></a></li>
 	  <li><a href="#steps"><?php _e('Recipe Steps', 'gmc'); ?></a></li>
-    <li><a href="#params"><?php _e('Recipe Details', 'gmc'); ?></a></li>
+      <li><a href="#params"><?php _e('Recipe Details', 'gmc'); ?></a></li>
 	  <li><a href="#gmc-desc"><?php _e('Recipe Summary', 'gmc'); ?></a></li>
 	  <li><a href="#gmc-note"><?php _e('Recipe Note', 'gmc'); ?></a></li>
+      <li><a href="#gmc-nutrition"><?php _e('Nutrition', 'gmc'); ?></a></li>
 	  <li><a href="#transfer"><?php _e('GetMeCooking User Details', 'gmc'); ?></a></li>
-    <li><a href="#help"><?php _e('Help / FAQ', 'gmc'); ?></a></li>
+      <li><a href="#help"><?php _e('Help / FAQ', 'gmc'); ?></a></li>
 	</ul>
   </div>
   <div class="gmc-tabs-panel">
-	<div id="params">	
-	  <?php require_once("recipe-template-edit-params.php"); ?>
-	</div>      
-	<div id="ingredients">
-    <div id="gmc-ingredientslistbox">
-      <p class="howto"><?php __('Drag and drop the ingredients to change their order', 'gmc');?></p>
-	  <?php
-    $ingredients=get_posts('post_status=publish&post_type=gmc_recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
-	
-	$i=1;
-  echo '<table id="ingredientsTable">
-  <thead>
-    <tr>      
-      <th></th>
-      <th>' 
-        . __('Quantity', 'gmc') . '
-          <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("e.g. 1 or 1.5 or 1/2 or 1-1/2", 'gmc').'" />
-      </th>
-      <th>' . __('Measurement', 'gmc') . '</th>
-      <th>' . __('Ingredient', 'gmc') . '</th>
-      <th>' . __('Note', 'gmc') . '</th>
-      <th>' 
-        . __('Group', 'gmc') . '
-          <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("Ingredients can be placed into groups such as '<strong>Cake base</strong>', '<strong>Cake filling</strong>' and '<strong>Cake topping</strong>'.", 'gmc').'<br/>'.__('Grouping makes it easy for your visitors to see which ingredients are for which part of the recipe.', 'gmc').'" />          
-      </th>
-      <th colspan="2">'
-        . __('Optional?', 'gmc') . '
-          <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("Tick the box to flag the ingredient as optional.<br/>Optional ingredients are displayed in a separate list.", 'gmc').'" />                  
-      </th>
-    </tr>
-  </thead>
-  <tbody class="sortable">';
-  
-  $gmc_add_new = false;
+  	<div id="params">	
+  	  <?php require_once("recipe-template-edit-params.php"); ?>
+  	</div>      
+  	<div id="ingredients">
+      <div id="gmc-ingredientslistbox">
+        <p class="howto"><?php __('Drag and drop the ingredients to change their order', 'gmc');?></p>
+  	  <?php
+      $ingredients=get_posts('post_status=publish&post_type=gmc_recipeingredient&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
+  	
+  	$i=1;
+    echo '<table id="ingredientsTable">
+    <thead>
+      <tr>      
+        <th></th>
+        <th>' 
+          . __('Quantity', 'gmc') . '
+            <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("e.g. 1 or 1.5 or 1/2 or 1-1/2", 'gmc').'" />
+        </th>
+        <th>' . __('Measurement', 'gmc') . '</th>
+        <th>' . __('Ingredient', 'gmc') . '</th>
+        <th>' . __('Note', 'gmc') . '</th>
+        <th>' 
+          . __('Group', 'gmc') . '
+            <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("Ingredients can be placed into groups such as '<strong>Cake base</strong>', '<strong>Cake filling</strong>' and '<strong>Cake topping</strong>'.", 'gmc').'<br/>'.__('Grouping makes it easy for your visitors to see which ingredients are for which part of the recipe.', 'gmc').'" />          
+        </th>
+        <th colspan="2">'
+          . __('Optional?', 'gmc') . '
+            <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("Tick the box to flag the ingredient as optional.<br/>Optional ingredients are displayed in a separate list.", 'gmc').'" />                  
+        </th>
+      </tr>
+    </thead>
+    <tbody class="sortable">';
+    
+    $gmc_add_new = false;
 
   foreach($ingredients as $ingredient){
 	  require("recipe-template-edit-ingredient.php");
 	  $i++;
   }
-  
-	// foreach($ingredients as $ingredient){
-	  // echo '<div id="gmc-ingredients-ingredient-'.$i.'" class="gmc-singleingredient postbox " >'."\n";
-	  // echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Ingredient', 'gmc').' <span class="gmc-ingredientnumber">'.$i.'</span></h3>'."\n";
-	  // echo '<div class="inside">'."\n";
-
-	  // require("recipe-template-edit-ingredient.php");
-
-	  // echo "</div></div>\n";
-	  // $i++;
-		// }
-	
-	// echo '<div id="gmc-ingredients-ingredient-'.$i.'" class="gmc-singleingredient postbox " >'."\n";
-	// echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Ingredient', 'gmc').' <span class="gmc-ingredientnumber">'.$i.'</span><span class="deleteReminder"> - '.__('Leave this empty if there are no more ingredients to add.', 'gmc').'</span></h3>'."\n";
-	// echo '<div class="inside">'."\n";
-
-	$ingredient = null;
-  $gmc_add_new = true;
-	require("recipe-template-edit-ingredient.php");
+  	
+  	$ingredient = null;
+    $gmc_add_new = true;
+  	require("recipe-template-edit-ingredient.php");
 
   echo '</tbody></table>';
-	// echo "</div></div>\n";  
-	//echo '</div></div>';     
 	  ?>
     </div>
 	</div>
@@ -1162,18 +1099,18 @@ function gmc_mainrecipe_box($post, $metabox) {
 	  <?php
 		$steps=get_posts('post_status=publish&post_type=gmc_recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
 
-		echo '<div id="gmc-stepslist">'."\n";		
+  		echo '<div id="gmc-stepslist">'."\n";		
 
-		$i=1;
-		foreach ($steps as $step) {
-	  echo '<div id="gmc-steps-step-'.$i.'" class="gmc-singlestep postbox" >'."\n";
-	  echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Step', 'gmc').' <span class="gmc-stepnumber">'.$i;
-    echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#"><img alt="'.__("Delete this step", "gmc").'" height="16" src="'. gmc_plugin_url() . '/images/delete.png" title="'. __('Delete this step', 'gmc').'" width="16" /></a>';
-    echo '</span></h3>'."\n";    
+  		$i=1;
+  		foreach ($steps as $step) {
+  	  echo '<div id="gmc-steps-step-'.$i.'" class="gmc-singlestep postbox" >'."\n";
+  	  echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Step', 'gmc').' <span class="gmc-stepnumber">'.$i;
+      echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#"><img alt="'.__("Delete this step", "gmc").'" height="16" src="'. gmc_plugin_url() . '/images/delete.png" title="'. __('Delete this step', 'gmc').'" width="16" /></a>';
+      echo '</span></h3>'."\n";    
 
-	  echo '<div class="inside">'."\n";
+  	  echo '<div class="inside">'."\n";
 
-	  echo "<input type='hidden' name='stepid[]' value='".$step->ID."' />"."\n";
+  	  echo "<input type='hidden' name='stepid[]' value='".$step->ID."' />"."\n";
 
 	  echo "<label class='gmc-admin-label gmc-admin-step-label'><strong>".__('Step description', 'gmc')."</strong></label>"."\n";
 	  echo '<div class="gmc-stepdesc-box">'."\n";
@@ -1188,9 +1125,7 @@ function gmc_mainrecipe_box($post, $metabox) {
     <img class="gmc-tooltip" src="'. gmc_plugin_url().'/images/help.png" alt="'.__('Help', 'gmc').'" title="'.__("Steps can be placed into groups such as '<strong>Cake base</strong>', '<strong>Cake filling</strong>' and '<strong>Cake topping</strong>'.<br/>Grouping makes it easy for your visitors to see which steps are for which part of the recipe.", 'gmc').'" /></label>'."\n";    
     echo '<div class="gmc-stepdesc-box">'."\n";
 	  echo "<input type='text' class='gmc-admin-halfline' name='gmc-stepgroup[]' value='".get_post_meta($step->ID, 'gmc_stepgroup', true)."' />\n";
-	  echo '</div>'."\n";
-	  //echo '<label class="gmc-admin-label gmc-admin-step-label"><strong>'.__('Alt text (optional - only used if you have added a photograph)', 'gmc').'</strong> ';
-	  //echo '<img class="gmc-tooltip" src="' . gmc_plugin_url().'/images/help.png" alt="'.__('Help', 'gmc').'" title="'.__('How would you describe the photograph if you could not see it? (e.g. Muffin mixture poured into a muffin tray)', 'gmc').'" /></label>';
+	  echo '</div>'."\n";	  
 	  
 	  $thumbid=get_post_thumbnail_id($step->ID);
 	  $alttext = '';
@@ -1199,106 +1134,126 @@ function gmc_mainrecipe_box($post, $metabox) {
 		$thumbnail = get_post($thumbid);
 		$alttext = $thumbnail->post_title;
 	  }
-    //echo '<div class="gmc-stepdesc-box">'."\n";
-	  echo '<input type="hidden" class="gmc-admin-alt-text-input" name="gmc-step-alt-text[]" value="'.$alttext.'"/>';
-    //echo '</div>'."\n";
-	  echo '<div style="clear:both"></div>';
-	  //echo '<a id="gmc-step-to-delete-'.$step->ID.'" class="gmc-delete-step" href="#">'.__('Delete step', 'gmc').'</a>';
+    
+	  echo '<input type="hidden" class="gmc-admin-alt-text-input" name="gmc-step-alt-text[]" value="'.$alttext.'"/>';    
+	  echo '<div style="clear:both"></div>';	  
 	  echo '</div></div>'."\n";
 	  
 	  $i++;
 		}
 
-	echo '<div id="gmc-steps-step-'.$i.'" class="gmc-singlestep postbox " >'."\n";
-	echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Step', 'gmc').' <span class="gmc-stepnumber">'.$i.'</span><span class="deleteReminder"> - '.__('Leave this empty if there are no more steps to add.', 'gmc').'</span></h3>'."\n";
-	echo '<div class="inside">'."\n";
+  	echo '<div id="gmc-steps-step-'.$i.'" class="gmc-singlestep postbox " >'."\n";
+  	echo '<div class="handlediv" title="'.__('Click to toggle', 'gmc').'"><br /></div><h3 class="gmc-hndle">'.__('Step', 'gmc').' <span class="gmc-stepnumber">'.$i.'</span><span class="deleteReminder"> - '.__('Leave this empty if there are no more steps to add.', 'gmc').'</span></h3>'."\n";
+  	echo '<div class="inside">'."\n";
 
-	echo '<input type="hidden" name="stepid[]" value="" />'."\n";
+  	echo '<input type="hidden" name="stepid[]" value="" />'."\n";
 
-	echo "<label class='gmc-admin-label gmc-admin-step-label'><strong>".__('Step Description', 'gmc')."</strong></label>"."\n";
-	echo '<div class="gmc-stepdesc-box">'."\n";
-	echo '<textarea id="gmc-admin-new-step-'.$i.'" class="gmc-admin-fullline autoResize" name="stepdescription[]"></textarea>'."\n";
-	echo '</div>'."\n";
-	echo '<div class="gmc-stepthumb-box">'."\n";
-	_e('You can add a photograph once you save/update the recipe', 'gmc');	
-	echo '</div>'."\n";
-	
-  echo '<label class="gmc-admin-label gmc-admin-step-label"><strong>'.__('Step group', 'gmc').'</strong>
-  <img class="gmc-tooltip" src="'. gmc_plugin_url().'/images/help.png" alt="'.__('Help', 'gmc').'" title="'.__("Steps can be placed into groups such as '<strong>Cake base</strong>', '<strong>Cake filling</strong>' and '<strong>Cake topping</strong>'.<br/>Grouping makes it easy for your visitors to see which steps are for which part of the recipe.", 'gmc').'" /></label>'."\n";    
-  echo '<div class="gmc-stepdesc-box">'."\n";
-  echo "<input type='text' class='gmc-admin-halfline' name='gmc-stepgroup[]' value='' />\n";
-  echo '</div>'."\n";
-  
-	echo '<div style="clear:both"></div>';    
-	echo '</div></div>'."\n";       
-	
-	echo '</div>'."\n";
-	  ?>  
-	</div>
+  	echo "<label class='gmc-admin-label gmc-admin-step-label'><strong>".__('Step Description', 'gmc')."</strong></label>"."\n";
+  	echo '<div class="gmc-stepdesc-box">'."\n";
+  	echo '<textarea id="gmc-admin-new-step-'.$i.'" class="gmc-admin-fullline autoResize" name="stepdescription[]"></textarea>'."\n";
+  	echo '</div>'."\n";
+  	echo '<div class="gmc-stepthumb-box">'."\n";
+  	_e('You can add a photograph once you save/update the recipe', 'gmc');	
+  	echo '</div>'."\n";
+  	
+    echo '<label class="gmc-admin-label gmc-admin-step-label"><strong>'.__('Step group', 'gmc').'</strong>
+    <img class="gmc-tooltip" src="'. gmc_plugin_url().'/images/help.png" alt="'.__('Help', 'gmc').'" title="'.__("Steps can be placed into groups such as '<strong>Cake base</strong>', '<strong>Cake filling</strong>' and '<strong>Cake topping</strong>'.<br/>Grouping makes it easy for your visitors to see which steps are for which part of the recipe.", 'gmc').'" /></label>'."\n";    
+    echo '<div class="gmc-stepdesc-box">'."\n";
+    echo "<input type='text' class='gmc-admin-halfline' name='gmc-stepgroup[]' value='' />\n";
+    echo '</div>'."\n";
+    
+  	echo '<div style="clear:both"></div>';    
+  	echo '</div></div>'."\n";       
+  	
+  	echo '</div>'."\n";
+  	  ?>  
+  	</div>
 
 	<div id="gmc-desc">
-	  <p><?php _e('The description is a 1 - 2 line summary that is used by search engines and <a href="http://www.getmecooking.com">GetMeCooking</a>. If you have the premium plugin and choose the appropriate layout then this text may appear on a recipe listing page too.', 'gmc');?></p>
+	  <?php echo '<p>' . __('The description is a 1 - 2 line summary that is used by search engines and <a href="http://www.getmecooking.com">GetMeCooking</a>.', 'gmc') . '</p>';
+    if (is_gmc_premium_active())
+    { 
+      echo '<p>' . __('If you choose the appropriate layout then this text may appear on a recipe listing page too.', 'gmc') . '</p>';
+    }
+    else
+    {
+      echo '<p>' . sprintf(__('If you have the <a href="%s">premium plugin</a> and choose the appropriate layout then this text may appear on a recipe listing page too.', 'gmc'), 'http://www.getmecooking.com/wordpress-recipe-plugin') . '</p>';
+    } ?>
 	  <textarea id="gmc-description" class="gmc-admin-fullline" rows="5" name="gmc-description"><?php echo get_post_meta($post->ID,"gmc-description",true); ?></textarea>
 	</div>
 	
 	<div id="gmc-note">
 	  <?php 
-		$note_position = get_option('gmc-note-position') == '' ? __('before', 'gmc') : __('after', 'gmc');
-		$note_link = "<a href='".home_url()."/wp-admin/admin.php?page=getmecooking_options"."'>$note_position</a>";
+		$note_position = '';
+    if (get_option('gmc-note-position') == '')
+    {
+      $note_position = __('Anything you type here will appear <a href="%s">before</a> the recipe steps.', 'gmc');
+    }
+    else
+    {
+      $note_position = __('Anything you type here will appear <a href="%s">after</a> the recipe steps.', 'gmc');
+    }
+
+		$note_link = home_url()."/wp-admin/admin.php?page=getmecooking_options#layout-options";
 	  ?>
-    <p><?php printf(__('Anything you type here will appear %s the recipe steps.', 'gmc'), $note_link); ?></p>
+    <p><?php printf($note_position, $note_link); ?></p>
     <p id="gmc-note-desc"><?php _e("Recommend some changes to put a twist on the recipe or things to look out for that could ruin the recipe e.g. don't let the mixture boil", 'gmc');?></p>
 	</div>
 	
+  <div id="gmc-nutrition">
+    <?php require("recipe-template-nutrition.php"); ?>
+  </div>
+
 	<div id="transfer">
 	  <?php
 		$gmcid=get_post_meta($post->ID,"gmc-id",true); 
 		$gmcusername=get_option("gmc-username");
     $details_url = home_url()."/wp-admin/admin.php?page=getmecooking_options";
 
-		if (empty($gmcusername)) {
-		  printf( __('<p>You are currently using this plugin as a guest user. To get more functionality, please <a href="%s">enter your GetMeCooking details</a>.</p>', 'gmc'), $details_url);
-		} else {
-      printf( __('<p>You have told us that your GetMeCooking username is <strong>%s</strong>.<br/>', 'gmc'), $gmcusername);
-  		printf( __('<p>You can <a href="%s">change your details here</a></p>', 'gmc'), $details_url);
-		} 
-		
-		echo "<p>";
-		if (get_option('gmc-hide-recipes')) {
-      $share_the_love = home_url().'/wp-admin/admin.php?page=getmecooking_options#gmc-share-the-love';
-		  printf( __('You have opted out of sending this recipe to GetMeCooking. (<a href="%s">I\'ve changed my mind, I want my recipes to appear on GetMeCooking</a>)', 'gmc'), $share_the_love);
-    }
-		else
-		{
-      _e('You have opted in to send this recipe to GetMeCooking.', 'gmc');
-      echo ' ';
-      if (empty($gmcusername)) {
-        _e('Once approved by the staff it will appear on <a href="http://www.getmecooking.com/recipes">www.getmecooking.com</a>.', 'gmc');
+  		if (empty($gmcusername)) {
+  		  printf( __('<p>You are currently using this plugin as a guest user. To get more functionality, please <a href="%s">enter your GetMeCooking details</a>.</p>', 'gmc'), $details_url);
+  		} else {
+        printf( __('<p>You have told us that your GetMeCooking username is <strong>%s</strong>.<br/>', 'gmc'), $gmcusername);
+    		printf( __('<p>You can <a href="%s">change your details here</a></p>', 'gmc'), $details_url);
+  		} 
+  		
+  		echo "<p>";
+  		if (get_option('gmc-hide-recipes')) {
+        $share_the_love = home_url().'/wp-admin/admin.php?page=getmecooking_options#gmc-share-the-love';
+  		  printf( __('You have opted out of sending this recipe to GetMeCooking. (<a href="%s">I\'ve changed my mind, I want my recipes to appear on GetMeCooking</a>)', 'gmc'), $share_the_love);
       }
-      else {
-        $user_profile_url = 'http://www.getmecooking.com/user/' . strtolower($gmcusername);
-        printf( __('Once approved by the staff it will appear on <a href="%s">%s</a>', 'gmc'), $user_profile_url, $user_profile_url);
+  		else
+  		{
+        _e('You have opted in to send this recipe to GetMeCooking.', 'gmc');
+        echo ' ';
+        if (empty($gmcusername)) {
+          _e('Once approved by the staff it will appear on <a href="http://www.getmecooking.com/recipes">www.getmecooking.com</a>.', 'gmc');
+        }
+        else {
+          $user_profile_url = 'http://www.getmecooking.com/user/' . strtolower($gmcusername);
+          printf( __('Once approved by the staff it will appear on <a href="%s">%s</a>', 'gmc'), $user_profile_url, $user_profile_url);
+        }
       }
-    }
-		echo "</p>";
-    _e('<strong>Note:</strong> Recipes go through an approval process before appearing on <a href="http://www.getmecooking.com">www.getmecooking.com</a>. It must have a good quality photograph and full recipe information. For more information please see <a href="http://www.getmecooking.com/recipe-template-info#faqMissingRecipesGMC">the FAQ</a>.', 'gmc');
-    
-		echo "<p>";
-		if (is_numeric($gmcid)) {
-      _e('This recipe has been sent to GetMeCooking.', 'gmc');
-		} else {
-      _e("This recipe hasn't been sent to GetMeCooking yet.", 'gmc');
-		}
-		echo "</p>";
-        
-    echo '<input type="hidden" name="gmc_noncename" value="' . wp_create_nonce( plugin_basename(__FILE__) ) . '" />';
-	  ?>
-	</div>
-  <div id="help">
-    <?php _e('<p>Have you looked at the <a href="http://www.getmecooking.com/recipe-template-info#faq">Recipe Template FAQ page</a> recently?</p>', 'gmc');?>
-    <object width="420" height="243"><param name="movie" value="http://www.youtube.com/v/xNW1ZyzfNFk&hl=en_US&feature=player_embedded&version=3"></param><param name="allowFullScreen" value="true"></param><param name="allowScriptAccess" value="always"></param><embed src="http://www.youtube.com/v/xNW1ZyzfNFk&hl=en_US&feature=player_embedded&version=3" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="420" height="243"></embed></object>
-    
-  </div>
+  		echo "</p>";
+      _e('<strong>Note:</strong> Recipes go through an approval process before appearing on <a href="http://www.getmecooking.com">www.getmecooking.com</a>. It must have a good quality photograph and full recipe information. For more information please see <a href="http://www.getmecooking.com/recipe-template-info#faqMissingRecipesGMC">the FAQ</a>.', 'gmc');
+      
+  		echo "<p>";
+  		if (is_numeric($gmcid)) {
+        _e('This recipe has been sent to GetMeCooking.', 'gmc');
+  		} else {
+        _e("This recipe hasn't been sent to GetMeCooking yet.", 'gmc');
+  		}
+  		echo "</p>";
+          
+      echo '<input type="hidden" name="gmc_noncename" value="' . wp_create_nonce( plugin_basename(__FILE__) ) . '" />';
+  	  ?>
+  	</div>
+    <div id="help">
+      <?php _e('<p>Have you looked at the <a href="http://www.getmecooking.com/recipe-template-info#faq">Recipe Template FAQ page</a> recently?</p>', 'gmc');?>
+      <iframe width="853" height="480" src="http://www.youtube.com/embed/xNW1ZyzfNFk?rel=0" frameborder="0" allowfullscreen></iframe>
+      <p />
+      <iframe width="853" height="480" src="http://www.youtube.com/embed/dP6cPzJISs4?rel=0" frameborder="0" allowfullscreen></iframe>
+    </div>
   </div>  
 </div>
 
@@ -1430,7 +1385,7 @@ function gmc_save_settings() {
 
 function updateOrDeleteOption($key, $value) {
   if(!empty($value)) {
-	update_option($key, $value);
+	update_option($key, stripslashes($value));
   } else {
 	delete_option($key);
   }
@@ -1720,7 +1675,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
   }
 
   //description
-  if (stripslashes($_POST['gmc-description']) != 'e.g. These muffins have a crunchy top with a crumbly inside where you taste the subtle hint of lemon.')
+  if (stripslashes($_POST['gmc-description']) != __('e.g. These muffins have a crunchy top with a crumbly inside where you taste the subtle hint of lemon.', 'gmc'))
   {
     updateOrDeleteMeta($post_ID, 'gmc-description', $_POST['gmc-description']);
   }
@@ -1729,6 +1684,11 @@ function gmc_save_recipe_to_db($post_ID, $post) {
     delete_post_meta($post_ID, 'gmc-description');
   }
   
+  if (is_gmc_premium_active())
+  {
+    gmc_save_premium_recipe_to_db($post_ID, $post);
+  }
+
   $recipe_id = $post_ID;
   $recipe_count = gmc_get_post_and_page_count_for_recipe($recipe_id);
 
@@ -1859,9 +1819,7 @@ function gmc_save_recipe_to_gmc($post_ID, $post) {
 	//error_log("+++++ RECIPE PUBLISH");
 	$gmcid=get_post_meta($post_ID,"gmc-id",true);
 
-	try {	  
-
-	  //$result=gmc_send_xml(GMC_URL, gmc_get_recipe_xml($post,$gmcid));
+	try {
 	  $result=gmc_send_xml_curl(GMC_URL, gmc_get_recipe_xml($post,$gmcid));
 	  //error_log("SAVING");
 
@@ -1872,9 +1830,8 @@ function gmc_save_recipe_to_gmc($post_ID, $post) {
 	$xresult=simplexml_load_string($result);
 	$gmcid=(int)$xresult['id'];
 
-//      if (!empty($gmcid)) {
+
 	  update_post_meta($post_ID,"gmc-id",$gmcid);
-//      }
   }
 
 }
@@ -2150,32 +2107,6 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_script('gmc-file-upload', gmc_plugin_url().'/js/gmc-file-upload.js', array('jquery','media-upload','thickbox'),GMC_VERSION,true);
   wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true);
   
-  wp_enqueue_script('swfupload');
-  wp_enqueue_script('swfupload-queue', array('swfupload'));
-  
-  wp_enqueue_script('gmc-swfupload-fileprogress', gmc_plugin_url().'/js/recipe-template-fileprogress.js', array('swfupload'),GMC_VERSION,true);
-  wp_enqueue_script('gmc-swfupload-handlers', gmc_plugin_url().'/js/recipe-template-handlers.js', array( 'gmc-swfupload-fileprogress'),GMC_VERSION,true);
-
-  wp_enqueue_script('gmc-ajax-request', gmc_plugin_url().'/js/recipe-template-ajax.js', array( 'jquery', 'swfupload', 'swfupload-queue', 'gmc-swfupload-handlers' ),GMC_VERSION,true);
-
-  global $post;
-  if (!empty($post))
-  {
-  wp_localize_script('gmc-ajax-request', 'GMCAjax', array('postID' => $post->ID,
-															'ajaxurl' => admin_url( 'admin-ajax.php' ),
-															'jsurl' => gmc_plugin_url().'/js/',
-															'uploadimageurl' => includes_url( 'images/upload.png' ),
-															'swfurl' => includes_url( 'js/swfupload/swfupload.swf' ),
-															'nonce' => wp_create_nonce( 'gmc-nonce' )
-															));
-  }
-
-  /*if ($_GET['gmc_recipe']))
-  {
-    wp_register_style('gmc-media-upload', gmc_plugin_url().'/css/gmc-media-upload.css');
-    wp_enqueue_style( 'gmc-media-upload');
-  }*/
-
   wp_register_style('jquery.alerts', gmc_plugin_url().'/css/jquery.alerts.css');
   wp_enqueue_style( 'jquery.alerts');
 
@@ -2208,7 +2139,7 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_style( 'recipe-template-admin');
 }
 
-function gmc_show_recipe($id, $showtitle=true) {
+function gmc_show_recipe($id, $show_title=true) {
   global $post;
   $tmppost=$post;
 
@@ -2217,12 +2148,8 @@ function gmc_show_recipe($id, $showtitle=true) {
 
   ob_start();
 
-//  echo "<pre>\n";
-//  echo htmlentities(gmc_get_recipe_xml($post));
-//  echo "</pre>\n";
-
   $gmc_narrow_css = get_option('gmc-widecss') ? '' : '-narrow';
-  $hasStepImage = false;
+  $has_step_image = false;
   $gmc_img_popup = get_option('gmc-img-popup');
   $gmc_hide_title = get_option('gmc-hide-title');
 
@@ -2266,7 +2193,6 @@ function gmc_the_content($content) {
 /*
   helper function: displays a select dropdown
 */
-
 function gmc_select_helper($name,$options,$selected = '',$params = '') {
   $return = '<select name="'.$name.'" id="'.$name.'"';
   if(is_array($params)) {
@@ -2289,29 +2215,36 @@ function gmc_insert_recipe_dialog() {
   $r=get_posts('post_status=publish&post_type=gmc_recipe&nopaging=1&orderby=title&order=ASC');  
 
   if ($r) {
-	$recipes=array();
-	foreach($r as $rec) {
-	  $recipes[$rec->post_title]=$rec->ID;
-	}
+  	$recipes=array();
+  	foreach($r as $rec) {
+  	  $recipes[$rec->post_title]=$rec->ID;
+  	}
 
-	echo '<p class="howto">' . __('Choose the recipe you would like to display in this post.', 'gmc') .'</p>';
-	
-	echo '<p><label class="gmc-admin-label inline">' . __('Recipe', 'gmc') . '</label>';
-	echo gmc_select_helper('gmc-insert-recipe-list', $recipes);
-	echo "</p>";
-	submit_button( __('Insert Recipe', 'gmc'), 'primary', 'gmc-insert-recipe-button', false, array('tabindex' => 100, 'class'=>"button-primary gmc-admin-button left"));
-	
+  	echo '<p class="howto">' . __('Choose the recipe you would like to display in this post.', 'gmc') .'</p>';
+  	
+  	echo '<p><label class="gmc-admin-label inline">' . __('Recipe', 'gmc') . '</label>';
+  	echo gmc_select_helper('gmc-insert-recipe-list', $recipes);
+  	echo "</p>";
+  	submit_button( __('Insert Recipe', 'gmc'), 'primary', 'gmc-insert-recipe-button', false, array('tabindex' => 100, 'class'=>"button-primary gmc-admin-button left"));  	
   } else {
-	echo '<p class="howto">'. __('Once you have added a recipe by using the Recipes menu on the left sidebar (below the Posts menu) you can come back here and insert that recipe into your post.', 'gmc') .'</p>';
+	 echo '<p class="howto">'. __('Once you have added a recipe by using the Recipes menu on the left sidebar (below the Posts menu) you can come back here and insert that recipe into your post.', 'gmc') .'</p>';
   }
 
-  echo '<ul class="hidden gmcPremiumFeature">';
-  echo '<li class="howto">' . __('Or add a list of recipes.', 'gmc') .'</li>';
-  echo '<li><a id="gmc-all-recipes" href="#">'. __('All recipes') . '</a></li>';
-  echo '<li><a id="gmc-latest-recipes" href="#">'. __('Latest recipes') . '</a></li>';
-  echo '<li><a id="gmc-recipe-categories" href="#">'. __('Recipe categories') . '</a></li>';
-  echo '<li><a id="gmc-archived-recipes" href="#">'. __('Archived recipes') . '</a></li>';
-  echo '</ul>';
+  if (is_gmc_premium_active())
+  {
+    echo '<ul class="hidden gmcPremiumFeature">';
+    echo '<li class="howto">' . __('Or add a list of recipes.', 'gmc') .'</li>';
+    echo '<li><a id="gmc-all-recipes" href="#">'. __('All recipes') . '</a></li>';
+    echo '<li><a id="gmc-latest-recipes" href="#">'. __('Latest recipes') . '</a></li>';
+    echo '<li><a id="gmc-latest-recipes-slideshow" href="#">'. __('Latest recipes slideshow') . '</a></li>';
+    echo '<li><a id="gmc-recipe-categories" href="#">'. __('Recipe categories') . '</a></li>';
+    echo '<li><a id="gmc-archived-recipes" href="#">'. __('Archived recipes') . '</a></li>';
+    echo '</ul>';
+  }
+  else
+  {
+    echo '<p class="howto">' . sprintf(__('If you have the <a href="%s">premium version</a> of this plugin you can see which recipes have already been posted and much more.', 'gmc'), 'http://www.getmecooking.com/wordpress-recipe-plugin') . '</p>';
+  }
   echo "</div>\n";
 }
 
@@ -2343,28 +2276,6 @@ function gmc_unattach_photo($atts, $post_ID) {
   }
 }
 
-function gmc_media_upload_tabs($tabs) {
-/*
-	$_default_tabs = array(
-		'type' => __('From Computer'), // handler action suffix => tab text
-		'type_url' => __('From URL'),
-		'gallery' => __('Gallery'),
-		'library' => __('Media Library')
-	);
-*/
-
-  //if (isset($_REQUEST['post_id'])) {
-	//$p=get_post($_REQUEST['post_id']);
-	//error_log(print_r($p,1));
-
-	//if ($p->post_type=='gmc_recipe' || $p->post_type=='gmc_recipestep' || $p->post_type=='gmc_recipeingredient') {
-//      unset($tabs['library']);
-	//}
-  //}
-
-	return $tabs;
-}
-
 function gmc_enter_title_here($title, $post) {
   if ($post->post_type=="gmc_recipe") {
     $title= __('Recipe Title', 'gmc');
@@ -2372,18 +2283,6 @@ function gmc_enter_title_here($title, $post) {
   
   return $title;
 }
-
-// function gmc_the_editor_content($content) {
-  // global $post;
-  
-  // // if ($post->post_type=="gmc_recipe" && empty($content)) {
-	// // $content="Enter a brief description of your recipe here (delete this text)";
-  // // }
-
-  // // //error_log($content);
-
-  // return $content;
-// }
 
 function gmc_admin_post_thumbnail_html($content) {
 //  error_log($content);
@@ -2424,59 +2323,6 @@ function gmc_redirect_post_location($location, $post_id) {
   }
 
   return $location;
-}
-
-function gmc_ajax_upload() {
-  $nonce = $_REQUEST['nonce'];
-
-// todo - why doesnt it work?
-//  if ( ! wp_verify_nonce( $nonce, 'onecpt-nonce' ) ) {
-//    die( 'How did you get here?');
-//  }
-
-  $post_id = $_REQUEST['post_id'];
-
-  // tricky...
-  $file_handler="Filedata";
-
-  // check to make sure its a successful upload
-  if ($_FILES[$file_handler]['error'] !== UPLOAD_ERR_OK) __return_false();
- 
-  require_once(ABSPATH . "wp-admin" . '/includes/image.php');
-  require_once(ABSPATH . "wp-admin" . '/includes/file.php');
-  require_once(ABSPATH . "wp-admin" . '/includes/media.php');
- 
-  //Get the current alt text as it is overwritten when the new file is uploaded
-  $step=get_post($post_id);
-
-  $atts=get_posts('post_type=attachment&post_status=inherit&post_parent='.$post_id);
-  
-  $original_alt_text = '';
-	foreach($atts as $att) {
-	  $original_alt_text = $att->post_title;
-	  break;
-	}
-  
-  $attach_id = media_handle_upload( $file_handler, $post_id );
-  
-  if (is_object($attach_id) && ($attach_id instanceof WP_Error)) {
-	$attach_id=0;
-  }
- 
-  if ($attach_id) {
-	// for further onecpt_ajax_get_images calls
-	update_post_meta($post_id,'_thumbnail_id',$attach_id);
-  
-	$photo=get_post($attach_id);
-	
-	$photo->post_title = $original_alt_text;
-	
-	wp_update_post($photo);
-  }
-
-  echo get_the_post_thumbnail($post_id, "medium");
-
-  exit;
 }
 
 function gmc_total_time($prepHour, $prepMinute, $cookHour, $cookMinute) {
@@ -2976,39 +2822,6 @@ function gmc_attachment_fields_to_edit($form_fields, $post)
   return $form_fields;
 }
 
-function gmc_type_url_form_media($html)
-{  
-  $post_id = !empty( $_GET['post_id'] ) ? (int) $_GET['post_id'] : 0;
-  $post_type = get_post_type($post_id);
-
-  if($post_type != 'gmc_recipe' || $post_type != 'gmc_recipestep')
-      return $html;
-
-    // Used to hide the unwanted table rows
-  $display_none = 'style="display:none"';
-
-  $html = <<<HTML
-   <p class="media-types">
-      <label><input type="radio" name="media_type" value="image" id="image-only" checked='checked' /> Image</label> &nbsp; &nbsp; <label><input type="radio" name="media_type" value="generic" id="not-image" /> Audio, Video, or Other File</label>
-  </p> 
-  <table class="describe ">
-      <tbody> 
-          <tr> <th valign="top" scope="row" class="label" style="width:130px;"> <span class="alignleft"><label for="src">URL</label></span> <span class="alignright"><abbr id="status_img" title="required" class="required">*</abbr></span> </th> <td class="field"><input id="src" name="src" value="" type="text" aria-required="true" onblur="addExtImage.getImageData()" /></td> </tr>
-          <tr> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="title">Title</label></span> <span class="alignright"><abbr title="required" class="required">*</abbr></span> </th> <td class="field"><input id="title" name="title" value="" type="text" aria-required="true" /></td> </tr>
-          <tr class="not-image" {$display_none}><td></td><td><p class="help">Link text, e.g. &#8220;Ransom Demands (PDF)&#8221;</p></td></tr>
-          <tr class="image-only" {$display_none}> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="alt">Alternate Text</label></span> </th> <td class="field"><input id="alt" name="alt" value="" type="text" aria-required="true" /> <p class="help">Alt text for the image, e.g. &#8220;The Mona Lisa&#8221;</p></td> </tr>
-          <tr class="image-only" {$display_none}> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="caption">Image Caption</label></span> </th> <td class="field"><input id="caption" name="caption" value="" type="text" /></td> </tr>
-          <tr class="align image-only" {$display_none}> <th valign="top" scope="row" class="label"><p><label for="align">Alignment</label></p></th> <td class="field"> <input name="align" id="align-none" value="none" onclick="addExtImage.align='align'+this.value" type="radio" checked="checked" /> <label for="align-none" class="align image-align-none-label">None</label> <input name="align" id="align-left" value="left" onclick="addExtImage.align='align'+this.value" type="radio" /> <label for="align-left" class="align image-align-left-label">Left</label> <input name="align" id="align-center" value="center" onclick="addExtImage.align='align'+this.value" type="radio" /> <label for="align-center" class="align image-align-center-label">Center</label> <input name="align" id="align-right" value="right" onclick="addExtImage.align='align'+this.value" type="radio" /> <label for="align-right" class="align image-align-right-label">Right</label> </td> </tr>
-          <tr class="image-only" {$display_none}> <th valign="top" scope="row" class="label"> <span class="alignleft"><label for="url">Link Image To:</label></span> </th> <td class="field"><input id="url" name="url" value="" type="text" /><br /> <button type="button" class="button" value="" onclick="document.forms[0].url.value=null">None</button> <button type="button" class="button" value="" onclick="document.forms[0].url.value=document.forms[0].src.value">Link to image</button> <p class="help">Enter a link URL or click above for presets.</p></td> </tr>
-          <tr class="image-only"> <td></td> <td> <input type="button" class="button" id="go_button" style="color:#bbb;" onclick="addExtImage.insert()" value="Insert into Post" /> </td> </tr>
-          <tr class="not-image"> <td></td> <td> <input type="submit" name="insertonlybutton" id="insertonlybutton" class="button" value="Insert into Post" /> </td> </tr>
-      </tbody>
-  </table>
-HTML;
-
-    return $html;
-}
-
 function gmc_remove_media_tabs($tabs)
 {
   if (isset($_REQUEST['post_type'])) {
@@ -3022,10 +2835,33 @@ function gmc_remove_media_tabs($tabs)
   return $tabs;
 }
 
-
 function startsWith($haystack, $needle)
 {
     $length = strlen($needle);
     return (substr($haystack, 0, $length) === $needle);
+}
+
+function is_gmc_premium_active()
+{
+  return is_plugin_active('getmecooking-recipe-template-premium/recipe-template-premium.php');
+}
+
+function is_gmc_premium_active_front_end()
+{
+  return in_array('getmecooking-recipe-template-premium/recipe-template-premium.php', (array)get_option('active_plugins', array()));
+}
+
+function current_page_url() {
+  $pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+  if ($_SERVER["SERVER_PORT"] != "80")
+  {
+      $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+  } 
+  else 
+  {
+      $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+  }
+  
+  return $pageURL;
 }
 ?>

@@ -12,6 +12,7 @@ h2.gmc-recipe-title {
   vertical-align: top;
   margin-top: 0 !important;
   padding-top: 0 !important;
+  max-width: 80%;
 }
 
 a.gmc-print-options {
@@ -220,6 +221,30 @@ table.gmc_recipe_list img {
   text-align: right;
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.gmc-nutrition-summary, .gmc-nutrition-advanced {
+  clear: both;
+}
+
+.gmc-nutrition-summary td, .gmc-nutrition-summary th {
+  border: 0;
+}
+
+.gmc-nutrition-summary th, .gmc-nutrition-summary td, .gmc-nutrition-advanced th, td.gmc_per_serving, td.gmc_100g, td.gmc_gda {
+  text-align: center;
+}
+
+.gmc-nutrition-summary th {
+  font-weight: bold;
+}
+
+td.gmc-nutrition-serving {
+  text-align: left;
+}
+
+span.gmc-nutrition-serving {
+  font-weight: bold;
 }
 
 @media print {

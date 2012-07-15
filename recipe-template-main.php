@@ -8,32 +8,46 @@
 <div class="postbox-container">
 <span id="gmc-logo">
       <img src="<?php echo gmc_plugin_url().'/images/icon.png'; ?>" alt="<?php _e('GetMeCooking logo', 'gmc')?>" />
-    </span><h2><?php _e('GetMeCooking Recipe Template Settings', 'gmc'); ?></h2><form action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" id="gmc-settings" method="post" name="gmc-settings">
+    </span><h2><?php _e('GetMeCooking Recipe Template Settings', 'gmc'); ?></h2>        <?php if (!is_gmc_premium_active()) { ?>
+
+<div class="postbox">
+<h3>
+          <?php _e('Premium Plugin', 'gmc'); ?>
+        </h3><div class="inside">
+<p>
+            <?php echo sprintf(__('Did you know that we have a <a href="%s">premium plugin</a> that adds a lot more functionality?', 'gmc'), 'http://www.getmecooking.com/wordpress-recipe-plugin'); ?>
+
+          </p>        </div>      </div>    <?php } ?>
+<form action="<?php echo str_replace( '%7E', '~', $_SERVER['REQUEST_URI']); ?>" id="gmc-settings" method="post" name="gmc-settings">
 <input name="gmc-settings-save" type="hidden" value="Y" /><input id="gmc_resetcss" name="gmc_resetcss" type="hidden" /><div class="postbox">
-        <?php $gmcusername= strtolower(get_option("gmc-username")); ?>
-        <?php if (!$gmcusername) { ?>
+        <?php $gmcusername = strtolower(get_option("gmc-username")); ?>
+                <?php if (!$gmcusername) { ?>
+
 <h3>
-          <?php _e('Have we met?', 'gmc'); ?>
-        </h3><div class="inside">
+            <?php _e('Have we met?', 'gmc'); ?>
+          </h3><div class="inside">
 <p>
-            <?php _e('Tell us your <a href="http://www.getmecooking.com/">GetMeCooking</a> username to get acknowledgement, a list of recipes on your profile page and <a href="http://www.getmecooking.com/recipe-template-info#featuresLinkToGMC">other features</a>.', 'gmc'); ?>
-          </p><p>
-            <?php _e('If you don\'t already have a user profile on GetMeCooking, you can <a href="http://www.getmecooking.com/login/">create a free user account</a> and then get listed on our <a href="http://www.getmecooking.com/blog-directory">food blog directory</a>.', 'gmc'); ?>
-          </p>        </div>        <?php } else { ?>
+              <?php _e('Tell us your <a href="http://www.getmecooking.com/">GetMeCooking</a> username to get acknowledgement, a list of recipes on your profile page and <a href="http://www.getmecooking.com/recipe-template-info#featuresLinkToGMC">other features</a>.', 'gmc'); ?>
+            </p><p>
+              <?php _e('If you don\'t already have a user profile on GetMeCooking, you can <a href="http://www.getmecooking.com/login/">create a free user account</a> and then get listed on our <a href="http://www.getmecooking.com/blog-directory">food blog directory</a>.', 'gmc'); ?>
+            </p>          </div>                <?php } else { ?>
+
 <h3>
-          <?php _e('Hey', 'gmc') . ' ' . get_option('gmc-username'); ?>
-        </h3><div class="inside">
+            <?php echo __('Hey', 'gmc') . ' ' . get_option('gmc-username'); ?>
+
+          </h3><div class="inside">
 <p>
-            <?php _e('How are you today? Have you looked at the <a href="http://www.getmecooking.com/recipe-template-info">Recipe Template FAQ page</a> recently?', 'gmc'); ?>
-          </p>        </div>        <?php } ?>
+              <?php _e('How are you today? Have you looked at the <a href="http://www.getmecooking.com/recipe-template-info">Recipe Template FAQ page</a> recently?', 'gmc'); ?>
+            </p>          </div>        <?php } ?>
 <table class="gmc-table">
 <tbody>
 <tr>
 <th>
 <label for="gmc-username">
-                    <?php _e('GetMeCooking username', 'gmc'); ?>
-                  </label>                </th><td>
-<input id="gmc-username" name="gmc-username" size="50" type="text" value="<?php echo get_option('gmc-username'); ?>" />                </td>              </tr>              <?php if ($gmcusername) { ?>
+                  <?php _e('GetMeCooking username', 'gmc'); ?>
+                </label>              </th><td>
+<input id="gmc-username" name="gmc-username" size="50" type="text" value="<?php echo get_option('gmc-username'); ?>" />              </td>            </tr>                        <?php if ($gmcusername) { ?>
+
 <tr>
 <th>
 <label for="gmc-userProfile">
@@ -46,10 +60,10 @@
                     <?php _e('Food blog directory', 'gmc'); ?>
                   </label>                </th><td>
                   <?php _e('Are you listed in our <a href="http://www.getmecooking.com/blog-directory">food blog directory?</a>', 'gmc'); ?>
-                </td>              </tr>              <?php } ?>
+                </td>              </tr>            <?php } ?>
 <tr>
 <td colspan="2">
-<input class="button button-primary save" name="submit" type="submit" value="<?php echo __('Save settings', 'gmc'); ?>" />                </td>              </tr>            </tbody>          </table>      </div><div class="postbox">
+<input class="button button-primary save" name="submit" type="submit" value="<?php echo __('Save settings', 'gmc'); ?>" />              </td>            </tr>          </tbody>        </table>      </div><div class="postbox">
 <h3 id="gmc-share-the-love"><?php _e('Share the love', 'gmc'); ?></h3><div class="inside">
 <table class="gmc-table">
 <tr>
@@ -159,7 +173,7 @@
 <td>
 <input class="button button-primary save" name="submit" type="submit" value="<?php echo __('Save settings', 'gmc'); ?>" />              </td><td>
               </td>            </tr>          </table>        </div>      </div><div class="postbox">
-<h3><?php _e('Layout options', 'gmc'); ?></h3><div class="inside">
+<h3 id="layout-options"><?php _e('Layout options', 'gmc'); ?></h3><div class="inside">
 <table class="gmc-table">
 <tr>
 <th>
