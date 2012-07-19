@@ -30,6 +30,7 @@ The premium version gives you more features:
 * Display fresh content - display up to 10 of your your most recently added recipes on any page or blog post
 * Advanced management - see which recipes you have added to a blog post, multiple blog posts, or not yet added
 * In-blog linking of recipes - recipes link to posts on your blog instead of linking to [GetMeCooking](http://www.getmecooking.com)
+* Language support for Dutch, English, Italian, Portuguese, Russian
  
 A video overview and more information is [available here](http://www.getmecooking.com/wordpress-recipe-plugin)
 
@@ -74,6 +75,10 @@ Everything is optional and headings will only appear if you have typed in the re
 = So how do I use your WordPress recipe plugin? =
 
 Come sit closer little Timmy and [watch the video](http://www.getmecooking.com/wordpress-recipe-plugin) or [read about it](http://www.getmecooking.com/recipe-template-info#installingThePlugin).
+
+= Which languages does it support? =
+
+Dutch, English, Italian, Portuguese, Russian.
 
 == Screenshots ==
 
