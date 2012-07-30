@@ -20,6 +20,7 @@ register_activation_hook( __FILE__, 'gmc_activate' );
 add_action('admin_menu', 'gmc_menu');
 
 add_action('init', 'gmc_init');
+add_action('admin_init', 'gmc_activate_redirect');
 
 add_action('wp_enqueue_scripts', 'gmc_enqueue_scripts');
 add_action('admin_enqueue_scripts', 'gmc_admin_enqueue_scripts');

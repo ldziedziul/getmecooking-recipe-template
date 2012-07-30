@@ -240,6 +240,7 @@ function gmc_menu() {
   add_submenu_page('getmecooking_options', 'GetMeCooking dietaries', __('Dietaries', 'gmc'), 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_dietary&post_type=gmc_recipe');
   add_submenu_page('getmecooking_options', 'GetMeCooking miscs', __('Miscs', 'gmc'), 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_misc&post_type=gmc_recipe');
   add_submenu_page('getmecooking_options', 'GetMeCooking occasions', __('Occasions', 'gmc'), 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_occasion&post_type=gmc_recipe');
+  add_submenu_page('getmecooking_options', 'GetMeCooking tour', __('Take a tour', 'gmc'), 'edit_others_posts', 'edit.php?post_type=gmc_recipe#guider=second');
   //add_submenu_page('getmecooking_options', 'GetMeCooking regions', 'Regions', 'edit_others_posts', 'edit-tags.php?taxonomy=gmc_region&post_type=gmc_recipe');
 }
 
@@ -602,6 +603,18 @@ function gmc_copy_to_premium($file, $theme_path)
 function gmc_activate()
 {
   gmc_init();
+
+  add_option('gmc_do_activation_redirect', true);
+}
+
+function gmc_activate_redirect() {
+    if (get_option('gmc_do_activation_redirect', false)) {
+        delete_option('gmc_do_activation_redirect');
+
+        $redirect = 'admin.php?page=getmecooking_options#guider=first';
+
+        wp_redirect($redirect);
+    }
 }
 
 function gmc_update_old_version() {
@@ -2096,6 +2109,7 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_script('chosen.jquery.min',gmc_plugin_url().'/js/chosen.jquery.min.js');
   wp_enqueue_script('jquery.alerts',gmc_plugin_url().'/js/jquery.alerts.min.js');
   wp_enqueue_script('jquery.miniColors',gmc_plugin_url().'/js/jquery.miniColors.min.js');
+  wp_enqueue_script('guiders',gmc_plugin_url().'/js/guiders-1.2.8.js');
   wp_enqueue_script('media-upload');
   wp_enqueue_script('thickbox');
 
@@ -2121,6 +2135,9 @@ function gmc_admin_enqueue_scripts() {
   
   wp_register_style('jquery.miniColors', gmc_plugin_url().'/css/jquery.miniColors.css');
   wp_enqueue_style( 'jquery.miniColors');
+
+  wp_register_style('guiders', gmc_plugin_url().'/css/guiders-1.2.8.css');
+  wp_enqueue_style( 'guiders');
   
   wp_enqueue_style('thickbox');
 
