@@ -3,7 +3,7 @@ Contributors: GetMeCooking
 Donate link: http://www.getmecooking.com/recipe-template-info#donate
 Tags: recipes, recipe, cooking, food, recipe template, getmecooking
 Requires at least: 3.0
-Tested up to: 3.3
+Tested up to: 3.4.1
 Stable tag: trunk
 
 A WordPress recipe plugin for food bloggers. Display one or more recipes per page with print, recipe search, custom layout, SEO and other features.
