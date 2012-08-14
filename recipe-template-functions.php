@@ -2084,10 +2084,20 @@ function gmc_option_list($options, $selected, $onlyvalues = false) {
 
 function gmc_enqueue_scripts() {
   wp_enqueue_script('jquery');
-  wp_enqueue_script('thickbox');
+
+  $load_thickbox = get_option('gmc-img-popup');
+
+  if ($load_thickbox)
+  {
+    wp_enqueue_script('thickbox');
+  }
+  
   wp_enqueue_script('recipe-template',gmc_plugin_url().'/js/recipe-template.js',array('jquery'),GMC_VERSION,true);
 
-  wp_enqueue_style('thickbox');
+  if ($load_thickbox)
+  {
+    wp_enqueue_style('thickbox');
+  }
 
   $overridecss=get_option('gmc-overridecss');
   $gmccss=get_option('gmc-shortcodecss');
@@ -2111,15 +2121,14 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_script('jquery.miniColors',gmc_plugin_url().'/js/jquery.miniColors.min.js');
   wp_enqueue_script('guiders',gmc_plugin_url().'/js/guiders-1.2.8.js');
   wp_enqueue_script('media-upload');
-  wp_enqueue_script('thickbox');
 
   wp_enqueue_script('codemirror', gmc_plugin_url().'/js/codemirror.js',GMC_VERSION,true);
   wp_enqueue_script('codemirrorcss', gmc_plugin_url().'/js/css.js',GMC_VERSION,true);
   
   wp_enqueue_script('autoresize.jquery', gmc_plugin_url().'/js/autoresize.jquery.min.js',GMC_VERSION,true);
   
-  wp_enqueue_script('gmc-file-upload', gmc_plugin_url().'/js/gmc-file-upload.js', array('jquery','media-upload','thickbox'),GMC_VERSION,true);
-  wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('thickbox','codemirror','codemirrorcss'),GMC_VERSION,true);
+  wp_enqueue_script('gmc-file-upload', gmc_plugin_url().'/js/gmc-file-upload.js', array('jquery','media-upload'),GMC_VERSION,true);
+  wp_enqueue_script('recipe-template-admin',gmc_plugin_url().'/js/recipe-template-admin.js',array('codemirror','codemirrorcss'),GMC_VERSION,true);
   
   wp_register_style('jquery.alerts', gmc_plugin_url().'/css/jquery.alerts.css');
   wp_enqueue_style( 'jquery.alerts');
@@ -2138,8 +2147,6 @@ function gmc_admin_enqueue_scripts() {
 
   wp_register_style('guiders', gmc_plugin_url().'/css/guiders-1.2.8.css');
   wp_enqueue_style( 'guiders');
-  
-  wp_enqueue_style('thickbox');
 
   global $pagenow;
   if ($pagenow == 'media-upload.php') {
