@@ -92,7 +92,7 @@
           <?php $output = ''; ?>
                     <?php foreach($allergies as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'allergy').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp, $large_image_url, 'allergy'); ?>
           <?php } ?>
         </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
@@ -108,7 +108,7 @@
           <?php $output = ''; ?>
                     <?php foreach($dietary as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'dietary').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp, $large_image_url, 'dietary'); ?>
           <?php } ?>
         </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
@@ -124,10 +124,10 @@
           <?php $output = ''; ?>
                     <?php foreach($mealType as $gmp) { ?>
 
-            <?php $output.= '<span itemprop="recipeCategory">'. gmc_recipe_filter_link($gmp->name, $large_image_url, 'course').'</span>, '; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp, $large_image_url, 'course'); ?>
           <?php } ?>
         </td><td class="gmc-summary-value">
-          <?php echo substr($output, 0, strlen($output) -2); ?>
+          <?php echo '<span itemprop="recipeCategory">' . substr($output, 0, strlen($output) -2) . '</span>'; ?>
 
         </td>      </tr>    <?php } ?>
     <?php $misc = wp_get_object_terms($post->ID, 'gmc_misc'); ?>
@@ -140,7 +140,7 @@
           <?php $output = ''; ?>
                     <?php foreach($misc as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'misc').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp, $large_image_url, 'misc'); ?>
           <?php } ?>
         </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
@@ -156,7 +156,7 @@
           <?php $output = ''; ?>
                     <?php foreach($occasion as $gmp) { ?>
 
-            <?php $output.= gmc_recipe_filter_link($gmp->name, $large_image_url, 'occasion').", "; ?>
+            <?php $output.= gmc_recipe_filter_link($gmp, $large_image_url, 'occasion'); ?>
           <?php } ?>
         </td><td class="gmc-summary-value">
           <?php echo substr($output, 0, strlen($output) -2); ?>
@@ -170,7 +170,8 @@
           <?php echo get_option("gmc-label-region") ? get_option("gmc-label-region") : __('Region', 'gmc'); ?>
 
         </td><td class="gmc-summary-value" itemprop="recipeCuisine">
-          <?php echo gmc_recipe_filter_link($region[0]->name, $large_image_url, 'region'); ?>
+          <?php $output = gmc_recipe_filter_link($region[0], $large_image_url, 'region'); ?>
+          <?php echo substr($output, 0, strlen($output) -2); ?>
 
         </td>      </tr>    <?php } ?>
     <?php $author = get_post_meta($post->ID, 'gmc-source-name', true); ?>
@@ -230,6 +231,7 @@
             <?php if (!empty($distinctGroupNames)) { ?>
 
 <ul class="gmc-ingredient-list">
+          <?php $gmc_kanguage = get_locale(); ?>
                     <?php foreach ($ingredients as $ingredient) { ?>
 
             <?php $inGroup = get_post_meta($ingredient->ID, "gmc-ingredientgroup", true); ?>

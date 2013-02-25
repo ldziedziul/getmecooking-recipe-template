@@ -103,13 +103,13 @@
         </div>      </div><div class="postbox">
 <h3><?php _e('Feedback, help and support', 'gmc'); ?></h3><div class="inside">
 <p>
-            <?php _e('Please let us know what you think of this template, any features you would like or any problems that you find, by <a href="http://www.getmecooking.com/contact">contacting us</a> via our website.', 'gmc'); ?>
+            <?php _e('Please <a href="http://www.getmecooking.com/contact">let us know</a> what you think of this plugin, any features you would like or any problems that you find.', 'gmc'); ?>
           </p><p>
             <?php _e('For some basic information on this plugin and a list of common questions, please visit the <a href="http://www.getmecooking.com/recipe-template-info">Recipe Template FAQ page</a>', 'gmc'); ?>
           </p><p>
             <?php _e('Come and hang out with us', 'gmc'); ?> <a target="_blank" href="http://www.getmecooking.com/newsletter-subscribe"><img src="<?php echo gmc_plugin_url().'/images/email.png'; ?>" alt="<?php _e('GetMeCooking newsletter', 'gmc');?>" /></a> <a target="_blank" href="http://www.facebook.com/GetMeCooking/"><img src="<?php echo gmc_plugin_url().'/images/facebook.png'; ?>" alt="Facebook" /></a> <a target="_blank" href="http://www.twitter.com/getmecooking"><img src="<?php echo gmc_plugin_url().'/images/twitter.png'; ?>" alt="Twitter" /></a> <a target="_blank" href="http://www.getmecooking.com/rss"><img src="<?php echo gmc_plugin_url().'/images/rss.png'; ?>" alt="<?php _e('RSS','gmc');?>" /></a> <a target="_blank" href="http://www.youtube.com/user/GetMeCooking"><img src="<?php echo gmc_plugin_url().'/images/youtube.png'; ?>" alt="YouTube" /></a>
           </p><p>
-            <?php _e('Like us? Please rate us, help and support', 'gmc');?><a target="_blank" href="http://wordpress.org/extend/plugins/getmecooking-recipe-template/"><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /></a>
+            <?php _e('Like this plugin? Please rate it on WordPress', 'gmc');?><a target="_blank" href="http://wordpress.org/extend/plugins/getmecooking-recipe-template/"><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /></a>
           </p>        </div>      </div><div class="postbox">
 <h3><?php _e('Heading text', 'gmc'); ?></h3><div class="inside">
 <p>
@@ -252,7 +252,7 @@
         </h3><div class="inside">
 <p>
             <?php _e('Here you can replace the standard Recipe Template styling with your own.', 'gmc')           ; ?>
-            <img class="gmc-tooltip" src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="<?php _e('Help', 'gmc'); ?>" title="<?php _e("Remember to tick 'Use your own CSS' and to 'Save settings'.", 'gmc'); ?>" />
+            <img class="gmc-tooltip" src="<?php echo gmc_plugin_url().'/images/help.png'; ?>" alt="<?php _e('Help', 'gmc'); ?>" title="<?php _e("Remember to tick 'Use custom CSS' and to 'Save settings'.", 'gmc'); ?>" />
           </p><p>
             <?php _e('To learn about Cascading Style Sheets (CSS), please see the <a href="http://www.w3schools.com/css/css_intro.asp">W3Schools introduction to CSS</a>', 'gmc'); ?>
           </p><p>
@@ -261,18 +261,18 @@
 <tbody>
 <tr valign="top">
 <th>
-                  <?php _e('Use your own CSS?', 'gmc'); ?>
+                  <?php _e('Use custom CSS (edited below)?', 'gmc'); ?>
                 </th><td>
                   <input id="gmc-overridecss" value="Y" name="gmc-overridecss" type="checkbox" <?php echo (get_option('gmc-overridecss')=='Y' ? 'checked="checked"' : ''); ?>/>
                 </td>              </tr><tr>
 <th>
                 </th><td>
 <a href="#" id="gmc-reset-css">
-                    <?php _e('Reset CSS back to default', 'gmc'); ?>
+                    <?php _e('Reset your custom CSS back to default', 'gmc'); ?>
                   </a><p>
                   </p>                </td>              </tr><tr valign="top">
 <th>
-                  <?php _e('Custom CSS', 'gmc'); ?>
+                  <?php _e('Your custom CSS', 'gmc'); ?>
                 </th><td>
                   <?php $gmccss=get_option('gmc-shortcodecss'); ?>
                   <?php if (empty($gmccss)) { ?>

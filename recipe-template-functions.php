@@ -307,6 +307,9 @@ function gmc_init() {
 
   register_post_type('gmc_recipestep', 
 	array(
+      'labels' => array(
+      'name' => __('Recipe steps', 'gmc')
+      ),
 		  'publicly_queryable' => false,
 		  'show_ui' => false,
 		  'show_in_menu' => false,
@@ -324,6 +327,9 @@ function gmc_init() {
 
   register_post_type('gmc_recipeingredient', 
 	 array(
+      'labels' => array(
+      'name' => __('Recipe ingredients', 'gmc')
+      ),
 		  'publicly_queryable' => false,
 		  'show_ui' => false,
 		  'show_in_menu' => false,
@@ -560,8 +566,6 @@ function gmc_init() {
     )
   );
   
-  flush_rewrite_rules(false);
-  
   if (!gmc_is_recipe_admin_page()) {
     gmc_add_recipe_button();
   }
@@ -603,8 +607,13 @@ function gmc_copy_to_premium($file, $theme_path)
 function gmc_activate()
 {
   gmc_init();
-
+  flush_rewrite_rules();
   add_option('gmc_do_activation_redirect', true);
+}
+
+function gmc_deactivate()
+{
+  flush_rewrite_rules();
 }
 
 function gmc_activate_redirect() {
@@ -618,113 +627,146 @@ function gmc_activate_redirect() {
 }
 
 function gmc_update_old_version() {
-  if (get_option("gmc_version") <= 1.11)
-  {    
-    //convert data to taxonomy
-    $post_key = 'gmc-recopt-region';
-    $regions = gmc_get_post_meta_unknown_id($post_key);
-  
-    foreach ($regions as $region)
-    {
-      wp_set_post_terms($region->post_id, $region->meta_value, 'gmc_region');
-      delete_post_meta($region->post_id, $post_key);
-    }
-    
-    gmc_convert_to_taxonomy('gmc-recopt-when', 'gmc_course');
-    gmc_convert_to_taxonomy('gmc-recopt-occasion', 'gmc_occasion');
-    gmc_convert_to_taxonomy('gmc-recopt-allergies', 'gmc_allergy');
-    gmc_convert_to_taxonomy('gmc-recopt-dietary', 'gmc_dietary');
-    gmc_convert_to_taxonomy('gmc-recopt-other', 'gmc_misc');
-    
-    global $wpdb;
-    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipe'  WHERE post_type = 'recipe'");
-    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipestep'  WHERE post_type = 'recipestep'");
-    $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipeingredient'  WHERE post_type = 'recipeingredient'");
-  }
-
-  if (get_option("gmc_version") <= 1.18)
-  {
-    add_option("gmc-widecss", 'Y');
-
-    //correct term_taxonomy data
-    global $wpdb;
-    $sql = $wpdb->prepare("SELECT tax.term_id, taxonomy, name, slug
-      FROM {$wpdb->term_taxonomy} tax
-      INNER JOIN {$wpdb->terms} term
-      ON tax.term_id = term.term_id
-      WHERE 
-      taxonomy IN('allergy', 'course', 'dietary' 'misc', 'occasion')
-    ");
-
-    foreach ($wpdb->get_results($sql) as $key => $row)
-    {
-      if (!term_exists((int)$row->term_id, "gmc_" . $row->taxonomy))
-      {
-        wp_insert_term($row->name, "gmc_" . $row->taxonomy,
-            array(
-              'slug' => $row->slug
-            )
-          );
-      }
-    }
-  }
-  if (get_option("gmc_version") <= 1.19)
-  {
-    //Go through all posts and update [recipe x] to [gmc_recipe x]
-    global $wpdb;
-    $wpdb->query("UPDATE {$wpdb->posts} SET post_content = replace(post_content, '[recipe', '[gmc_recipe') WHERE post_type = 'page' OR post_type = 'post'");
-
-    if(get_option('gmc_order') && strpos('region', get_option('gmc_order')) === false)
-    {
-      update_option("gmc_order", get_option('gmc_order') . ',region');
-    }
-  }
-  if (get_option("gmc_version") <= 1.21)
-  {
-    global $wpdb;
-    $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = 'l' WHERE meta_value = 'litre' AND meta_key = 'gmc-ingredientmeasurement'");
-    
-    wp_insert_term(__('Easter', 'gmc'), 'gmc_occasion');
-    wp_insert_term(__('Valentines day', 'gmc'), 'gmc_occasion');
-
-    if (get_option('gmc-label-step'))
-    {
-      switch (get_option('gmc-label-step'))
-      {
-        case '2':
-          update_option('gmc-label-step', 0);
-        break;
-        case '3':
-          update_option('gmc-label-step', 1);
-        break;
-        case '4':
-          update_option('gmc-label-step', 2);
-        break;
-        case '5':
-          update_option('gmc-label-step', 3);
-        break;
-        case '6':
-          update_option('gmc-label-step', 4);
-        break;
-        default:
-      }      
-    }
-  }
-
   if(!get_option("gmc_version"))
   {
     add_option("gmc_version", GMC_VERSION, '', 'no');
-    
-    if(!get_option("gmc_initial_version"))
-    {
-      add_option("gmc_initial_version", GMC_VERSION, '', 'no');
-    }
+    add_option("gmc_initial_version", GMC_VERSION, '', 'no');
   }
   else
   {
-    if(!get_option("gmc_initial_version"))
+    if (get_option("gmc_version") <= 1.11)
+    {    
+      //convert data to taxonomy
+      $post_key = 'gmc-recopt-region';
+      $regions = gmc_get_post_meta_unknown_id($post_key);
+    
+      foreach ($regions as $region)
+      {
+        wp_set_post_terms($region->post_id, $region->meta_value, 'gmc_region');
+        delete_post_meta($region->post_id, $post_key);
+      }
+      
+      gmc_convert_to_taxonomy('gmc-recopt-when', 'gmc_course');
+      gmc_convert_to_taxonomy('gmc-recopt-occasion', 'gmc_occasion');
+      gmc_convert_to_taxonomy('gmc-recopt-allergies', 'gmc_allergy');
+      gmc_convert_to_taxonomy('gmc-recopt-dietary', 'gmc_dietary');
+      gmc_convert_to_taxonomy('gmc-recopt-other', 'gmc_misc');
+      
+      global $wpdb;
+      $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipe'  WHERE post_type = 'recipe'");
+      $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipestep'  WHERE post_type = 'recipestep'");
+      $wpdb->query("UPDATE $wpdb->posts SET post_type = 'gmc_recipeingredient'  WHERE post_type = 'recipeingredient'");
+    }
+
+    if (get_option("gmc_version") <= 1.18)
     {
-      add_option("gmc_initial_version", get_option("gmc_version"), '', 'no');
+      add_option("gmc-widecss", 'Y');
+
+      //correct term_taxonomy data
+      global $wpdb;
+      $sql = $wpdb->prepare("SELECT tax.term_id, taxonomy, name, slug
+        FROM {$wpdb->term_taxonomy} tax
+        INNER JOIN {$wpdb->terms} term
+        ON tax.term_id = term.term_id
+        WHERE 
+        taxonomy IN('allergy', 'course', 'dietary' 'misc', 'occasion')
+      ");
+
+      foreach ($wpdb->get_results($sql) as $key => $row)
+      {
+        if (!term_exists((int)$row->term_id, "gmc_" . $row->taxonomy))
+        {
+          wp_insert_term($row->name, "gmc_" . $row->taxonomy,
+              array(
+                'slug' => $row->slug
+              )
+            );
+        }
+      }
+    }
+    if (get_option("gmc_version") <= 1.19)
+    {
+      //Go through all posts and update [recipe x] to [gmc_recipe x]
+      global $wpdb;
+      $wpdb->query("UPDATE {$wpdb->posts} SET post_content = replace(post_content, '[recipe', '[gmc_recipe') WHERE post_type = 'page' OR post_type = 'post'");
+
+      if(get_option('gmc_order') && strpos('region', get_option('gmc_order')) === false)
+      {
+        update_option("gmc_order", get_option('gmc_order') . ',region');
+      }
+    }
+    if (get_option("gmc_version") <= 1.21)
+    {
+      global $wpdb;
+      $wpdb->query("UPDATE {$wpdb->postmeta} SET meta_value = 'l' WHERE meta_value = 'litre' AND meta_key = 'gmc-ingredientmeasurement'");
+      
+      wp_insert_term(__('Easter', 'gmc'), 'gmc_occasion');
+      wp_insert_term(__('Valentines day', 'gmc'), 'gmc_occasion');
+
+      if (get_option('gmc-label-step'))
+      {
+        switch (get_option('gmc-label-step'))
+        {
+          case '2':
+            update_option('gmc-label-step', 0);
+          break;
+          case '3':
+            update_option('gmc-label-step', 1);
+          break;
+          case '4':
+            update_option('gmc-label-step', 2);
+          break;
+          case '5':
+            update_option('gmc-label-step', 3);
+          break;
+          case '6':
+            update_option('gmc-label-step', 4);
+          break;
+          default:
+        }      
+      }
+    }
+
+    if (get_option("gmc_version") <= 1.23 && get_option("gmc_premium_files"))
+    {
+      switch (get_locale())
+      {
+        case 'da_DK':
+        case 'de_DE':
+        case 'it_IT':
+        case 'nl_NL':
+        case 'pt_PT':
+        case 'ru_RU':
+          gmc_update_language_term('African', 'gmc_region');
+          gmc_update_language_term('American', 'gmc_region');
+          gmc_update_language_term('Asian', 'gmc_region');
+          gmc_update_language_term('European', 'gmc_region');
+          gmc_update_language_term('Oceanian', 'gmc_region');
+          gmc_update_language_term('South American', 'gmc_region');
+          gmc_update_language_term('British', 'gmc_region');
+          gmc_update_language_term('Canadian', 'gmc_region');
+          gmc_update_language_term('Chinese', 'gmc_region');
+          gmc_update_language_term('Croatian', 'gmc_region');
+          gmc_update_language_term('French', 'gmc_region');
+          gmc_update_language_term('German', 'gmc_region');
+          gmc_update_language_term('Greek', 'gmc_region');
+          gmc_update_language_term('Indian', 'gmc_region');
+          gmc_update_language_term('Indonesian', 'gmc_region');
+          gmc_update_language_term('Irish', 'gmc_region');
+          gmc_update_language_term('Italian', 'gmc_region');
+          gmc_update_language_term('Jamaican', 'gmc_region');
+          gmc_update_language_term('Japanese', 'gmc_region');
+          gmc_update_language_term('Lebanese', 'gmc_region');
+          gmc_update_language_term('Malaysian', 'gmc_region');
+          gmc_update_language_term('Spanish', 'gmc_region');
+          gmc_update_language_term('Swedish', 'gmc_region');
+          gmc_update_language_term('Thai', 'gmc_region');
+          gmc_update_language_term('Turkish', 'gmc_region');
+          gmc_update_language_term('Vietnamese', 'gmc_region');
+          break;
+        default:
+          break;
+      }
     }
     
     update_option("gmc_version", GMC_VERSION);
@@ -1113,6 +1155,111 @@ function gmc_mainrecipe_box($post, $metabox) {
 		$steps=get_posts('post_status=publish&post_type=gmc_recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID);
 
   		echo '<div id="gmc-stepslist">'."\n";		
+
+      echo '<div id="recipeEditFloatMenu">';
+        echo '<table id="conversionTable">';
+          echo '<thead>';
+            echo '<tr>';
+              echo '<td class="conversionTemp">Temperature chart</td>';
+              echo '<td class="conversionLength">Length</td>';
+              echo '<td class="conversionQuart">Quarts</td>';
+            echo '</tr>';
+          echo '</thead>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">110°C / 230°F</td>';
+            echo '<td class="conversionLength">0.5cm (0.25")</td>';
+            echo '<td class="conversionQuart"></td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">120°C / 250°F / Gas Mark ½</td>';
+            echo '<td class="conversionLength">1.5cm (0.5")</td>';
+            echo '<td class="conversionQuart">0.5 litres (0.5 quart)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">140°C / 275°F / Gas Mark 1</td>';
+            echo '<td class="conversionLength">2.5cm (1")</td>';
+            echo '<td class="conversionQuart">1.1 litres (1 quart)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">150°C / 300°F / Gas Mark 2</td>';
+            echo '<td class="conversionLength">5cm (2")</td>';
+            echo '<td class="conversionQuart">2.3 litres (2 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">160°C / 325°F / Gas Mark 3</td>';
+            echo '<td class="conversionLength">8cm (3")</td>';
+            echo '<td class="conversionQuart">3.4 litres (3 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">180ºC / 350ºF / Gas Mark 4</td>';
+            echo '<td class="conversionLength">10cm (4")</td>';
+            echo '<td class="conversionQuart">4.5 litres (4 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">190°C / 375°F / Gas Mark 5</td>';
+            echo '<td class="conversionLength">13cm (5")</td>';
+            echo '<td class="conversionQuart">5.7 litres (5 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">200°C / 400°F / Gas Mark 6</td>';
+            echo '<td class="conversionLength">15cm (6")</td>';
+            echo '<td class="conversionQuart">6.8 litres (6 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">220°C / 425°F / Gas Mark 7</td>';
+            echo '<td class="conversionLength">18cm (7")</td>';
+            echo '<td class="conversionQuart">8 litres (7 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">230°C / 450°F / Gas Mark 8</td>';
+            echo '<td class="conversionLength">20cm (8")</td>';
+            echo '<td class="conversionQuart">9 litres (8 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">240°C / 475°F / Gas Mark 9</td>';
+            echo '<td class="conversionLength">23cm (9")</td>';
+            echo '<td class="conversionQuart">10.2 litres (9 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp">260°C / 500°F / Gas Mark 10</td>';
+            echo '<td class="conversionLength">25cm (10")</td>';
+            echo '<td class="conversionQuart">11.4 litres (10 quarts)</td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp"></td>';
+            echo '<td class="conversionLength">28cm (11")</td>';
+            echo '<td class="conversionQuart"></td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp"></td>';
+            echo '<td class="conversionLength">31cm (12")</td>';
+            echo '<td class="conversionQuart"></td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp"></td>';
+            echo '<td class="conversionLength">33cm (13")</td>';
+            echo '<td class="conversionQuart"></td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp"></td>';
+            echo '<td class="conversionLength">36cm (14")</td>';
+            echo '<td class="conversionQuart"></td>';
+          echo '</tr>';
+          echo '<tr>';
+            echo '<td class="conversionTemp"></td>';
+            echo '<td class="conversionLength">38cm (15")</td>';
+            echo '<td class="conversionQuart"></td>';
+          echo '</tr>';
+          echo '<tfoot>';
+            echo '<tr>';
+              echo '<td><a href="http://www.getmecooking.com/measurements">View more measurements</a></td>';
+              echo '<td></td>';
+              echo '<td>All values are approximate</td>';
+            echo '</tr>';
+          echo '</tfoot>';
+        echo '</table>';
+      echo '<a id="gmcToggleConversionChart" href="#">Show conversion chart</a>';
+      echo '</div>';
 
   		$i=1;
   		foreach ($steps as $step) {
@@ -1514,7 +1661,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
   
   if (!empty($_POST['gmc-use-custom-region']) && !empty($_POST['gmc-custom-region'])) {
 	update_post_meta($post_ID, "gmc-use-custom-region", 'Y');
-	$region = $_POST['gmc-custom-region'];
+	$region = trim($_POST['gmc-custom-region']);
   }
   else
   {
@@ -1611,11 +1758,11 @@ function gmc_save_recipe_to_db($post_ID, $post) {
 	  $my_post['post_author'] = $current_user->ID;
 
 	  if (!empty($_POST['gmc-ingredientname'][$key]) && stripslashes($_POST['gmc-ingredientname'][$key]) != __("e.g. 'onion' or 'cheese'", 'gmc')) {
-      $my_post['post_title']=$_POST['gmc-ingredientname'][$key];
+      $my_post['post_title']=trim($_POST['gmc-ingredientname'][$key]);
 	  }
 
 	  if (!empty($_POST['gmc-ingredientnote'][$key]) && stripslashes($_POST['gmc-ingredientnote'][$key]) != __("e.g. 'finely chopped' or 'freshly grated'", 'gmc')) {
-      $my_post['post_content']=$_POST['gmc-ingredientnote'][$key];
+      $my_post['post_content']=trim($_POST['gmc-ingredientnote'][$key]);
 	  }
     else {
       $my_post['post_content'] = "";
@@ -1650,7 +1797,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
     if (!$deleting && !empty($my_post['post_title'])) {
       if (stripslashes($_POST['gmc-ingredientquantity'][$key]) != 'e.g. 1')
       {
-        updateOrDeleteMeta($iid, "gmc-ingredientquantity", $_POST['gmc-ingredientquantity'][$key]);
+        updateOrDeleteMeta($iid, "gmc-ingredientquantity", trim($_POST['gmc-ingredientquantity'][$key]));
       }
       else
       {
@@ -1662,7 +1809,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
       
       if (!empty($_POST['gmc-use-custom-measurement'][$key]) && !empty($_POST['gmc-custom-measurement'][$key])) {
         update_post_meta($iid, "gmc-use-custom-measurement", 'Y');
-        $measurement = $_POST['gmc-custom-measurement'][$key];
+        $measurement = trim($_POST['gmc-custom-measurement'][$key]);
       }
       else
       {
@@ -1671,7 +1818,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
       
       updateOrDeleteMeta($iid, "gmc-ingredientmeasurement", $measurement);
       
-      updateOrDeleteMeta($iid, "gmc-ingredientgroup", $_POST['gmc-ingredientgroup'][$key]);
+      updateOrDeleteMeta($iid, "gmc-ingredientgroup", trim($_POST['gmc-ingredientgroup'][$key]));
       
       //error_log(print_r($_POST['gmc-ingredientoptional'],1));
           
@@ -1690,7 +1837,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
   //description
   if (stripslashes($_POST['gmc-description']) != __('e.g. These muffins have a crunchy top with a crumbly inside where you taste the subtle hint of lemon.', 'gmc'))
   {
-    updateOrDeleteMeta($post_ID, 'gmc-description', $_POST['gmc-description']);
+    updateOrDeleteMeta($post_ID, 'gmc-description', trim($_POST['gmc-description']));
   }
   else
   {
@@ -2520,9 +2667,12 @@ function print_ingredient_description($ingredient)
     case 'dash':
       $measurement = gmc_pluralise(__('Dash', 'gmc'), __('dashes', 'gmc'), $quantity);
     break;
+    case 'drizzle':
+      $measurement = __($measurement, 'gmc');
+    break;
     case 'drop':
       $measurement = gmc_pluralise(__('Drop', 'gmc'), __('drops', 'gmc'), $quantity);
-    break;    
+    break;
     case 'glass':
       $measurement = gmc_pluralise(__('Glass', 'gmc'), __('glasses', 'gmc'), $quantity);
     break;
@@ -2595,6 +2745,9 @@ function print_ingredient_description($ingredient)
     case 'tin':
       $measurement = gmc_pluralise(__('Tin', 'gmc'), __('tins', 'gmc'), $quantity);
     break;
+    case 'tub':
+      $measurement = gmc_pluralise(__('Tub', 'gmc'), __('tubs', 'gmc'), $quantity);
+    break;
     case 'tube':
       $measurement = gmc_pluralise(__('Tube', 'gmc'), __('tubes', 'gmc'), $quantity);
     break;
@@ -2609,8 +2762,13 @@ function print_ingredient_description($ingredient)
 	  case 'usa pint':
     case 'usa pint weight':
     case 'imperial pint weight':
-		  $measurement = __('pint', 'gmc');
+		  $measurement = gmc_pluralise(__('Pint', 'gmc'), __('pints', 'gmc'), $quantity);
 		break;
+    case 'imperial quart':
+    case 'usa dry quart':
+    case 'usa liquid quart':
+      $measurement = gmc_pluralise(__('Quart', 'gmc'), __('quarts', 'gmc'), $quantity);
+    break;
     case 'juice':
       $measurement = gmc_pluralise(__('Juice', 'gmc'), __('juices', 'gmc'), $quantity);
     break;
@@ -2649,29 +2807,34 @@ function gmc_pluralise($singular, $plural, $quantity)
     return $plural;
   }
 
+  if ($gmc_language == 'de_DE')
+  {
+    return $singular;
+  }
+
   return strtolower($singular);
 }
 
 function gmc_recipe_filter_link($filter, $has_photo, $category)
 {
-  if(get_option('gmc-hide-links'))
-	return $filter;
-
-  $username = get_option("gmc-username");
-  $filterText = $filter;
-	
-  if($username && $has_photo)
-  {
-    $filter .= "&username=$username";
-  }
-  
   if (get_option('gmc_local_taxonomy') == 'Y')
   {
-    return '<a href="' . get_term_link($filterText, $category) . '">' . $filterText . '</a>';
+    $termLink = get_term_link($filter, $category);
+    return '<a href="' . $termLink . '">' . $filter->name . '</a>, ';
   }
   else
   {
-    return '<a href="http://www.getmecooking.com/recipes?'.$category.'='.$filter. '">'.$filterText.'</a>';
+    if(get_option('gmc-hide-links'))
+      return $filter->name . ', ';
+
+    $username = get_option("gmc-username");
+    
+    if($username && $has_photo)
+    {
+      $filterQuery = $filter->name . "&username=$username";
+    }
+
+    return '<a href="http://www.getmecooking.com/recipes?'.$category.'='.$filterQuery. '">'.$filter->name.'</a>, ';
   }
 }
 

@@ -3,7 +3,7 @@ Contributors: GetMeCooking
 Donate link: http://www.getmecooking.com/recipe-template-info#donate
 Tags: recipes, recipe, cooking, food, recipe template, getmecooking
 Requires at least: 3.0
-Tested up to: 3.5
+Tested up to: 3.5.1
 Stable tag: trunk
 
 A WordPress recipe plugin for food bloggers. Display one or more recipes per page with print, recipe search, custom layout, SEO and other features.
@@ -92,6 +92,15 @@ Dutch, English, Italian, Portuguese, Russian.
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.24 =
+* Added conversion chart
+* Improved CSS
+* Added label for recipe steps / ingredients
+* Improved update gmc_update_old_version
+* Trimmed input
+* Fixed gmc_recipe_filter_link
+* Corrected use of flush_rewrite_rules
+
 = 1.23 =
 * Only the recipe title that matches the blog post is hidden when the option is enabled
 * Adding an apostrophe to a custom heading no longer adds a backslash
