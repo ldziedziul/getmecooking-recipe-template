@@ -5,6 +5,8 @@ Tags: recipes, recipe, cooking, food, recipe template, getmecooking
 Requires at least: 3.0
 Tested up to: 3.5.1
 Stable tag: trunk
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 A WordPress recipe plugin for food bloggers. Display one or more recipes per page with print, recipe search, custom layout, SEO and other features.
 
