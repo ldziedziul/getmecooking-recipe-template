@@ -9,7 +9,7 @@
 */
 
 define('GMC_URL', 'http://www.getmecooking.com/recipeservice.svc/submitrecipe');
-define('GMC_VERSION', '1.24');
+define('GMC_VERSION', '1.25');
 $premium_files = dirname( dirname(__FILE__) ).DIRECTORY_SEPARATOR.'getmecooking-recipe-template-premium'.DIRECTORY_SEPARATOR.'recipe-template-premium.php';
 define('GMC_PREMIUM_FILES', $premium_files);
 
