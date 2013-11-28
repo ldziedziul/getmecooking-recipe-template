@@ -32,7 +32,7 @@ The premium version gives you more features:
 * Display fresh content - display up to 10 of your your most recently added recipes on any page or blog post
 * Advanced management - see which recipes you have added to a blog post, multiple blog posts, or not yet added
 * In-blog linking of recipes - recipes link to posts on your blog instead of linking to [GetMeCooking](http://www.getmecooking.com)
-* Language support for Danish, Dutch, English, German, Italian, Portuguese, Russian
+* Language support for Danish, Dutch, English, French, German, Italian, Portuguese, Russian
  
 A video overview and more information is [available here](https://www.getmecooking.com/wordpress-recipe-plugin)
 
@@ -94,6 +94,14 @@ Dutch, English, Italian, Portuguese, Russian.
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.26 =
+* If the recipe name is the same as the blog post title and the option is ticked to hide it, it is now shown when printed.
+* Putting a recipe in the trash section correctly updates the count
+* Updated chosen
+* Fixed duplicate post bug
+* Hide the article header image if you go directly to the recipe
+* Corrected the prep/cooking time used by search engines
+
 = 1.25 =
 * Fixed a JavaScript bug caused by WordPress 3.6
 

@@ -92,25 +92,10 @@
 <td colspan="2">
 <p>
                 </p><b>
-                  <?php _e('If you choose to untick any of these, please consider a donation.', 'gmc'); ?>
+                  <?php _e('If you choose to untick any of these, please consider a <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=TJ2X9BHYUGEWU">donation</a>.', 'gmc'); ?>
                 </b>              </td>            </tr><tr>
 <td colspan="2">
 <input class="button button-primary save" name="submit" type="submit" value="<?php echo __('Save settings', 'gmc'); ?>" />              </td>            </tr>          </table>        </div>      </div><div class="postbox">
-<h3><?php _e('Want to help?', 'gmc'); ?></h3><div class="inside">
-<p>
-            <?php _e('If you would like to help fund further improvements to this plugin (and feed the GetMeCooking team), please send us a donation (we really appreciate it!).', 'gmc'); ?>
-          </p>          <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=TJ2X9BHYUGEWU"><img id="gmc-donate" width="160" height="47" alt="Donate towards the GetMeCooking Recipe Template plugin for WordPress" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" title="Donate towards the GetMeCooking Recipe Template plugin for WordPress" class="aligncenter size-full wp-image-174"></a>
-        </div>      </div><div class="postbox">
-<h3><?php _e('Feedback, help and support', 'gmc'); ?></h3><div class="inside">
-<p>
-            <?php _e('Please <a href="http://www.getmecooking.com/contact">let us know</a> what you think of this plugin, any features you would like or any problems that you find.', 'gmc'); ?>
-          </p><p>
-            <?php _e('For some basic information on this plugin and a list of common questions, please visit the <a href="http://www.getmecooking.com/recipe-template-info">Recipe Template FAQ page</a>', 'gmc'); ?>
-          </p><p>
-            <?php _e('Come and hang out with us', 'gmc'); ?> <a target="_blank" href="http://www.getmecooking.com/newsletter-subscribe"><img src="<?php echo gmc_plugin_url().'/images/email.png'; ?>" alt="<?php _e('GetMeCooking newsletter', 'gmc');?>" /></a> <a target="_blank" href="http://www.facebook.com/GetMeCooking/"><img src="<?php echo gmc_plugin_url().'/images/facebook.png'; ?>" alt="Facebook" /></a> <a target="_blank" href="http://www.twitter.com/getmecooking"><img src="<?php echo gmc_plugin_url().'/images/twitter.png'; ?>" alt="Twitter" /></a> <a target="_blank" href="http://www.getmecooking.com/rss"><img src="<?php echo gmc_plugin_url().'/images/rss.png'; ?>" alt="<?php _e('RSS','gmc');?>" /></a> <a target="_blank" href="http://www.youtube.com/user/GetMeCooking"><img src="<?php echo gmc_plugin_url().'/images/youtube.png'; ?>" alt="YouTube" /></a>
-          </p><p>
-            <?php _e('Like this plugin? Please rate it on WordPress', 'gmc');?><a target="_blank" href="http://wordpress.org/extend/plugins/getmecooking-recipe-template/"><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /></a>
-          </p>        </div>      </div><div class="postbox">
 <h3><?php _e('Heading text', 'gmc'); ?></h3><div class="inside">
 <p>
             <?php _e('Here you can change the default text of the headings.', 'gmc'); ?>
@@ -172,7 +157,9 @@
               </th><td><input type="text" name="gmc-label-note" value="<?php echo get_option("gmc-label-note");?>" /></td>            </tr><tr>
 <td>
 <input class="button button-primary save" name="submit" type="submit" value="<?php echo __('Save settings', 'gmc'); ?>" />              </td><td>
-              </td>            </tr>          </table>        </div>      </div><div class="postbox">
+              </td>            </tr>          </table><p>
+            This plugin supports <a href="http://www.getmecooking.com/recipe-template-info#settingsUseYourOwnLanguage">multiple languages</a>.
+          </p>        </div>      </div><div class="postbox">
 <h3 id="layout-options"><?php _e('Layout options', 'gmc'); ?></h3><div class="inside">
 <table class="gmc-table">
 <tr>
@@ -282,4 +269,19 @@
                 </td>              </tr><tr>
 <td colspan="2">
 <input class="button button-primary save" id="save-settings" name="submit" type="submit" value="<?php echo __('Save settings', 'gmc'); ?>" />                </td><td>
-                </td>              </tr>            </tbody>          </table>        </div>      </div>    </form>  </div></div>
+                </td>              </tr>            </tbody>          </table>        </div>      </div><div class="postbox">
+<h3><?php _e('Buy us a pizza?', 'gmc'); ?></h3><div class="inside">
+<p>
+            <?php _e('If you would like to help fund further improvements to this plugin (and feed the GetMeCooking team), please send us a donation (we really appreciate it!).', 'gmc'); ?>
+          </p>          <a target="_blank" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=TJ2X9BHYUGEWU"><img id="gmc-donate" width="160" height="47" alt="Donate towards the GetMeCooking Recipe Template plugin for WordPress" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" title="Donate towards the GetMeCooking Recipe Template plugin for WordPress" class="aligncenter size-full wp-image-174"></a>
+        </div>      </div><div class="postbox">
+<h3><?php _e('Feedback, help and support', 'gmc'); ?></h3><div class="inside">
+<p>
+            <?php _e('Please <a href="http://www.getmecooking.com/contact">let us know</a> what you think of this plugin, any features you would like or any problems that you find.', 'gmc'); ?>
+          </p><p>
+            <?php _e('For some basic information on this plugin and a list of common questions, please visit the <a href="http://www.getmecooking.com/recipe-template-info">Recipe Plugin FAQ page</a>', 'gmc'); ?>
+          </p><p>
+            <?php _e('Come and hang out with us', 'gmc'); ?> <a target="_blank" href="http://www.getmecooking.com/newsletter-subscribe"><img src="<?php echo gmc_plugin_url().'/images/email.png'; ?>" alt="<?php _e('GetMeCooking newsletter', 'gmc');?>" /></a> <a target="_blank" href="http://www.facebook.com/GetMeCooking/"><img src="<?php echo gmc_plugin_url().'/images/facebook.png'; ?>" alt="Facebook" /></a> <a target="_blank" href="http://www.twitter.com/getmecooking"><img src="<?php echo gmc_plugin_url().'/images/twitter.png'; ?>" alt="Twitter" /></a> <a target="_blank" href="http://www.getmecooking.com/rss"><img src="<?php echo gmc_plugin_url().'/images/rss.png'; ?>" alt="<?php _e('RSS','gmc');?>" /></a> <a target="_blank" href="http://www.youtube.com/user/GetMeCooking"><img src="<?php echo gmc_plugin_url().'/images/youtube.png'; ?>" alt="YouTube" /></a>
+          </p><p>
+            <?php _e('Like this plugin? Please rate it on WordPress', 'gmc');?><a target="_blank" href="http://wordpress.org/extend/plugins/getmecooking-recipe-template/"><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /><img src="<?php echo gmc_plugin_url().'/images/star.png'; ?>" alt="<?php _e('Rate GetMeCooking 5 stars', 'gmc');?>" /></a>
+          </p>        </div>      </div>    </form>  </div></div>

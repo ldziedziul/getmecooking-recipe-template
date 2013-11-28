@@ -124,7 +124,8 @@
     </div>  </div><div class="gmc-half">
 <div>
 <label class="gmc-admin-label">
-        The recipe is...             
+        <?php echo __('The recipe is...', 'gmc'); ?>
+
       </label>      <?php echo '<img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png'.'" alt="'. __('Help', 'gmc').'" title="<strong>'.__('Child friendly', 'gmc').'</strong> '.__('Can be made by children with adult supervision. No knives, naked flames, etc.', 'gmc').'<br/><br/>
       <strong>'.__('Freezable', 'gmc').'</strong> '.__('Can be frozen (for storage or serving).', 'gmc').'<br/><br/>
       <strong>'.__('Gourmet', 'gmc').'</strong> '.__("Food that is deemed highly refined and sophisticated. Not something you'd make for eating in front of the TV.", 'gmc').'<br/><br/>

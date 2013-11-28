@@ -6,6 +6,10 @@
   position: relative;
 }
 
+article.gmc_recipe header img {
+  display: none;
+}
+
 .entry-content .gmc-recipe table {
   width: auto;
   font-size: inherit;

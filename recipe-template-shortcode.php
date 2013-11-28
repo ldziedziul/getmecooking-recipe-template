@@ -2,12 +2,13 @@
 <?php $large_image_url = wp_get_attachment_image_src( get_post_thumbnail_id(), 'large'); ?>
 <?php $steps=get_posts('post_status=publish&post_type=gmc_recipestep&nopaging=1&orderby=menu_order&order=ASC&post_parent='.$post->ID); ?>
 <div class="gmc-recipe" id="gmc-print-<?php echo $post->ID; ?>" itemscope itemtype="http://schema.org/Recipe" style="<?php echo gmc_recipe_main_style(); ?>">
-  <?php $parent_title = $tmppost->post_title; ?>
-  <?php $recipe_title = get_the_title(); ?>
-    <?php if ($show_title) { ?>
-
-<h2 class="gmc-recipe-title <?php echo $gmc_hide_title == 'Y' && $parent_title == $recipe_title ? 'gmc-web-hidden' : ''; ?>" itemprop="name"><?php echo $recipe_title; ?></h2>  <?php } ?>
-<div class="gmc-print-area">
+  <?php $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";; ?>
+  <?php $sp = strtolower($_SERVER["SERVER_PROTOCOL"]);; ?>
+  <?php $protocol = substr($sp, 0, strpos($sp, "/")) . $s;; ?>
+  <meta property="og:site_name" content="<?php echo $protocol . "://" . $_SERVER['HTTP_HOST']; ?>" />
+  <?php $parent_title = trim($tmppost->post_title); ?>
+  <?php $recipe_title = html_entity_decode(trim(get_the_title()), ENT_QUOTES,'UTF-8'); ?>
+<h2 class="gmc-recipe-title <?php echo $gmc_hide_title == 'Y' && mb_strlen($parent_title) == mb_strlen($recipe_title) ? 'gmc-web-hidden' : ''; ?>" itemprop="name"><?php echo $recipe_title; ?></h2><div class="gmc-print-area">
         <?php if ($steps) { ?>
 
             <?php foreach ($steps as $step) { ?>
@@ -64,24 +65,21 @@
 <td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-prep-time") ? get_option("gmc-label-prep-time") : __('Prep time', 'gmc'); ?>
 
-        </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="prepTime"><?php echo gmc_time($prepHour,$prepMinute); ?></td></tr>    <?php } ?>
-    <?php $searchEngineTime = search_engine_time($prepHour, $prepMinute); ?>
+        </td>        <?php $searchEngineTime = search_engine_time($prepHour, $prepMinute); ?><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="prepTime"><?php echo gmc_time($prepHour,$prepMinute); ?></td></tr>    <?php } ?>
         <?php if ($cookHour > 0 || $cookMinute > 0) { ?>
 
 <tr>
 <td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-cook-time") ? get_option("gmc-label-cook-time") : __('Cook time', 'gmc')       ; ?>
 
-        </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="cookTime"><?php echo gmc_time($cookHour,$cookMinute); ?></td></tr>    <?php } ?>
-    <?php $searchEngineTime = search_engine_time($cookHour, $cookMinute); ?>
+        </td>        <?php $searchEngineTime = search_engine_time($cookHour, $cookMinute); ?><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="cookTime"><?php echo gmc_time($cookHour,$cookMinute); ?></td></tr>    <?php } ?>
         <?php if (($prepHour > 0 || $prepMinute > 0) && ($cookHour > 0 || $cookMinute > 0)) { ?>
 
 <tr>
 <td class="gmc-heading<?php echo $gmc_narrow_css; ?>">
           <?php echo get_option("gmc-label-total-time") ? get_option("gmc-label-total-time") : __('Total time', 'gmc')       ; ?>
 
-        </td><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="totalTime"><?php echo gmc_total_time($prepHour,$prepMinute,$cookHour,$cookMinute); ?></td></tr>    <?php } ?>
-    <?php $searchEngineTime = search_engine_total_time($prepHour, $prepMinute, $cookHour, $cookMinute); ?>
+        </td>        <?php $searchEngineTime = search_engine_total_time($prepHour, $prepMinute, $cookHour, $cookMinute); ?><td class="gmc-summary-value" content="<?php echo $searchEngineTime; ?>" itemprop="totalTime"><?php echo gmc_total_time($prepHour,$prepMinute,$cookHour,$cookMinute); ?></td></tr>    <?php } ?>
     <?php $allergies = wp_get_object_terms($post->ID, 'gmc_allergy'); ?>
         <?php if (!empty($allergies)) { ?>
 
@@ -451,5 +449,5 @@
 </div><?php if (get_option('gmc-hide-powered-by') != 'Y') { ?>
 
 <div class="gmc-powered-by">
-    <a href="http://www.getmecooking.com/wordpress-recipe-plugin"><?php _e('Powered by GetMeCooking', 'gmc');?></a>
+    <a href="https://www.getmecooking.com/wordpress-recipe-plugin"><?php _e('Powered by GetMeCooking', 'gmc');?></a>
   </div><?php } ?>
