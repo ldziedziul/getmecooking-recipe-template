@@ -307,7 +307,6 @@ function gmc_init() {
       'show_in_nav_menus' => false,
 		  'show_ui' => true,
 		  'exclude_from_search' => true,
-		  'capability_type' => 'page',
 		  'hierarchical' => false,
 		  'rewrite' => array('slug' => 'recipe'),
 		  'query_var' => true,
@@ -328,7 +327,6 @@ function gmc_init() {
 		  'show_in_menu' => false,
 		  'show_in_nav_menus' => false,
 		  'exclude_from_search' => true,
-		  'capability_type' => 'page',
 		  'hierarchical' => false,
 		  'rewrite' => false,
 		  'query_var' => true,
@@ -348,7 +346,6 @@ function gmc_init() {
 		  'show_in_menu' => false,
 		  'show_in_nav_menus' => false,
 		  'exclude_from_search' => true,
-		  'capability_type' => 'page',
 		  'hierarchical' => false,
 		  'rewrite' => false,
 		  'query_var' => true,
@@ -1720,23 +1717,23 @@ function gmc_save_recipe_to_db($post_ID, $post) {
   //Need to create the corresponding non gmc term taxonomy for those that do not add recipes in posts  
   setNewTaxonomyCountToZero($post_ID, $region, 'region');
 
-  foreach($_POST['gmc-recopt-when'] as $key => $course) {
+  foreach((array)$_POST['gmc-recopt-when'] as $key => $course) {
     setNewTaxonomyCountToZero($post_ID, $course, 'course');
   }
 
-  foreach($_POST['gmc-recopt-occasion'] as $key => $occasion) {
+  foreach((array)$_POST['gmc-recopt-occasion'] as $key => $occasion) {
     setNewTaxonomyCountToZero($post_ID, $occasion, 'occasion');
   }
 
-  foreach($_POST['gmc-recopt-allergies'] as $key => $allergy) {
+  foreach((array)$_POST['gmc-recopt-allergies'] as $key => $allergy) {
     setNewTaxonomyCountToZero($post_ID, $allergy, 'allergy');
   }
 
-  foreach($_POST['gmc-recopt-dietary'] as $key => $dietary) {
+  foreach((array)$_POST['gmc-recopt-dietary'] as $key => $dietary) {
     setNewTaxonomyCountToZero($post_ID, $dietary, 'dietary');
   }
 
-  foreach($_POST['gmc-recopt-other'] as $key => $misc) {
+  foreach((array)$_POST['gmc-recopt-other'] as $key => $misc) {
     setNewTaxonomyCountToZero($post_ID, $misc, 'misc');
   }
 

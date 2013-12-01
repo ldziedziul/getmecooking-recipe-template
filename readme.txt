@@ -94,6 +94,10 @@ Dutch, English, Italian, Portuguese, Russian.
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.27 =
+* Added a null check for some loops
+* Changed user permissions to be based on 'post' and not 'page'
+
 = 1.26 =
 * If the recipe name is the same as the blog post title and the option is ticked to hide it, it is now shown when printed.
 * Putting a recipe in the trash section correctly updates the count
