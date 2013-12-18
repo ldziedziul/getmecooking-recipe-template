@@ -1140,7 +1140,7 @@ function gmc_mainrecipe_box($post, $metabox) {
         </th>
         <th>' 
           . __('Measurement', 'gmc') . '
-            <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("Select the drop-down and start typing. The measurement will appear it's available.<br /><br />Or select 'measurement not listed?' to add your own.", 'gmc').'" />
+            <img class="gmc-tooltip" src="'.gmc_plugin_url().'/images/help.png" alt="'. __('Help', 'gmc').'" title="'.__("Select the drop-down and start typing. The measurement will appear if it's available.<br /><br />Or select 'measurement not listed?' to add your own.", 'gmc').'" />
         </th>
         <th>' . __('Ingredient', 'gmc') . '</th>
         <th>' . __('Note', 'gmc') . '</th>
@@ -1584,20 +1584,36 @@ function gmc_save_recipe_to_db($post_ID, $post) {
   global $wpdb;
   
   //if on post-new, delete all steps and ingredients incase they pressed preview. Fixes duplicate steps/ingredients bug
-  $deleteStepsAndIngredients = true;
+  $deleteSteps = true;
 
   foreach($_POST['stepid'] as $key => $stepId) {
     if(!empty($stepId))
     {
-      $deleteStepsAndIngredients = false;
+      $deleteSteps = false;
       break;
     }
   }
 
-  if ($deleteStepsAndIngredients) {
+  if ($deleteSteps) {
     $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE post_id = $post_ID");
 
-    $wpdb->query("DELETE FROM {$wpdb->posts} WHERE post_parent = $post_ID && (post_type = 'gmc_recipeingredient' || post_type = 'gmc_recipestep')");
+    $wpdb->query("DELETE FROM {$wpdb->posts} WHERE post_parent = $post_ID && post_type = 'gmc_recipestep'");
+  }
+
+  $deleteIngredients = true;
+
+  foreach($_POST['gmc-recipeingredientid'] as $key => $ingredientId) {
+    if(!empty($stepId))
+    {
+      $deleteIngredients = false;
+      break;
+    }
+  }
+
+  if ($deleteIngredients) {
+    $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE post_id = $post_ID");
+
+    $wpdb->query("DELETE FROM {$wpdb->posts} WHERE post_parent = $post_ID && post_type = 'gmc_recipeingredient'");
   }
 
   if (empty($_POST['gmcMainImage']))
@@ -2777,7 +2793,7 @@ function search_engine_time($hour, $minute)
 		if ($dblMinutes >= 60)
 		{
 			$partMinutes = $dblMinutes % 60;
-			$dblHour .= floor($dblMinutes / 60);
+			$dblHour = $dblHour + floor($dblMinutes / 60);
 			$dblMinutes = $partMinutes;
 		}
 
