@@ -1603,7 +1603,7 @@ function gmc_save_recipe_to_db($post_ID, $post) {
   $deleteIngredients = true;
 
   foreach($_POST['gmc-recipeingredientid'] as $key => $ingredientId) {
-    if(!empty($stepId))
+    if(!empty($ingredientId))
     {
       $deleteIngredients = false;
       break;

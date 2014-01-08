@@ -94,6 +94,9 @@ Dutch, English, Italian, Portuguese, Russian.
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.29 =
+* Fixed bug where ingredients would be deleted if no steps had been entered
+
 = 1.28 =
 * Fixed bug where ingredients would be deleted if no steps had been entered
 
