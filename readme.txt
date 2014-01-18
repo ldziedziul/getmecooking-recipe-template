@@ -32,7 +32,7 @@ The premium version gives you more features:
 * Display fresh content - display up to 10 of your your most recently added recipes on any page or blog post
 * Advanced management - see which recipes you have added to a blog post, multiple blog posts, or not yet added
 * In-blog linking of recipes - recipes link to posts on your blog instead of linking to [GetMeCooking](http://www.getmecooking.com)
-* Language support for Danish, Dutch, English, French, German, Italian, Portuguese, Russian
+* Language support for Danish, Dutch, English, French, German, Italian, Portuguese, Russian, Romanian, Swedish
  
 A video overview and more information is [available here](https://www.getmecooking.com/wordpress-recipe-plugin)
 
