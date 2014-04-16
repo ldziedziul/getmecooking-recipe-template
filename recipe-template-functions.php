@@ -823,7 +823,7 @@ function gmc_is_recipe_admin_page() {
     }
   }
   else if ($pagenow == 'post-new.php') {
-  	if ($_GET['post_type']=="gmc_recipe") {
+  	if (isset($_GET['post_type']) && $_GET['post_type'] =="gmc_recipe") {
   	  return true;
   	}
   } 
@@ -2138,7 +2138,7 @@ function gmc_save_recipe($post_ID, $post) {
       return;
 
   // Check permissions
-  if ('page' == $_POST['post_type'] ) 
+  if (isset($_POST['post_type']) && 'page' == $_POST['post_type'] ) 
   {
     if ( !current_user_can( 'edit_page', $post_ID ) )
         return;
@@ -2468,6 +2468,9 @@ function gmc_admin_enqueue_scripts() {
   wp_enqueue_script('jquery');
   wp_enqueue_script('jquery-ui-sortable');
   wp_enqueue_script('jquery-ui-tabs');
+  wp_enqueue_script('wpdialogs');
+  wp_enqueue_script('jquery-ui-dialog');
+  wp_enqueue_style('wp-jquery-ui-dialog');
 
   wp_enqueue_script('jquery.tools.min',gmc_plugin_url().'/js/jquery.tools.min.js');
   wp_enqueue_script('chosen.jquery.min',gmc_plugin_url().'/js/chosen.jquery.min.js');
@@ -2837,7 +2840,7 @@ function print_ingredient_description($ingredient)
   $description = $ingredient->post_content;
   $output = $quantity;
   if(!empty($measurement))
-  {
+  {    
 	switch ($measurement)
 	{
     case 'bag':
@@ -2988,6 +2991,11 @@ function print_ingredient_description($ingredient)
       $measurement = gmc_pluralise(__($measurement, 'gmc'), __('thick slices', 'gmc'), $quantity);
     break;
 	  default:
+      if ($measurement != 'g' && $measurement != 'kg' && $measurement != 'ml' && $measurement != 'l' && $measurement != 'oz' && $measurement != 'lb' && $measurement != 'fl oz')  
+      {
+        $measurement = __(ucfirst($measurement), 'gmc');
+      }
+    break;
 	}
   
 	if ($measurement == 'g' || $measurement == 'kg' || $measurement == 'ml' || $measurement == 'l' || $measurement == 'oz' || $measurement == 'lb' || $measurement == 'fl oz')

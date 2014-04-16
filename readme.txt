@@ -3,7 +3,7 @@ Contributors: GetMeCooking
 Donate link: http://www.getmecooking.com/recipe-template-info#donate
 Tags: recipes, recipe, cooking, food, recipe template, recipe seo, recipe view, getmecooking
 Requires at least: 3.0
-Tested up to: 3.8
+Tested up to: 3.9
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -94,6 +94,9 @@ Dutch, English, Italian, Portuguese, Russian.
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.30 =
+* WordPress 3.9 fixes
+
 = 1.29 =
 * Fixed bug where ingredients would be deleted if no steps had been entered
 
