@@ -3,13 +3,13 @@
 	Plugin Name: GetMeCooking Recipe Template
 	Plugin URI: http://www.getmecooking.com/wordpress-recipe-plugin
 	Description: <strong>For food bloggers - allows you to add recipes to your blog</strong>. Includes recipe title, photographs, list of ingredients, recipe steps and Search Engine Optimisation (SEO). Also your recipes can be added to <a href="http://www.getmecooking.com/">http://www.getmecooking.com</a>, which will give your recipes additional functionality, more exposure and increased traffic. Visit the <a href="http://www.getmecooking.com/recipe-template/">information page</a> for full details.
-	Version: 1.29
+	Version: 1.30
 	Author: GetMeCooking
 	Author URI: http://www.getmecooking.com/
 */
 
 define('GMC_URL', 'http://www.getmecooking.com/recipeservice.svc/submitrecipe');
-define('GMC_VERSION', '1.29');
+define('GMC_VERSION', '1.30');
 $premium_files = dirname( dirname(__FILE__) ).DIRECTORY_SEPARATOR.'getmecooking-recipe-template-premium'.DIRECTORY_SEPARATOR.'recipe-template-premium.php';
 define('GMC_PREMIUM_FILES', $premium_files);
 
