@@ -94,6 +94,9 @@ Dutch, English, Italian, Portuguese, Russian.
 8. Geek out and customise the recipe template as much as you want
 
 == Changelog ==
+= 1.31 =
+* Hidden the preview button until you press the save button to get around the double ingredient / steps bug
+
 = 1.30 =
 * WordPress 3.9 fixes
 

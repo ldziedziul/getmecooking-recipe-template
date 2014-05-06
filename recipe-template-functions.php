@@ -2129,10 +2129,16 @@ function gmc_save_recipe_to_gmc($post_ID, $post) {
 }
 
 function gmc_save_recipe($post_ID, $post) {
+  // if ( wp_is_post_revision($post_ID))
+  //   return;  
+  
+  // if($post->post_status == 'trash' or $post->post_status == 'auto-draft'){
+  //   return $post_ID;
+  // }
   if( $parent_id = wp_is_post_revision($post_ID) ) {
     $post_ID = $parent_id;
   }
-  
+
   // verify if this is an auto save routine. If it is our form has not been submitted, so we dont want to do anything
   if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) 
       return;
